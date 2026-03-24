@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ルーツ・クエスト</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
+      min-height: 100vh;
+      background-color: #f7f3ee;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      color: #3d2b1f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 桜の花びら装飾 */
+    .petal {
+      position: fixed;
+      pointer-events: none;
+      opacity: 0;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.4; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* 背景の和柄装飾 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -60px;
+      right: -60px;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(230, 180, 190, 0.18) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -80px;
+      left: -80px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(160, 190, 160, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ヘッダー装飾ライン */
+    .header-deco {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .header-deco .line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #c9a8b0);
+    }
+
+    .header-deco .line.right {
+      background: linear-gradient(to left, transparent, #c9a8b0);
+    }
+
+    .header-deco .icon {
+      font-size: 1.1rem;
+      color: #c9a8b0;
+    }
+
+    /* タイトル */
+    .title-block {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .title-en {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      color: #b08a90;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .title-ja {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 2.4rem;
+      font-weight: 600;
+      color: #3d2b1f;
+      letter-spacing: 0.2em;
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+
+    .title-dot {
+      color: #c9a8b0;
+    }
+
+    .title-sub {
+      font-size: 0.8rem;
+      color: #9a7e76;
+      letter-spacing: 0.12em;
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    /* カード */
+    .card {
+      background: rgba(255, 252, 249, 0.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(201, 168, 176, 0.35);
+      border-radius: 20px;
+      padding: 40px 36px;
+      box-shadow:
+        0 4px 24px rgba(120, 80, 70, 0.08),
+        0 1px 4px rgba(120, 80, 70, 0.06);
+    }
+
+    /* 桜の小枝装飾（カード上部） */
+    .card-deco {
+      text-align: center;
+      font-size: 1.3rem;
+      margin-bottom: 28px;
+      opacity: 0.55;
+      letter-spacing: 0.4em;
+    }
+
+    /* フォーム */
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      color: #9a7e76;
+      margin-bottom: 8px;
+      letter-spacing: 0.18em;
+      font-weight: 400;
+    }
+
+    .label-ja {
+      font-size: 0.9rem;
+      color: #5c3f36;
+      letter-spacing: 0.1em;
+      margin-right: 8px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 13px 18px;
+      background: rgba(247, 243, 238, 0.7);
+      border: 1px solid rgba(201, 168, 176, 0.4);
+      border-radius: 10px;
+      color: #3d2b1f;
+      font-size: 1rem;
+      font-family: 'Noto Serif JP', serif;
+      outline: none;
+      transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #b08a90;
+      background: rgba(255, 252, 249, 0.95);
+      box-shadow: 0 0 0 3px rgba(176, 138, 144, 0.12);
+    }
+
+    input[type="text"]::placeholder {
+      color: rgba(90, 60, 50, 0.3);
+      font-size: 0.9rem;
+    }
+
+    /* ボタン */
+    .btn {
+      width: 100%;
+      padding: 15px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-family: 'Shippori Mincho', serif;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #c9a8b0, #d4b8be);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(176, 138, 144, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #b8979f, #c9a8b0);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(176, 138, 144, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(176, 138, 144, 0.3);
+    }
+
+    /* セカンダリボタン（抹茶） */
+    .btn-secondary {
+      background: linear-gradient(135deg, #8fa88f, #a3baa3);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(130, 160, 130, 0.3);
+      margin-top: 12px;
+    }
+
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, #7d977d, #8fa88f);
+      transform: translateY(-2px);
+    }
+
+    /* 仕切り */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 28px 0 0;
+    }
+
+    .divider .line {
+      flex: 1;
+      height: 1px;
+      background: rgba(201, 168, 176, 0.3);
+    }
+
+    .divider .text {
+      font-size: 0.7rem;
+      color: #c9a8b0;
+      letter-spacing: 0.2em;
+    }
+
+    /* 結果エリア */
+    .result {
+      margin-top: 28px;
+      padding: 24px;
+      background: linear-gradient(135deg, rgba(247, 243, 238, 0.9), rgba(240, 235, 228, 0.9));
+      border: 1px solid rgba(201, 168, 176, 0.3);
+      border-radius: 14px;
+      display: none;
+      animation: fadeIn 0.5s ease;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: #b08a90;
+      margin-bottom: 12px;
+    }
+
+    .result p {
+      font-size: 0.95rem;
+      line-height: 2;
+      color: #5c3f36;
+    }
+
+    .result .highlight {
+      color: #9a5f6a;
+      font-weight: 500;
+    }
+
+    /* フッター */
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 0.65rem;
+      color: #c0a89e;
+      letter-spacing: 0.2em;
+    }
+
+    /* 季節の花装飾（SVG） */
+    .seasonal-deco {
+      position: fixed;
+      pointer-events: none;
+      opacity: 0.12;
+    }
+
+    .deco-top-left {
+      top: 0;
+      left: 0;
+      width: 200px;
+    }
+
+    .deco-bottom-right {
+      bottom: 0;
+      right: 0;
+      width: 200px;
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 左上の枝装飾 -->
+  <svg class="seasonal-deco deco-top-left" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,180 Q40,120 80,100 Q120,80 150,40 Q160,20 180,0" stroke="#b08a90" stroke-width="1.5" fill="none"/>
+    <circle cx="80" cy="100" r="5" fill="#c9a8b0"/>
+    <circle cx="100" cy="88" r="4" fill="#d4b8be"/>
+    <circle cx="120" cy="80" r="3" fill="#c9a8b0"/>
+    <circle cx="150" cy="40" r="5" fill="#c9a8b0"/>
+    <circle cx="165" cy="28" r="3" fill="#d4b8be"/>
+    <circle cx="60" cy="112" r="4" fill="#d4b8be"/>
+    <circle cx="140" cy="60" r="3" fill="#c9a8b0"/>
+    <!-- 桜の花 -->
+    <g transform="translate(78,96) scale(0.7)" opacity="0.8">
+      <circle cx="0" cy="-6" r="3.5" fill="#e8c8cc"/>
+      <circle cx="5.7" cy="-1.9" r="3.5" fill="#e8c8cc"/>
+      <circle cx="3.5" cy="5.2" r="3.5" fill="#e8c8cc"/>
+      <circle cx="-3.5" cy="5.2" r="3.5" fill="#e8c8cc"/>
+      <circle cx="-5.7" cy="-1.9" r="3.5" fill="#e8c8cc"/>
+      <circle cx="0" cy="0" r="2" fill="#f5d0d4"/>
+    </g>
+    <g transform="translate(148,38) scale(0.6)" opacity="0.8">
+      <circle cx="0" cy="-6" r="3.5" fill="#e8c8cc"/>
+      <circle cx="5.7" cy="-1.9" r="3.5" fill="#e8c8cc"/>
+      <circle cx="3.5" cy="5.2" r="3.5" fill="#e8c8cc"/>
+      <circle cx="-3.5" cy="5.2" r="3.5" fill="#e8c8cc"/>
+      <circle cx="-5.7" cy="-1.9" r="3.5" fill="#e8c8cc"/>
+      <circle cx="0" cy="0" r="2" fill="#f5d0d4"/>
+    </g>
+  </svg>
+
+  <!-- 右下の枝装飾 -->
+  <svg class="seasonal-deco deco-bottom-right" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,180 Q40,120 80,100 Q120,80 150,40 Q160,20 180,0" stroke="#8fa88f" stroke-width="1.5" fill="none"/>
+    <circle cx="80" cy="100" r="5" fill="#a3baa3"/>
+    <circle cx="120" cy="80" r="4" fill="#8fa88f"/>
+    <circle cx="150" cy="40" r="5" fill="#a3baa3"/>
+    <circle cx="60" cy="112" r="3" fill="#8fa88f"/>
+  </svg>
+
+  <!-- 落ちる花びら（JS で動的生成） -->
+
+  <div class="wrapper">
+
+    <div class="header-deco">
+      <div class="line"></div>
+      <div class="icon">✿</div>
+      <div class="line right"></div>
+    </div>
+
+    <div class="title-block">
+      <div class="title-en">Roots Quest</div>
+      <h1 class="title-ja">ルーツ<span class="title-dot">・</span>クエスト</h1>
+      <p class="title-sub">名字と出身地から、あなたのご先祖さまへ<br>歴史の旅へ、出発しましょう</p>
+    </div>
+
+    <div class="card">
+      <div class="card-deco">✿ ❀ ✿</div>
+
+      <form id="rootsForm">
+        <div class="form-group">
+          <label>
+            <span class="label-ja">名字</span>
+            <span style="font-size:0.7rem; letter-spacing:0.15em; color:#b08a90;">FAMILY NAME</span>
+          </label>
+          <input type="text" id="myoji" name="myoji" placeholder="例：田中、鈴木、佐藤" required>
+        </div>
+
+        <div class="form-group">
+          <label>
+            <span class="label-ja">出身地</span>
+            <span style="font-size:0.7rem; letter-spacing:0.15em; color:#b08a90;">BIRTHPLACE</span>
+          </label>
+          <input type="text" id="shusshinchi" name="shusshinchi" placeholder="例：京都府、薩摩、陸奥" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">ご先祖さまを探る</button>
+      </form>
+
+      <div class="result" id="result">
+        <div class="result-label">✦ あなたのルーツ ✦</div>
+        <p id="resultText"></p>
+      </div>
+
+      <div class="divider">
+        <div class="line"></div>
+        <div class="text">または</div>
+        <div class="line"></div>
+      </div>
+
+      <button class="btn btn-secondary" onclick="alert('近日公開予定です')">歴史マップで探す</button>
+    </div>
+
+    <div class="footer">
+      &copy; 2025 Roots Quest &nbsp;&#xFF5C;&nbsp; あなたの物語が、ここから始まる
+    </div>
+
+  </div>
+
+  <script>
+    // フォーム送信
+    document.getElementById('rootsForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const myoji = document.getElementById('myoji').value;
+      const shusshinchi = document.getElementById('shusshinchi').value;
+      const submitBtn = this.querySelector('button[type="submit"]');
+      const resultDiv = document.getElementById('result');
+      const resultText = document.getElementById('resultText');
+
+      // ローディング状態
+      submitBtn.disabled = true;
+      submitBtn.textContent = '探索中...';
+      resultText.innerHTML = `<span class="highlight">「${myoji}」</span> 家のルーツを辿っています...`;
+      resultDiv.style.display = 'block';
+      resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      try {
+        const response = await fetch('/api/story', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ myoji, shusshinchi }),
+        });
+
+        if (response.status === 429) throw new Error('rate_limit');
+        if (!response.ok) throw new Error('サーバーエラー');
+
+        // ストリーミング受信
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let story = '';
+        resultText.innerHTML = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split('\n');
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6);
+              if (data === '[DONE]') break;
+              try {
+                const { text } = JSON.parse(data);
+                story += text;
+                resultText.textContent = story;
+              } catch {}
+            }
+          }
+        }
+      } catch (err) {
+        const msg = err.message === 'rate_limit'
+          ? 'アクセスが集中しています。しばらくしてからお試しください。'
+          : 'エラーが発生しました。もう一度お試しください。';
+        resultText.innerHTML = `<span style="color:#c9a8b0">${msg}</span>`;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'ご先祖さまを探る';
+      }
+    });
+
+    // 花びらアニメーション
+    function createPetal() {
+      const petal = document.createElement('div');
+      petal.className = 'petal';
+
+      const size = Math.random() * 10 + 8;
+      const left = Math.random() * 100;
+      const duration = Math.random() * 8 + 8;
+      const delay = Math.random() * 5;
+
+      // 桜の花びら（SVG）
+      petal.innerHTML = `
+        <svg width="${size}" height="${size}" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,180,0.7)" transform="rotate(0 10 10)"/>
+          <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,180,0.7)" transform="rotate(72 10 10)"/>
+          <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,180,0.7)" transform="rotate(144 10 10)"/>
+          <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,180,0.7)" transform="rotate(216 10 10)"/>
+          <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,180,0.7)" transform="rotate(288 10 10)"/>
+        </svg>`;
+
+      petal.style.cssText = `
+        position: fixed;
+        left: ${left}vw;
+        top: -30px;
+        pointer-events: none;
+        animation: fall ${duration}s ${delay}s linear infinite;
+        z-index: 0;
+      `;
+
+      document.body.appendChild(petal);
+
+      // 一定時間後に削除して再生成
+      setTimeout(() => {
+        petal.remove();
+        createPetal();
+      }, (duration + delay) * 1000);
+    }
+
+    // 花びらを12枚生成
+    for (let i = 0; i < 12; i++) {
+      setTimeout(() => createPetal(), i * 600);
+    }
+  </script>
+</body>
+</html>
