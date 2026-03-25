@@ -332,6 +332,166 @@
       width: 200px;
       transform: rotate(180deg);
     }
+
+    /* ご先祖キャラクター */
+    .character-result {
+      margin-top: 20px;
+      padding: 28px 24px;
+      background: linear-gradient(135deg, rgba(247, 243, 238, 0.95), rgba(240, 235, 228, 0.95));
+      border: 1px solid rgba(201, 168, 176, 0.4);
+      border-radius: 16px;
+      display: none;
+      animation: fadeIn 0.6s ease;
+      text-align: center;
+    }
+
+    .character-result.rare {
+      border: 1.5px solid rgba(212, 175, 55, 0.6);
+      background: linear-gradient(135deg, rgba(255, 252, 240, 0.97), rgba(248, 240, 218, 0.97));
+      animation: fadeIn 0.6s ease, rareGlow 2.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes rareGlow {
+      from { box-shadow: 0 0 12px rgba(212, 175, 55, 0.18), 0 4px 16px rgba(180, 140, 20, 0.08); }
+      to   { box-shadow: 0 0 30px rgba(212, 175, 55, 0.35), 0 4px 24px rgba(180, 140, 20, 0.14); }
+    }
+
+    .character-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: #b08a90;
+      margin-bottom: 16px;
+    }
+
+    .rare-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, #c9a227, #e8c84a, #c9a227);
+      background-size: 200% auto;
+      color: #5c3a00;
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      animation: shimmer 2.5s linear infinite;
+    }
+
+    @keyframes shimmer {
+      from { background-position: 0% center; }
+      to   { background-position: 200% center; }
+    }
+
+    .character-emoji-wrap {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      background: rgba(255, 252, 249, 0.95);
+      border: 1px solid rgba(201, 168, 176, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      box-shadow: 0 2px 12px rgba(120, 80, 70, 0.1);
+    }
+
+    .rare .character-emoji-wrap {
+      border-color: rgba(212, 175, 55, 0.55);
+      box-shadow: 0 2px 18px rgba(212, 175, 55, 0.22);
+    }
+
+    .character-name {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #3d2b1f;
+      letter-spacing: 0.15em;
+      margin-bottom: 10px;
+    }
+
+    .character-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(201, 168, 176, 0.15);
+      border: 1px solid rgba(201, 168, 176, 0.35);
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: 0.77rem;
+      color: #7a5a60;
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+    }
+
+    .rare .character-type-badge {
+      background: rgba(212, 175, 55, 0.1);
+      border-color: rgba(212, 175, 55, 0.4);
+      color: #7a5500;
+    }
+
+    .character-divider {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 16px;
+    }
+
+    .character-divider .cdline {
+      flex: 1;
+      height: 1px;
+      background: rgba(201, 168, 176, 0.3);
+    }
+
+    .character-divider .cdicon {
+      font-size: 0.75rem;
+      color: #c9a8b0;
+    }
+
+    .character-feature {
+      font-size: 0.87rem;
+      line-height: 2;
+      color: #5c3f36;
+      text-align: left;
+      margin-bottom: 16px;
+    }
+
+    .character-comment-wrap {
+      background: rgba(201, 168, 176, 0.1);
+      border-left: 2px solid rgba(201, 168, 176, 0.6);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      text-align: left;
+    }
+
+    .rare .character-comment-wrap {
+      background: rgba(212, 175, 55, 0.07);
+      border-left-color: rgba(212, 175, 55, 0.5);
+    }
+
+    .character-comment-label {
+      font-size: 0.65rem;
+      color: #b08a90;
+      letter-spacing: 0.2em;
+      margin-bottom: 6px;
+    }
+
+    .rare .character-comment-label {
+      color: #a07830;
+    }
+
+    .character-comment {
+      font-size: 0.9rem;
+      color: #5c3f36;
+      line-height: 1.8;
+    }
+
+    .character-loading {
+      padding: 20px 0;
+      color: #c9a8b0;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+    }
   </style>
 </head>
 <body>
@@ -418,6 +578,8 @@
         <p id="resultText"></p>
       </div>
 
+      <div class="character-result" id="characterResult"></div>
+
       <div class="divider">
         <div class="line"></div>
         <div class="text">または</div>
@@ -443,13 +605,18 @@
       const submitBtn = this.querySelector('button[type="submit"]');
       const resultDiv = document.getElementById('result');
       const resultText = document.getElementById('resultText');
+      const characterDiv = document.getElementById('characterResult');
 
       // ローディング状態
       submitBtn.disabled = true;
       submitBtn.textContent = '探索中...';
       resultText.innerHTML = `<span class="highlight">「${myoji}」</span> 家のルーツを辿っています...`;
       resultDiv.style.display = 'block';
+      characterDiv.style.display = 'none';
+      characterDiv.className = 'character-result';
       resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      let story = '';
 
       try {
         const response = await fetch('/api/story', {
@@ -464,7 +631,6 @@
         // ストリーミング受信
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
-        let story = '';
         resultText.innerHTML = '';
 
         while (true) {
@@ -486,6 +652,11 @@
             }
           }
         }
+
+        // ストーリー完了後にキャラクター判定
+        if (story) {
+          await fetchCharacter(myoji, shusshinchi, story);
+        }
       } catch (err) {
         const msg = err.message === 'rate_limit'
           ? 'アクセスが集中しています。しばらくしてからお試しください。'
@@ -496,6 +667,54 @@
         submitBtn.textContent = 'ご先祖さまを探る';
       }
     });
+
+    // キャラクター判定を取得して表示
+    async function fetchCharacter(myoji, shusshinchi, story) {
+      const characterDiv = document.getElementById('characterResult');
+      characterDiv.className = 'character-result';
+      characterDiv.innerHTML = '<div class="character-loading">✦ ご先祖キャラクター霊視中... ✦</div>';
+      characterDiv.style.display = 'block';
+      characterDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      try {
+        const res = await fetch('/api/character', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ myoji, shusshinchi, story }),
+        });
+        if (!res.ok) throw new Error('failed');
+        const data = await res.json();
+        renderCharacter(data);
+      } catch {
+        characterDiv.innerHTML = '<div class="character-loading" style="color:#c9a8b0">キャラクター判定に失敗しました</div>';
+      }
+    }
+
+    // キャラクターカードを描画
+    function renderCharacter(data) {
+      const characterDiv = document.getElementById('characterResult');
+      const isRare = data.isRare;
+      characterDiv.className = 'character-result' + (isRare ? ' rare' : '');
+
+      characterDiv.innerHTML = `
+        ${isRare ? '<div class="rare-badge">✨ RARE CHARACTER ✨</div>' : ''}
+        <div class="character-label">✦ ご先祖キャラクター ✦</div>
+        <div class="character-emoji-wrap">${data.emoji}</div>
+        <div class="character-name">${data.ancestorName}</div>
+        <div class="character-type-badge">${data.typeName}｜${data.typeDesc}</div>
+        <div class="character-divider">
+          <div class="cdline"></div>
+          <div class="cdicon">❧</div>
+          <div class="cdline"></div>
+        </div>
+        <p class="character-feature">${data.feature}</p>
+        <div class="character-comment-wrap">
+          <div class="character-comment-label">ご先祖さまより</div>
+          <p class="character-comment">「${data.comment}」</p>
+        </div>
+      `;
+      characterDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 
     // 花びらアニメーション
     function createPetal() {
