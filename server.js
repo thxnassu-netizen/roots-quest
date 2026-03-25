@@ -13,26 +13,26 @@ app.use(express.static(__dirname));
 app.get("/", (req, res) => res.sendFile(__dirname + "/public/index.html"));
 
 const CHARACTER_TYPES = {
-  farmer:        { emoji: '🦝', typeName: 'たぬきの豊穣神',   typeDesc: '豊作・大地をつかさどる守護獣',   isRare: false },
-  warrior:       { emoji: '🐕', typeName: '柴犬の武神',       typeDesc: '勇気・忠義をつかさどる守護獣',   isRare: false },
-  merchant:      { emoji: '🦊', typeName: 'きつねの商才神',   typeDesc: '知恵・金運をつかさどる守護獣',   isRare: false },
-  christian:     { emoji: '🐇', typeName: 'うさぎの光明神',   typeDesc: '信仰・希望をつかさどる守護獣',   isRare: true  },
-  craftsman:     { emoji: '🦔', typeName: 'はりねずみの匠神', typeDesc: '器用・創造をつかさどる守護獣',   isRare: false },
-  seafarer:      { emoji: '🦦', typeName: 'かわうその海神',   typeDesc: '冒険・自由をつかさどる守護獣',   isRare: false },
-  scholar:       { emoji: '🦉', typeName: 'ふくろうの知恵神', typeDesc: '学問・洞察をつかさどる守護獣',   isRare: false },
-  castle_samurai:{ emoji: '🐕', typeName: '柴犬の城守神',     typeDesc: '誇り・規律をつかさどる守護獣',   isRare: false },
-  court_noble:   { emoji: '🐇', typeName: 'うさぎの雅神',     typeDesc: '美・感性をつかさどる守護獣',     isRare: false },
-  shugenja:      { emoji: '🦌', typeName: 'しかの霊験神',     typeDesc: '神秘・霊力をつかさどる守護獣',   isRare: true  },
-  performer:     { emoji: '🐱', typeName: 'ねこの芸能神',     typeDesc: '魅力・自由をつかさどる守護獣',   isRare: false },
-  hunter:        { emoji: '🐻', typeName: 'くまの山神',       typeDesc: '自然・直感をつかさどる守護獣',   isRare: false },
-  blacksmith:    { emoji: '🐗', typeName: 'いのししの炎神',   typeDesc: '技術・情熱をつかさどる守護獣',   isRare: false },
-  healer:        { emoji: '🐇', typeName: 'うさぎの癒神',     typeDesc: '癒し・慈悲をつかさどる守護獣',   isRare: false },
-  trader:        { emoji: '🦊', typeName: 'きつねの旅神',     typeDesc: '外交・冒険をつかさどる守護獣',   isRare: false },
-  ninja:         { emoji: '🐱', typeName: 'くろねこの忍神',   typeDesc: '俊敏・秘密をつかさどる守護獣',   isRare: true  },
-  weaver:        { emoji: '🐱', typeName: 'ねこの織神',       typeDesc: '繊細・美意識をつかさどる守護獣', isRare: false },
-  mountain_folk: { emoji: '🐻', typeName: 'くまの森神',       typeDesc: '自然・精神をつかさどる守護獣',   isRare: false },
-  tea_master:    { emoji: '🦊', typeName: 'きつねの風雅神',   typeDesc: '侘び寂び・風流をつかさどる守護獣', isRare: false },
-  noble_exile:   { emoji: '🐇', typeName: 'うさぎの哀愁神',   typeDesc: '誇り・悲哀をつかさどる守護獣',   isRare: true  },
+  warrior:       { emoji: '🐕', typeName: '柴犬の武神',         typeDesc: '勇気・忠義をつかさどる守護獣',       isRare: false },
+  ninja:         { emoji: '🐱', typeName: '黒猫の忍神',         typeDesc: '俊敏・秘密をつかさどる守護獣',       isRare: true  },
+  court_noble:   { emoji: '🐇', typeName: '白うさぎの雅神',     typeDesc: '美・気品をつかさどる守護獣',         isRare: false },
+  farmer:        { emoji: '🦝', typeName: 'たぬきの豊穣神',     typeDesc: '豊作・大地をつかさどる守護獣',       isRare: false },
+  shugenja:      { emoji: '🦌', typeName: 'しかの霊験神',       typeDesc: '神秘・霊力をつかさどる守護獣',       isRare: true  },
+  craftsman:     { emoji: '🐱', typeName: '三毛猫の匠神',       typeDesc: '器用・創造をつかさどる守護獣',       isRare: false },
+  merchant:      { emoji: '🐼', typeName: 'パンダの商才神',     typeDesc: '知恵・金運をつかさどる守護獣',       isRare: false },
+  seafarer:      { emoji: '🐧', typeName: 'ペンギンの海神',     typeDesc: '冒険・自由をつかさどる守護獣',       isRare: false },
+  scholar:       { emoji: '🐹', typeName: 'ハムスターの仏神',   typeDesc: '信心・慈悲をつかさどる守護獣',       isRare: false },
+  healer:        { emoji: '🦊', typeName: 'きつねの陰陽神',     typeDesc: '知恵・神秘をつかさどる守護獣',       isRare: false },
+  hunter:        { emoji: '🐻', typeName: 'くまのマタギ神',     typeDesc: '自然・直感をつかさどる守護獣',       isRare: false },
+  trader:        { emoji: '🐿', typeName: 'りすの速神',         typeDesc: '素早さ・誠実をつかさどる守護獣',     isRare: false },
+  performer:     { emoji: '🦉', typeName: 'ふくろうの長老神',   typeDesc: '学問・洞察をつかさどる守護獣',       isRare: false },
+  weaver:        { emoji: '🐸', typeName: 'かえるの芸神',       typeDesc: '魅力・表現をつかさどる守護獣',       isRare: false },
+  mountain_folk: { emoji: '🐒', typeName: 'さるの祭神',         typeDesc: '陽気・縁起をつかさどる守護獣',       isRare: false },
+  christian:     { emoji: '🦦', typeName: 'かわうその川神',     typeDesc: '誠実・奉仕をつかさどる守護獣',       isRare: false },
+  blacksmith:    { emoji: '🐗', typeName: 'いのししの守神',     typeDesc: '力強さ・守護をつかさどる守護獣',     isRare: false },
+  tea_master:    { emoji: '🐨', typeName: 'コアラの風雅神',     typeDesc: '侘び寂び・癒しをつかさどる守護獣',   isRare: false },
+  castle_samurai:{ emoji: '🐘', typeName: 'ぞうの縁神',         typeDesc: '縁・繁栄をつかさどる守護獣',         isRare: false },
+  noble_exile:   { emoji: '🐉', typeName: 'たつの龍神',         typeDesc: '天地万物をつかさどる伝説の守護獣',   isRare: true  },
 };
 
 async function generateWithRetry(myoji, shusshinchi, maxRetries = 3) {
@@ -145,17 +145,17 @@ app.post("/api/character", async (req, res) => {
 JSON形式のみで返してください。
 
 守護獣タイプ（key）：
-farmer（たぬき豊穣神）, warrior（柴犬武神）, merchant（きつね商才神）, christian（うさぎ光明神）,
-craftsman（はりねずみ匠神）, seafarer（かわうそ海神）, scholar（ふくろう知恵神）,
-castle_samurai（柴犬城守神）, court_noble（うさぎ雅神）, shugenja（しか霊験神）,
-performer（ねこ芸能神）, hunter（くま山神）, blacksmith（いのしし炎神）,
-healer（うさぎ癒神）, trader（きつね旅神）, ninja（くろねこ忍神）,
-weaver（ねこ織神）, mountain_folk（くま森神）, tea_master（きつね風雅神）, noble_exile（うさぎ哀愁神）
+warrior（柴犬武神）, ninja（黒猫忍神・レア）, court_noble（白うさぎ雅神）, farmer（たぬき豊穣神）,
+shugenja（しか霊験神・レア）, craftsman（三毛猫匠神）, merchant（パンダ商才神）, seafarer（ペンギン海神）,
+scholar（ハムスター仏神）, healer（きつね陰陽神）, hunter（くまマタギ神）, trader（りす速神）,
+performer（ふくろう長老神）, weaver（かえる芸神）, mountain_folk（さる祭神）,
+christian（かわうそ川神）, blacksmith（いのしし守神）, tea_master（コアラ風雅神）,
+castle_samurai（ぞう縁神）, noble_exile（たつ龍神・レア）
 
 返すJSONの形式：
 {
   "key": "上記のkeyから1つ",
-  "ancestorName": "名字や地域を活かした守護獣の名前（例：陸奥の守り神・鉄三郎権現）",
+  "ancestorName": "名字や地域・動物を活かした守護獣の名前（例：陸奥の柴犬武神・鉄三郎権現）",
   "feature": "この守護獣の由来と特徴を2〜3文で。ご先祖の時代背景・ご加護の内容を含めてください。",
   "comment": "守護獣からあなたへの温かいひとこと。やさしく励ますような語り口で（40字程度）"
 }`,
