@@ -13,26 +13,26 @@ app.use(express.static(__dirname));
 app.get("/", (req, res) => res.sendFile(__dirname + "/public/index.html"));
 
 const CHARACTER_TYPES = {
-  farmer:        { emoji: '🌾', typeName: '開拓の農民',     typeDesc: '体力・忍耐タイプ',      isRare: false },
-  warrior:       { emoji: '⚔️',  typeName: '北面の武士',     typeDesc: '攻撃・忠義タイプ',      isRare: false },
-  merchant:      { emoji: '💰', typeName: '商都の豪商',     typeDesc: '金運・知恵タイプ',      isRare: false },
-  christian:     { emoji: '🙏', typeName: '隠れキリシタン',  typeDesc: '精神・信仰タイプ',      isRare: true  },
-  craftsman:     { emoji: '🎨', typeName: '町の職人',       typeDesc: '器用・創造タイプ',      isRare: false },
-  seafarer:      { emoji: '🌊', typeName: '海の民',         typeDesc: '自由・冒険タイプ',      isRare: false },
-  scholar:       { emoji: '📚', typeName: '学者・僧侶',     typeDesc: '知識・瞑想タイプ',      isRare: false },
-  castle_samurai:{ emoji: '🏯', typeName: '城下の侍',       typeDesc: '誇り・規律タイプ',      isRare: false },
-  court_noble:   { emoji: '🌸', typeName: '宮廷の雅人',     typeDesc: '美・感性タイプ',        isRare: false },
-  shugenja:      { emoji: '🐉', typeName: '山岳の修験者',   typeDesc: '神秘・霊力タイプ',      isRare: true  },
-  performer:     { emoji: '🎭', typeName: '旅の芸人',       typeDesc: '魅力・自由タイプ',      isRare: false },
-  hunter:        { emoji: '🏹', typeName: '辺境の猟師',     typeDesc: '野性・直感タイプ',      isRare: false },
-  blacksmith:    { emoji: '🔥', typeName: '鍛冶師',         typeDesc: '技術・情熱タイプ',      isRare: false },
-  healer:        { emoji: '🌿', typeName: '薬草師・医師',   typeDesc: '癒し・慈悲タイプ',      isRare: false },
-  trader:        { emoji: '🚢', typeName: '交易商人',       typeDesc: '冒険・外交タイプ',      isRare: false },
-  ninja:         { emoji: '🌙', typeName: '忍者',           typeDesc: '秘密・俊敏タイプ',      isRare: true  },
-  weaver:        { emoji: '👘', typeName: '織物師',         typeDesc: '繊細・美意識タイプ',    isRare: false },
-  mountain_folk: { emoji: '🏔️', typeName: '山の民',         typeDesc: '自然・精神タイプ',      isRare: false },
-  tea_master:    { emoji: '🎋', typeName: '茶人・文化人',   typeDesc: '侘び寂び・風流タイプ',  isRare: false },
-  noble_exile:   { emoji: '👑', typeName: '落ち延びた貴族', typeDesc: '誇り・悲哀タイプ',      isRare: true  },
+  farmer:        { emoji: '🦝', typeName: 'たぬきの豊穣神',   typeDesc: '豊作・大地をつかさどる守護獣',   isRare: false },
+  warrior:       { emoji: '🐕', typeName: '柴犬の武神',       typeDesc: '勇気・忠義をつかさどる守護獣',   isRare: false },
+  merchant:      { emoji: '🦊', typeName: 'きつねの商才神',   typeDesc: '知恵・金運をつかさどる守護獣',   isRare: false },
+  christian:     { emoji: '🐇', typeName: 'うさぎの光明神',   typeDesc: '信仰・希望をつかさどる守護獣',   isRare: true  },
+  craftsman:     { emoji: '🦔', typeName: 'はりねずみの匠神', typeDesc: '器用・創造をつかさどる守護獣',   isRare: false },
+  seafarer:      { emoji: '🦦', typeName: 'かわうその海神',   typeDesc: '冒険・自由をつかさどる守護獣',   isRare: false },
+  scholar:       { emoji: '🦉', typeName: 'ふくろうの知恵神', typeDesc: '学問・洞察をつかさどる守護獣',   isRare: false },
+  castle_samurai:{ emoji: '🐕', typeName: '柴犬の城守神',     typeDesc: '誇り・規律をつかさどる守護獣',   isRare: false },
+  court_noble:   { emoji: '🐇', typeName: 'うさぎの雅神',     typeDesc: '美・感性をつかさどる守護獣',     isRare: false },
+  shugenja:      { emoji: '🦌', typeName: 'しかの霊験神',     typeDesc: '神秘・霊力をつかさどる守護獣',   isRare: true  },
+  performer:     { emoji: '🐱', typeName: 'ねこの芸能神',     typeDesc: '魅力・自由をつかさどる守護獣',   isRare: false },
+  hunter:        { emoji: '🐻', typeName: 'くまの山神',       typeDesc: '自然・直感をつかさどる守護獣',   isRare: false },
+  blacksmith:    { emoji: '🐗', typeName: 'いのししの炎神',   typeDesc: '技術・情熱をつかさどる守護獣',   isRare: false },
+  healer:        { emoji: '🐇', typeName: 'うさぎの癒神',     typeDesc: '癒し・慈悲をつかさどる守護獣',   isRare: false },
+  trader:        { emoji: '🦊', typeName: 'きつねの旅神',     typeDesc: '外交・冒険をつかさどる守護獣',   isRare: false },
+  ninja:         { emoji: '🐱', typeName: 'くろねこの忍神',   typeDesc: '俊敏・秘密をつかさどる守護獣',   isRare: true  },
+  weaver:        { emoji: '🐱', typeName: 'ねこの織神',       typeDesc: '繊細・美意識をつかさどる守護獣', isRare: false },
+  mountain_folk: { emoji: '🐻', typeName: 'くまの森神',       typeDesc: '自然・精神をつかさどる守護獣',   isRare: false },
+  tea_master:    { emoji: '🦊', typeName: 'きつねの風雅神',   typeDesc: '侘び寂び・風流をつかさどる守護獣', isRare: false },
+  noble_exile:   { emoji: '🐇', typeName: 'うさぎの哀愁神',   typeDesc: '誇り・悲哀をつかさどる守護獣',   isRare: true  },
 };
 
 async function generateWithRetry(myoji, shusshinchi, maxRetries = 3) {
@@ -140,20 +140,24 @@ app.post("/api/character", async (req, res) => {
       messages: [
         {
           role: "system",
-          content: `あなたは日本の歴史と霊視に長けた占い師です。
-名字・出身地・ご先祖のストーリーをもとに、以下20種類のキャラクタータイプから最も適切なものを1つ選び、JSON形式のみで返してください。
+          content: `あなたは動物の守護獣を呼び出す、やさしい神秘の占い師です。
+名字・出身地・ご先祖のストーリーをもとに、以下20種類の守護獣タイプから最も適切なものを1つ選んでください。
+JSON形式のみで返してください。
 
-キャラクタータイプ（key）：
-farmer, warrior, merchant, christian, craftsman, seafarer, scholar, castle_samurai,
-court_noble, shugenja, performer, hunter, blacksmith, healer, trader, ninja,
-weaver, mountain_folk, tea_master, noble_exile
+守護獣タイプ（key）：
+farmer（たぬき豊穣神）, warrior（柴犬武神）, merchant（きつね商才神）, christian（うさぎ光明神）,
+craftsman（はりねずみ匠神）, seafarer（かわうそ海神）, scholar（ふくろう知恵神）,
+castle_samurai（柴犬城守神）, court_noble（うさぎ雅神）, shugenja（しか霊験神）,
+performer（ねこ芸能神）, hunter（くま山神）, blacksmith（いのしし炎神）,
+healer（うさぎ癒神）, trader（きつね旅神）, ninja（くろねこ忍神）,
+weaver（ねこ織神）, mountain_folk（くま森神）, tea_master（きつね風雅神）, noble_exile（うさぎ哀愁神）
 
 返すJSONの形式：
 {
   "key": "上記のkeyから1つ",
-  "ancestorName": "名字や地域を活かした和風のキャラクター固有の名前（例：陸奥の鉄人・三郎）",
-  "feature": "このご先祖の特徴を2〜3文で。時代背景・性格・生き様を含めて",
-  "comment": "ご先祖さまからあなたへの一言。一人称で時代を感じさせる語り口で（40字程度）"
+  "ancestorName": "名字や地域を活かした守護獣の名前（例：陸奥の守り神・鉄三郎権現）",
+  "feature": "この守護獣の由来と特徴を2〜3文で。ご先祖の時代背景・ご加護の内容を含めてください。",
+  "comment": "守護獣からあなたへの温かいひとこと。やさしく励ますような語り口で（40字程度）"
 }`,
         },
         {
