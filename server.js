@@ -10,6 +10,7 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 app.use(express.json());
 app.use(express.static(__dirname));
+app.get("/", (req, res) => res.sendFile(__dirname + "/public/index.html"));
 
 async function generateWithRetry(myoji, shusshinchi, maxRetries = 3) {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
