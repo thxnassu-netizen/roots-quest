@@ -245,7 +245,7 @@
     .info-card {
       background:var(--card); backdrop-filter:blur(8px);
       border:1.5px solid var(--border); border-radius:18px;
-      padding:20px 20px;
+      padding:28px 24px;
       box-shadow:0 4px 20px rgba(180,120,140,0.08), 0 2px 6px rgba(180,120,140,0.05);
       margin-bottom:14px; animation:fadeUp 0.5s ease forwards;
     }
@@ -256,7 +256,7 @@
     }
     .info-card.green { border-color:var(--borderG); }
     .info-card.green::before { background:linear-gradient(to right,transparent,rgba(143,184,143,0.5),transparent); }
-    .card-hdr { font-family:'Shippori Mincho',serif; font-size:0.83rem; font-weight:700; color:var(--pink-d); letter-spacing:0.22em; margin-bottom:12px; }
+    .card-hdr { font-family:'Shippori Mincho',serif; font-size:0.83rem; font-weight:700; color:var(--pink-d); letter-spacing:0.22em; margin-bottom:18px; }
     .info-card.green .card-hdr { color:#5a9070; }
 
     /* 名字ルーツリスト */
@@ -271,7 +271,7 @@
     .nr-val   { font-size:0.84rem; color:var(--text); flex:1; line-height:1.55; }
 
     /* ストーリー */
-    .story-text { font-size:0.88rem; line-height:2.05; color:rgba(74,48,64,0.78); }
+    .story-text { font-size:0.87rem; line-height:2.1; color:rgba(74,48,64,0.76); letter-spacing:0.04em; }
 
     /* 区切り */
     .divider-or { display:flex; align-items:center; gap:12px; margin:8px 0 14px; }
@@ -377,38 +377,40 @@
 
     function ch({h, hf='', ha='', xtra='', c, e='#e060a8', sad=false}) {
       const skin = '#fdecd6';
-      // きらら系目：下寄り配置・太いまつ毛アーク・きらきらハイライト4個
+      // きらら系目：顔下70%位置・まつ毛フィルアーク・ハイライト4個
       const mkEye = (cx) => `
-        <ellipse cx="${cx}" cy="37" rx="6.5" ry="7.5" fill="white"/>
-        <path d="M${cx-6.5},33 Q${cx},28 ${cx+6.5},33" fill="${e}"/>
-        <ellipse cx="${cx}" cy="38.5" rx="5.5" ry="6.2" fill="${e}"/>
-        <circle  cx="${cx}"    cy="39.5" r="3.2" fill="#18091e"/>
-        <circle  cx="${cx-2.8}" cy="32.5" r="3.6" fill="white"/>
-        <circle  cx="${cx+2.2}" cy="43.5" r="1.9" fill="white" opacity="0.88"/>
-        <circle  cx="${cx+2.8}" cy="33"   r="1.1" fill="white" opacity="0.78"/>
-        <circle  cx="${cx-1.5}" cy="44.2" r="0.7" fill="white" opacity="0.55"/>`;
+        <ellipse cx="${cx}" cy="39" rx="6.5" ry="7.5" fill="white"/>
+        <path d="M${cx-6.5},35 Q${cx},30 ${cx+6.5},35" fill="${e}"/>
+        <ellipse cx="${cx}" cy="40.5" rx="5.5" ry="6.2" fill="${e}"/>
+        <circle  cx="${cx}"    cy="41.5" r="3.2" fill="#18091e"/>
+        <circle  cx="${cx-2.8}" cy="34.5" r="3.6" fill="white"/>
+        <circle  cx="${cx+2.2}" cy="45.5" r="1.9" fill="white" opacity="0.88"/>
+        <circle  cx="${cx+2.8}" cy="35"   r="1.1" fill="white" opacity="0.78"/>
+        <circle  cx="${cx-1.5}" cy="46.2" r="0.7" fill="white" opacity="0.55"/>`;
+      // 細い眉：前髪に半分隠れる位置
       const brows = sad ? `
-        <path d="M21,28 Q25,30 29,28.5" stroke="#7a4830" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-        <path d="M31,28.5 Q35,30 39,28" stroke="#7a4830" stroke-width="1.6" fill="none" stroke-linecap="round"/>` : `
-        <path d="M21,27.5 Q25,25.5 29,27" stroke="#7a4830" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-        <path d="M31,27 Q35,25.5 39,27.5" stroke="#7a4830" stroke-width="1.6" fill="none" stroke-linecap="round"/>`;
+        <path d="M22,30.5 Q26,32.5 30,31" stroke="#8a5838" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+        <path d="M30,31 Q34,32.5 38,30.5" stroke="#8a5838" stroke-width="1.1" fill="none" stroke-linecap="round"/>` : `
+        <path d="M22,30 Q26,28 30,29.5" stroke="#8a5838" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+        <path d="M30,29.5 Q34,28 38,30" stroke="#8a5838" stroke-width="1.1" fill="none" stroke-linecap="round"/>`;
       const mouth = sad
-        ? `<path d="M26,47 Q30,44.5 34,47" stroke="#e07890" stroke-width="1.5" fill="none" stroke-linecap="round"/>`
-        : `<path d="M26,47 Q30,51.5 34,47" stroke="#e07890" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-           <ellipse cx="30" cy="48.2" rx="3" ry="1.6" fill="rgba(255,140,165,0.22)"/>`;
+        ? `<path d="M26,48.5 Q30,46 34,48.5" stroke="#e07890" stroke-width="1.5" fill="none" stroke-linecap="round"/>`
+        : `<path d="M26,48.5 Q30,53 34,48.5" stroke="#e07890" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+           <ellipse cx="30" cy="49.8" rx="3" ry="1.6" fill="rgba(255,140,165,0.22)"/>`;
       return `<svg viewBox="0 0 60 72" xmlns="http://www.w3.org/2000/svg">
         ${h}
-        <ellipse cx="30" cy="32" rx="19" ry="18" fill="${skin}"/>
-        <ellipse cx="18" cy="40" rx="6.5" ry="3.2" fill="#ffbccc" opacity="0.54"/>
-        <ellipse cx="42" cy="40" rx="6.5" ry="3.2" fill="#ffbccc" opacity="0.54"/>
+        <ellipse cx="30" cy="31" rx="19" ry="19" fill="${skin}"/>
+        <ellipse cx="18" cy="43" rx="6.5" ry="3.2" fill="#ffbccc" opacity="0.54"/>
+        <ellipse cx="42" cy="43" rx="6.5" ry="3.2" fill="#ffbccc" opacity="0.54"/>
+        ${hf}
         ${mkEye(21)}${mkEye(39)}${brows}
-        ${mouth}${hf}${ha}${xtra}
+        ${mouth}${ha}${xtra}
         <path d="M14,66 Q22,57 30,54 Q38,57 46,66 L46,72 L14,72 Z" fill="${c}"/>
         <path d="M24,54 L30,62 L36,54" stroke="${c}" stroke-width="3" fill="none" stroke-linecap="round"/>
       </svg>`;
     }
 
-    // ヘア（ハイライト付き）
+    // ヘア（バック：ハイライト付き）
     const H = (col, ex='') => `
       <ellipse cx="30" cy="22" rx="20" ry="16" fill="${col}"/>
       <ellipse cx="30" cy="11" rx="14" ry="11" fill="${col}"/>
@@ -419,23 +421,31 @@
       ${H(col, ex)}
       <path d="M10,28 Q11,52 13,60 Q17,67 21,60 Q19,50 19,28" fill="${col}"/>
       <path d="M50,28 Q49,52 47,60 Q43,67 39,60 Q41,50 41,28" fill="${col}"/>`;
+    // 前髪（顔の上に重ねて描く、おでこを隠す波形バング）
+    const B = (col, ex='') => `
+      <path d="M11,22 Q13,12 30,10 Q47,12 49,22 Q45,18 41,27 Q37,18 33,25 Q30,17 27,25 Q23,18 19,27 Q15,18 11,22 Z" fill="${col}"/>
+      ${ex}
+      <ellipse cx="28" cy="13" rx="8" ry="2.8" fill="white" opacity="0.25"/>`;
 
     const CHARACTER_SVGS = {
       // 農民：ピーチ団子ヘア＋鉢巻き
       farmer: ch({
         h: H('#ffcca0', `<ellipse cx="30" cy="11" rx="7" ry="7" fill="#f0b880"/>`),
-        ha: `<rect x="12" y="22" width="36" height="5" rx="2.5" fill="#e8905a" opacity="0.82"/>`,
+        hf: B('#ffcca0'),
+        ha: `<rect x="12" y="24" width="36" height="4" rx="2" fill="#e8905a" opacity="0.82"/>`,
         c: '#b89a60', e:'#c07840'
       }),
       // 武士：スチールブルーの髷、キリッ
       warrior: ch({
         h: H('#a0b8e0', `<rect x="25" y="7" width="10" height="17" rx="5" fill="#8098c8"/>
           <rect x="35" y="16" width="13" height="4" rx="2" fill="#8098c8"/>`),
+        hf: B('#a0b8e0'),
         c: '#3060a8', e:'#3878d0', sad:false
       }),
       // 豪商：ゴールドアップドゥ、コイン飾り
       merchant: ch({
         h: H('#f8d888', `<ellipse cx="30" cy="10" rx="9" ry="8" fill="#e8c068"/>`),
+        hf: B('#f8d888'),
         ha: `<circle cx="30" cy="7" r="4.5" fill="#d4a820" opacity="0.9"/>
           <circle cx="30" cy="7" r="2.2" fill="#f8e060"/>`,
         c: '#c87820', e:'#b89828'
@@ -443,6 +453,7 @@
       // 隠れキリシタン（レア）：ラベンダー、十字架
       christian: ch({
         h: H('#d8c8f0'),
+        hf: B('#d8c8f0'),
         ha: `<line x1="30" y1="44" x2="30" y2="52" stroke="#8060c0" stroke-width="2"/>
           <line x1="27" y1="47" x2="33" y2="47" stroke="#8060c0" stroke-width="2"/>`,
         c: '#8060b8', e:'#6040a8'
@@ -450,33 +461,37 @@
       // 職人：タンヘア、ハチマキ
       craftsman: ch({
         h: H('#d0a880'),
-        ha: `<path d="M11,23 Q30,17 49,23 L49,28 Q30,22 11,28 Z" fill="#c07838" opacity="0.85"/>`,
+        hf: B('#d0a880'),
+        ha: `<path d="M11,25 Q30,19 49,25 L49,29 Q30,23 11,29 Z" fill="#c07838" opacity="0.85"/>`,
         c: '#907860', e:'#c07838'
       }),
       // 海の民：空色ショートヘア、小麦肌
       seafarer: ch({
         h: H('#88c4e8'),
+        hf: B('#88c4e8'),
         c: '#3080b8', e:'#2898d0'
       }),
       // 学者・僧侶：グレーラベンダー、丸メガネ
       scholar: ch({
         h: H('#b8b8d8', `<rect x="24" y="8" width="12" height="15" rx="6" fill="#a0a0c0"/>`),
-        ha: `<ellipse cx="22" cy="38" rx="5" ry="4" fill="none" stroke="#9a8878" stroke-width="1.4"/>
-          <ellipse cx="38" cy="38" rx="5" ry="4" fill="none" stroke="#9a8878" stroke-width="1.4"/>
-          <line x1="27" y1="38" x2="33" y2="38" stroke="#9a8878" stroke-width="1.4"/>`,
+        hf: B('#b8b8d8'),
+        ha: `<ellipse cx="22" cy="40" rx="5" ry="4" fill="none" stroke="#9a8878" stroke-width="1.4"/>
+          <ellipse cx="38" cy="40" rx="5" ry="4" fill="none" stroke="#9a8878" stroke-width="1.4"/>
+          <line x1="27" y1="40" x2="33" y2="40" stroke="#9a8878" stroke-width="1.4"/>`,
         c: '#8888a8', e:'#6868c8'
       }),
       // 城下の侍：ネイビー髷
       castle_samurai: ch({
         h: H('#8898c8', `<rect x="25" y="7" width="10" height="18" rx="5" fill="#6878a8"/>
           <ellipse cx="30" cy="7" rx="6" ry="4" fill="#6878a8"/>`),
+        hf: B('#8898c8'),
         c: '#2040a0', e:'#3868c8'
       }),
       // 宮廷の雅人：チェリーピンク長髪、花飾り
       court_noble: ch({
         h: HL('#ffc8d8'),
-        ha: `<circle cx="20" cy="18" r="4.5" fill="#ff90b8" opacity="0.88"/>
-          <circle cx="40" cy="18" r="4.5" fill="#ff90b8" opacity="0.88"/>`,
+        hf: B('#ffc8d8', `<circle cx="20" cy="22" r="4" fill="#ff90b8" opacity="0.9"/>
+          <circle cx="40" cy="22" r="4" fill="#ff90b8" opacity="0.9"/>`),
         c: '#d860a0', e:'#c03080'
       }),
       // 山岳の修験者（レア）：パープルワイルドヘア
@@ -484,7 +499,7 @@
         h: `<ellipse cx="30" cy="20" rx="20" ry="16" fill="#c0a0f0"/>
           <path d="M11,22 Q14,6 22,12 Q26,4 30,8 Q34,4 38,12 Q46,6 49,22" fill="#c0a0f0"/>
           <ellipse cx="27" cy="11" rx="9" ry="4" fill="white" opacity="0.18"/>`,
-        ha: `<path d="M30,13 L33,6 L36,12 L30,10 Z" fill="#f8e040" opacity="0.9"/>
+        hf: `<path d="M30,13 L33,6 L36,12 L30,10 Z" fill="#f8e040" opacity="0.9"/>
           <circle cx="30" cy="5" r="3" fill="#fff060" opacity="0.95"/>`,
         c: '#f0e8d8', e:'#6020b0'
       }),
@@ -493,11 +508,13 @@
         h: H('#ff90c0', `<ellipse cx="30" cy="10" rx="8" ry="9" fill="#ff70a8"/>
           <path d="M37,12 Q46,7 50,14" stroke="#ff70a8" stroke-width="5" fill="none" stroke-linecap="round"/>
           <path d="M23,12 Q14,7 10,14" stroke="#ff70a8" stroke-width="5" fill="none" stroke-linecap="round"/>`),
+        hf: B('#ff90c0'),
         c: '#d83080', e:'#c02080'
       }),
       // 辺境の猟師：セージグリーン、引き締まった目
       hunter: ch({
         h: H('#a8c890'),
+        hf: B('#a8c890'),
         c: '#507040', e:'#509848'
       }),
       // 鍛冶師：オレンジ炎髪
@@ -505,77 +522,81 @@
         h: `<ellipse cx="30" cy="20" rx="20" ry="16" fill="#f0a870"/>
           <path d="M11,20 Q17,5 26,11 Q30,4 34,11 Q43,5 49,20" fill="#f0a870"/>
           <ellipse cx="27" cy="11" rx="9" ry="4.5" fill="white" opacity="0.22"/>`,
-        ha: `<ellipse cx="43" cy="29" rx="3" ry="4" fill="#a0d8e8" opacity="0.72"/>`,
+        hf: B('#f0a870'),
+        ha: `<ellipse cx="43" cy="31" rx="3" ry="4" fill="#a0d8e8" opacity="0.72"/>`,
         c: '#c84020', e:'#d85030'
       }),
       // 薬草師・医師：ミントグリーン、花飾り
       healer: ch({
         h: H('#a0d8c0'),
-        ha: `<circle cx="41" cy="18" r="6" fill="#ffd0e8"/>
-          <circle cx="41" cy="18" r="4" fill="#ffb0d0"/>
-          <circle cx="41" cy="18" r="2" fill="#ffd8e8"/>`,
+        hf: B('#a0d8c0', `<circle cx="41" cy="21" r="5" fill="#ffd0e8"/>
+          <circle cx="41" cy="21" r="3" fill="#ffb0d0"/>
+          <circle cx="41" cy="21" r="1.5" fill="#ffd8e8"/>`),
         c: '#509870', e:'#38a890'
       }),
       // 交易商人：はちみつブロンド
       trader: ch({
         h: H('#f0d080'),
+        hf: B('#f0d080'),
         c: '#308090', e:'#2898c8'
       }),
-      // 忍者（レア）：マスク、紫の大きな瞳、かわいい忍者
+      // 忍者（レア）：頭巾つきかわいい忍者、紫の大きな瞳
       ninja: `<svg viewBox="0 0 60 72" xmlns="http://www.w3.org/2000/svg">
         <ellipse cx="30" cy="22" rx="20" ry="16" fill="#303858"/>
         <ellipse cx="30" cy="11" rx="14" ry="11" fill="#303858"/>
         <ellipse cx="27" cy="12" rx="9" ry="4.5" fill="white" opacity="0.18"/>
-        <ellipse cx="30" cy="32" rx="19" ry="18" fill="#fdecd6"/>
-        <rect x="11" y="38" width="38" height="14" rx="5" fill="#303858"/>
-        <ellipse cx="18" cy="40" rx="6.5" ry="3.2" fill="#ffbccc" opacity="0.54"/>
-        <ellipse cx="42" cy="40" rx="6.5" ry="3.2" fill="#ffbccc" opacity="0.54"/>
-        <ellipse cx="21" cy="37" rx="6.5" ry="7.5" fill="white"/>
-        <path d="M14.5,33 Q21,28 27.5,33" fill="#7040c0"/>
-        <ellipse cx="21" cy="38.5" rx="5.5" ry="6.2" fill="#7040c0"/>
-        <circle  cx="21" cy="39.5" r="3.2" fill="#18091e"/>
-        <circle  cx="18.2" cy="32.5" r="3.6" fill="white"/>
-        <circle  cx="23.2" cy="43.5" r="1.9" fill="white" opacity="0.88"/>
-        <circle  cx="23.8" cy="33" r="1.1" fill="white" opacity="0.78"/>
-        <ellipse cx="39" cy="37" rx="6.5" ry="7.5" fill="white"/>
-        <path d="M32.5,33 Q39,28 45.5,33" fill="#7040c0"/>
-        <ellipse cx="39" cy="38.5" rx="5.5" ry="6.2" fill="#7040c0"/>
-        <circle  cx="39" cy="39.5" r="3.2" fill="#18091e"/>
-        <circle  cx="36.2" cy="32.5" r="3.6" fill="white"/>
-        <circle  cx="41.2" cy="43.5" r="1.9" fill="white" opacity="0.88"/>
-        <circle  cx="41.8" cy="33"   r="1.1" fill="white" opacity="0.78"/>
-        <path d="M21,27.5 Q25,25.5 29,27" stroke="#7a4830" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-        <path d="M31,27 Q35,25.5 39,27.5" stroke="#7a4830" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+        <ellipse cx="30" cy="31" rx="19" ry="19" fill="#fdecd6"/>
+        <ellipse cx="18" cy="43" rx="6.5" ry="3.2" fill="#ffbccc" opacity="0.54"/>
+        <ellipse cx="42" cy="43" rx="6.5" ry="3.2" fill="#ffbccc" opacity="0.54"/>
+        <path d="M11,22 Q13,12 30,10 Q47,12 49,22 Q45,18 41,27 Q37,18 33,25 Q30,17 27,25 Q23,18 19,27 Q15,18 11,22 Z" fill="#303858"/>
+        <ellipse cx="28" cy="13" rx="8" ry="2.8" fill="white" opacity="0.22"/>
+        <ellipse cx="21" cy="39" rx="6.5" ry="7.5" fill="white"/>
+        <path d="M14.5,35 Q21,30 27.5,35" fill="#7040c0"/>
+        <ellipse cx="21" cy="40.5" rx="5.5" ry="6.2" fill="#7040c0"/>
+        <circle  cx="21" cy="41.5" r="3.2" fill="#18091e"/>
+        <circle  cx="18.2" cy="34.5" r="3.6" fill="white"/>
+        <circle  cx="23.2" cy="45.5" r="1.9" fill="white" opacity="0.88"/>
+        <circle  cx="23.8" cy="35"   r="1.1" fill="white" opacity="0.78"/>
+        <ellipse cx="39" cy="39" rx="6.5" ry="7.5" fill="white"/>
+        <path d="M32.5,35 Q39,30 45.5,35" fill="#7040c0"/>
+        <ellipse cx="39" cy="40.5" rx="5.5" ry="6.2" fill="#7040c0"/>
+        <circle  cx="39" cy="41.5" r="3.2" fill="#18091e"/>
+        <circle  cx="36.2" cy="34.5" r="3.6" fill="white"/>
+        <circle  cx="41.2" cy="45.5" r="1.9" fill="white" opacity="0.88"/>
+        <circle  cx="41.8" cy="35"   r="1.1" fill="white" opacity="0.78"/>
+        <path d="M22,30 Q26,28 30,29.5" stroke="#8a5838" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+        <path d="M30,29.5 Q34,28 38,30" stroke="#8a5838" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+        <rect x="11" y="43" width="38" height="12" rx="5" fill="#303858"/>
         <path d="M14,66 Q22,57 30,54 Q38,57 46,66 L46,72 L14,72 Z" fill="#303858"/>
         <path d="M24,54 L30,62 L36,54" stroke="#303858" stroke-width="3" fill="none" stroke-linecap="round"/>
       </svg>`,
       // 織物師：ラベンダーアップドゥ、かんざし
       weaver: ch({
         h: H('#c0a0e0', `<ellipse cx="30" cy="11" rx="9" ry="8" fill="#b090d0"/>`),
-        ha: `<line x1="37" y1="13" x2="46" y2="7" stroke="#f0d0ff" stroke-width="2"/>
-          <circle cx="46" cy="6" r="3.2" fill="#e0b0f8"/>`,
+        hf: B('#c0a0e0', `<line x1="37" y1="13" x2="46" y2="7" stroke="#f0d0ff" stroke-width="2"/>
+          <circle cx="46" cy="6" r="3.2" fill="#e0b0f8"/>`),
         c: '#8060b0', e:'#6040a8'
       }),
       // 山の民：セージグリーン、葉っぱ飾り
       mountain_folk: ch({
         h: H('#b0c898'),
-        ha: `<ellipse cx="15" cy="21" rx="7" ry="4.5" fill="#78b060" opacity="0.9"/>
-          <path d="M12,23 Q16,16 22,20" stroke="#508038" stroke-width="2" fill="none"/>`,
+        hf: B('#b0c898', `<ellipse cx="15" cy="23" rx="7" ry="4.5" fill="#78b060" opacity="0.9"/>
+          <path d="M12,25 Q16,18 22,22" stroke="#508038" stroke-width="2" fill="none"/>`),
         c: '#4a7040', e:'#508840'
       }),
       // 茶人・文化人：モーブアップドゥ、かんざし
       tea_master: ch({
         h: H('#c0a8c0', `<ellipse cx="30" cy="11" rx="10" ry="8" fill="#b098b0"/>
           <ellipse cx="30" cy="9" rx="7" ry="5" fill="#c8b0c8"/>`),
-        ha: `<line x1="38" y1="14" x2="47" y2="8" stroke="#e8d8c0" stroke-width="2"/>
-          <circle cx="47" cy="7" r="3" fill="#f0e0b0"/>`,
+        hf: B('#c0a8c0', `<line x1="38" y1="14" x2="47" y2="8" stroke="#e8d8c0" stroke-width="2"/>
+          <circle cx="47" cy="7" r="3" fill="#f0e0b0"/>`),
         c: '#605878', e:'#7090a8'
       }),
       // 落ち延びた貴族（レア）：ローズパープル、ティアラ、悲しい目
       noble_exile: ch({
         h: HL('#c090d8', `<ellipse cx="30" cy="11" rx="11" ry="9" fill="#b078c8"/>`),
-        ha: `<path d="M20,16 L25,9.5 L30,14 L35,9.5 L40,16"
-          stroke="#d4c040" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+        hf: B('#c090d8', `<path d="M20,16 L25,9.5 L30,14 L35,9.5 L40,16"
+          stroke="#d4c040" stroke-width="2" fill="none" stroke-linecap="round"/>`),
         c: '#703880', e:'#8848c8', sad:true
       }),
     };
@@ -666,7 +687,7 @@
             if (!line.startsWith('data: ')) continue;
             const d = line.slice(6);
             if (d === '[DONE]') break;
-            try { const {text} = JSON.parse(d); story += text; resultText.textContent = story; } catch {}
+            try { const {text} = JSON.parse(d); story += text; resultText.textContent = story.replace(/<\|[^|>]*\|>/g,'').replace(/\s{2,}/g,' ').trim(); } catch {}
           }
         }
         if (story) {

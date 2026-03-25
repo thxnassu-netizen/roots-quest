@@ -88,11 +88,29 @@ app.post("/api/story", async (req, res) => {
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
 
+    const SPECIAL_TOKENS = /<\|[^|>]*\|>/g;
+    let pendingBuf = '';
     for await (const chunk of stream) {
-      const text = chunk.choices[0]?.delta?.content ?? "";
-      if (text) {
-        res.write(`data: ${JSON.stringify({ text })}\n\n`);
+      const raw = chunk.choices[0]?.delta?.content ?? "";
+      if (!raw) continue;
+      pendingBuf += raw;
+      // 末尾に未完了の特殊トークンがある場合は保留
+      const lt = pendingBuf.lastIndexOf('<|');
+      let safe, hold;
+      if (lt !== -1 && pendingBuf.indexOf('|>', lt) === -1) {
+        safe = pendingBuf.slice(0, lt);
+        hold = pendingBuf.slice(lt);
+      } else {
+        safe = pendingBuf;
+        hold = '';
       }
+      const text = safe.replace(SPECIAL_TOKENS, '');
+      if (text) res.write(`data: ${JSON.stringify({ text })}\n\n`);
+      pendingBuf = hold;
+    }
+    if (pendingBuf) {
+      const text = pendingBuf.replace(SPECIAL_TOKENS, '');
+      if (text) res.write(`data: ${JSON.stringify({ text })}\n\n`);
     }
 
     res.write("data: [DONE]\n\n");
