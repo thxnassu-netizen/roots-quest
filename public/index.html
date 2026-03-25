@@ -383,8 +383,8 @@
     }
 
     .character-emoji-wrap {
-      width: 76px;
-      height: 76px;
+      width: 80px;
+      height: 80px;
       margin: 0 auto 14px;
       border-radius: 50%;
       background: rgba(255, 252, 249, 0.95);
@@ -392,8 +392,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.2rem;
       box-shadow: 0 2px 12px rgba(120, 80, 70, 0.1);
+      overflow: hidden;
     }
 
     .rare .character-emoji-wrap {
@@ -492,6 +492,104 @@
       font-size: 0.85rem;
       letter-spacing: 0.15em;
     }
+
+    /* 名字ルーツ */
+    .nameroot-result {
+      margin-top: 20px;
+      padding: 26px 24px;
+      background: linear-gradient(135deg, rgba(238, 245, 238, 0.95), rgba(228, 238, 228, 0.95));
+      border: 1px solid rgba(143, 168, 143, 0.4);
+      border-radius: 16px;
+      display: none;
+      animation: fadeIn 0.6s ease;
+    }
+
+    .nameroot-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: #6a9a6a;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .nameroot-title {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #3d4a3d;
+      letter-spacing: 0.15em;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .nameroot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .nameroot-item {
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(143, 168, 143, 0.25);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .nameroot-item-label {
+      font-size: 0.63rem;
+      color: #7a9a7a;
+      letter-spacing: 0.15em;
+      margin-bottom: 4px;
+    }
+
+    .nameroot-item-value {
+      font-size: 0.82rem;
+      color: #3d4a3d;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    .nameroot-desc {
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(143, 168, 143, 0.25);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+
+    .nameroot-desc-label {
+      font-size: 0.63rem;
+      color: #7a9a7a;
+      letter-spacing: 0.15em;
+      margin-bottom: 6px;
+    }
+
+    .nameroot-desc-text {
+      font-size: 0.87rem;
+      line-height: 2;
+      color: #3d4a3d;
+    }
+
+    .nameroot-meaning-wrap {
+      background: rgba(143, 168, 143, 0.1);
+      border-left: 2px solid rgba(143, 168, 143, 0.5);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+    }
+
+    .nameroot-meaning-label {
+      font-size: 0.63rem;
+      color: #7a9a7a;
+      letter-spacing: 0.2em;
+      margin-bottom: 6px;
+    }
+
+    .nameroot-meaning-text {
+      font-size: 0.9rem;
+      color: #3d4a3d;
+      line-height: 1.8;
+    }
   </style>
 </head>
 <body>
@@ -580,6 +678,8 @@
 
       <div class="character-result" id="characterResult"></div>
 
+      <div class="nameroot-result" id="namerootResult"></div>
+
       <div class="divider">
         <div class="line"></div>
         <div class="text">または</div>
@@ -596,7 +696,160 @@
   </div>
 
   <script>
-    // フォーム送信
+    // ── アニメ風キャラクターSVG生成 ──────────────────────────────
+    function ch({h, hf='', ha='', xtra='', c, s='#fde8d0', e='#2d1b0e', sad=false, blush=true}) {
+      const bl = blush
+        ? `<ellipse cx="21" cy="31" rx="3.5" ry="2" fill="#f4a0a0" opacity="0.35"/>
+           <ellipse cx="39" cy="31" rx="3.5" ry="2" fill="#f4a0a0" opacity="0.35"/>`
+        : '';
+      const mouth = sad
+        ? `<path d="M26,36 Q30,33.5 34,36" stroke="#c07870" stroke-width="1.2" fill="none" stroke-linecap="round"/>`
+        : `<path d="M26,34.5 Q30,37.5 34,34.5" stroke="#c07870" stroke-width="1.2" fill="none" stroke-linecap="round"/>`;
+      return `<svg viewBox="0 0 60 66" xmlns="http://www.w3.org/2000/svg">
+        ${h}
+        <circle cx="30" cy="28" r="15" fill="${s}"/>
+        ${bl}
+        <ellipse cx="24" cy="27" rx="2.8" ry="3.2" fill="${e}"/>
+        <circle cx="25.2" cy="25.8" r="1" fill="white"/>
+        <ellipse cx="36" cy="27" rx="2.8" ry="3.2" fill="${e}"/>
+        <circle cx="37.2" cy="25.8" r="1" fill="white"/>
+        <path d="M21,22.5 Q24,21 27,22.5" stroke="#5a3010" stroke-width="1.2" fill="none"/>
+        <path d="M33,22.5 Q36,21 39,22.5" stroke="#5a3010" stroke-width="1.2" fill="none"/>
+        <circle cx="30" cy="31" r="1" fill="#e8b89e"/>
+        ${mouth}
+        ${hf}${ha}${xtra}
+        <path d="M15,56 Q30,48 45,56 L46,66 L14,66 Z" fill="${c}"/>
+        <path d="M25,49 L30,55 L35,49" stroke="${c}" stroke-width="2.5" fill="none"/>
+      </svg>`;
+    }
+    const H = (col, ex='') => `<ellipse cx="30" cy="22" rx="16" ry="14" fill="${col}"/>${ex}`;
+
+    const CHARACTER_SVGS = {
+      farmer: ch({
+        h: H('#8b5e3c', `<ellipse cx="30" cy="12" rx="6" ry="6" fill="#7a5030"/>`),
+        ha: `<rect x="13" y="19" width="34" height="5" rx="2.5" fill="#d49060" opacity="0.85"/>`,
+        c: '#a89060'
+      }),
+      warrior: ch({
+        h: H('#2d1b0e', `<rect x="26" y="8" width="8" height="14" rx="4" fill="#2d1b0e"/>
+          <rect x="36" y="16" width="11" height="4" rx="2" fill="#2d1b0e"/>`),
+        c: '#2d4a6b', blush: false
+      }),
+      merchant: ch({
+        h: H('#3d2810', `<ellipse cx="30" cy="13" rx="8" ry="7" fill="#3d2810"/>`),
+        ha: `<circle cx="30" cy="10" r="3.5" fill="#d4a820" opacity="0.9"/>
+          <circle cx="30" cy="10" r="1.8" fill="#f0d850"/>`,
+        c: '#c97820'
+      }),
+      christian: ch({
+        h: H('#c8b8d0'),
+        ha: `<line x1="30" y1="41" x2="30" y2="47" stroke="#8060a0" stroke-width="1.5"/>
+          <line x1="27" y1="43.5" x2="33" y2="43.5" stroke="#8060a0" stroke-width="1.5"/>`,
+        c: '#7a60a0', e: '#5a3a80'
+      }),
+      craftsman: ch({
+        h: H('#5c3a1e'),
+        ha: `<path d="M13,22 Q30,16 47,22 L47,27 Q30,23 13,27 Z" fill="#c08040" opacity="0.8"/>`,
+        c: '#7a6850'
+      }),
+      seafarer: ch({
+        h: H('#3a5880'),
+        c: '#3a7ab0', s: '#f0d0a8'
+      }),
+      scholar: ch({
+        h: H('#2d1b0e', `<rect x="25" y="9" width="10" height="13" rx="5" fill="#2d1b0e"/>
+          <ellipse cx="30" cy="9" rx="4" ry="3" fill="#3a2818"/>`),
+        ha: `<ellipse cx="23" cy="28" rx="4" ry="3" fill="none" stroke="#8a7060" stroke-width="1.2"/>
+          <ellipse cx="37" cy="28" rx="4" ry="3" fill="none" stroke="#8a7060" stroke-width="1.2"/>
+          <line x1="27" y1="28" x2="33" y2="28" stroke="#8a7060" stroke-width="1.2"/>`,
+        c: '#8a8a78'
+      }),
+      castle_samurai: ch({
+        h: H('#1a1008', `<rect x="26" y="8" width="8" height="16" rx="4" fill="#1a1008"/>
+          <ellipse cx="30" cy="8" rx="5" ry="3.5" fill="#1a1008"/>`),
+        c: '#1a2d5a', blush: false
+      }),
+      court_noble: ch({
+        h: `<ellipse cx="30" cy="26" rx="18" ry="20" fill="#5c3a20"/>
+          <rect x="12" y="24" width="7" height="24" rx="3.5" fill="#5c3a20"/>
+          <rect x="41" y="24" width="7" height="24" rx="3.5" fill="#5c3a20"/>
+          <ellipse cx="30" cy="16" rx="16" ry="10" fill="#5c3a20"/>`,
+        ha: `<circle cx="22" cy="18" r="3" fill="#e890a8" opacity="0.85"/>
+          <circle cx="38" cy="18" r="3" fill="#e890a8" opacity="0.85"/>`,
+        c: '#d4758a'
+      }),
+      shugenja: ch({
+        h: `<ellipse cx="30" cy="20" rx="18" ry="16" fill="#3a2050"/>
+          <path d="M13,20 Q18,8 25,14 Q30,8 35,14 Q42,8 47,20" fill="#3a2050"/>`,
+        ha: `<path d="M30,13 L32,7 L34,12 L30,10 Z" fill="#e8c040" opacity="0.9"/>
+          <circle cx="30" cy="7" r="2" fill="#f0d050"/>`,
+        c: '#e8e0d0', e: '#6a3a9a', blush: false
+      }),
+      performer: ch({
+        h: H('#c94878', `<ellipse cx="30" cy="10" rx="7" ry="8" fill="#c94878"/>
+          <path d="M37,13 Q44,9 47,16" stroke="#c94878" stroke-width="4" fill="none" stroke-linecap="round"/>`),
+        c: '#c94878'
+      }),
+      hunter: ch({
+        h: H('#7a5c3a'),
+        c: '#5a7040', blush: false, e: '#3a2808'
+      }),
+      blacksmith: ch({
+        h: `<ellipse cx="30" cy="20" rx="16" ry="13" fill="#c84028"/>
+          <path d="M14,20 Q20,10 30,14 Q40,10 46,20" fill="#c84028"/>`,
+        ha: `<ellipse cx="42" cy="23" rx="2" ry="3" fill="#90d0e8" opacity="0.7"/>`,
+        c: '#c04028', s: '#f0c898'
+      }),
+      healer: ch({
+        h: H('#6b8a40'),
+        ha: `<circle cx="39" cy="18" r="5" fill="#e8c0d0"/>
+          <circle cx="39" cy="18" r="3" fill="#e890a8"/>
+          <circle cx="39" cy="18" r="1.5" fill="#f8d0e0"/>`,
+        c: '#5a9060'
+      }),
+      trader: ch({
+        h: H('#c89840'),
+        c: '#3070a8'
+      }),
+      ninja: `<svg viewBox="0 0 60 66" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="30" cy="26" rx="17" ry="15" fill="#1a1a2a"/>
+        <ellipse cx="30" cy="16" rx="15" ry="10" fill="#1a1a2a"/>
+        <rect x="14" y="28" width="32" height="14" rx="2" fill="#1a1a2a"/>
+        <ellipse cx="24" cy="25" rx="3.8" ry="4" fill="#7040b0"/>
+        <circle cx="25.5" cy="23.5" r="1.3" fill="white"/>
+        <ellipse cx="36" cy="25" rx="3.8" ry="4" fill="#7040b0"/>
+        <circle cx="37.5" cy="23.5" r="1.3" fill="white"/>
+        <path d="M15,56 Q30,48 45,56 L46,66 L14,66 Z" fill="#1a1a2a"/>
+      </svg>`,
+      weaver: ch({
+        h: H('#6a40a0', `<ellipse cx="30" cy="12" rx="8" ry="7" fill="#6a40a0"/>`),
+        ha: `<line x1="36" y1="14" x2="43" y2="9" stroke="#e8c0f0" stroke-width="1.5"/>
+          <circle cx="43" cy="8" r="2.5" fill="#d4a0e8"/>`,
+        c: '#8060a8'
+      }),
+      mountain_folk: ch({
+        h: H('#5c6a3a'),
+        ha: `<ellipse cx="16" cy="21" rx="5" ry="3.5" fill="#5a8a30" opacity="0.85"/>
+          <path d="M14,23 Q16,18 20,21" stroke="#3a6020" stroke-width="1.5" fill="none"/>`,
+        c: '#4a6a3a'
+      }),
+      tea_master: ch({
+        h: H('#2a2840', `<ellipse cx="30" cy="13" rx="9" ry="7" fill="#2a2840"/>
+          <ellipse cx="30" cy="11" rx="6" ry="4" fill="#3a3860"/>`),
+        ha: `<line x1="38" y1="15" x2="45" y2="10" stroke="#c0b880" stroke-width="1.5"/>
+          <circle cx="45" cy="9" r="2.2" fill="#d4c890"/>`,
+        c: '#5a5a7a'
+      }),
+      noble_exile: ch({
+        h: H('#4a2860', `<ellipse cx="30" cy="12" rx="10" ry="8" fill="#4a2860"/>
+          <rect x="12" y="24" width="6" height="20" rx="3" fill="#4a2860"/>
+          <rect x="42" y="24" width="6" height="20" rx="3" fill="#4a2860"/>`),
+        ha: `<path d="M22,15 L26,10 L30,14 L34,10 L38,15" stroke="#d4c040" stroke-width="1.5" fill="none"/>`,
+        c: '#6a3a7a', e: '#3a2040', sad: true, blush: false
+      }),
+    };
+
+    // ── フォーム送信 ──────────────────────────────────────────────
     document.getElementById('rootsForm').addEventListener('submit', async function(e) {
       e.preventDefault();
 
@@ -606,14 +859,15 @@
       const resultDiv = document.getElementById('result');
       const resultText = document.getElementById('resultText');
       const characterDiv = document.getElementById('characterResult');
+      const namerootDiv = document.getElementById('namerootResult');
 
-      // ローディング状態
       submitBtn.disabled = true;
       submitBtn.textContent = '探索中...';
       resultText.innerHTML = `<span class="highlight">「${myoji}」</span> 家のルーツを辿っています...`;
       resultDiv.style.display = 'block';
       characterDiv.style.display = 'none';
       characterDiv.className = 'character-result';
+      namerootDiv.style.display = 'none';
       resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
       let story = '';
@@ -628,7 +882,6 @@
         if (response.status === 429) throw new Error('rate_limit');
         if (!response.ok) throw new Error('サーバーエラー');
 
-        // ストリーミング受信
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         resultText.innerHTML = '';
@@ -636,26 +889,21 @@
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-
           const chunk = decoder.decode(value, { stream: true });
-          const lines = chunk.split('\n');
-
-          for (const line of lines) {
+          for (const line of chunk.split('\n')) {
             if (line.startsWith('data: ')) {
               const data = line.slice(6);
               if (data === '[DONE]') break;
-              try {
-                const { text } = JSON.parse(data);
-                story += text;
-                resultText.textContent = story;
-              } catch {}
+              try { const { text } = JSON.parse(data); story += text; resultText.textContent = story; } catch {}
             }
           }
         }
 
-        // ストーリー完了後にキャラクター判定
         if (story) {
-          await fetchCharacter(myoji, shusshinchi, story);
+          await Promise.all([
+            fetchCharacter(myoji, shusshinchi, story),
+            fetchNameroot(myoji),
+          ]);
         }
       } catch (err) {
         const msg = err.message === 'rate_limit'
@@ -668,14 +916,13 @@
       }
     });
 
-    // キャラクター判定を取得して表示
+    // ── キャラクター ──────────────────────────────────────────────
     async function fetchCharacter(myoji, shusshinchi, story) {
-      const characterDiv = document.getElementById('characterResult');
-      characterDiv.className = 'character-result';
-      characterDiv.innerHTML = '<div class="character-loading">✦ ご先祖キャラクター霊視中... ✦</div>';
-      characterDiv.style.display = 'block';
-      characterDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
+      const div = document.getElementById('characterResult');
+      div.className = 'character-result';
+      div.innerHTML = '<div class="character-loading">✦ ご先祖キャラクター霊視中... ✦</div>';
+      div.style.display = 'block';
+      div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       try {
         const res = await fetch('/api/character', {
           method: 'POST',
@@ -683,37 +930,74 @@
           body: JSON.stringify({ myoji, shusshinchi, story }),
         });
         if (!res.ok) throw new Error('failed');
-        const data = await res.json();
-        renderCharacter(data);
+        renderCharacter(await res.json());
       } catch {
-        characterDiv.innerHTML = '<div class="character-loading" style="color:#c9a8b0">キャラクター判定に失敗しました</div>';
+        div.innerHTML = '<div class="character-loading" style="color:#c9a8b0">キャラクター判定に失敗しました</div>';
       }
     }
 
-    // キャラクターカードを描画
     function renderCharacter(data) {
-      const characterDiv = document.getElementById('characterResult');
-      const isRare = data.isRare;
-      characterDiv.className = 'character-result' + (isRare ? ' rare' : '');
-
-      characterDiv.innerHTML = `
-        ${isRare ? '<div class="rare-badge">✨ RARE CHARACTER ✨</div>' : ''}
+      const div = document.getElementById('characterResult');
+      div.className = 'character-result' + (data.isRare ? ' rare' : '');
+      const svgIcon = CHARACTER_SVGS[data.key] || CHARACTER_SVGS.farmer;
+      div.innerHTML = `
+        ${data.isRare ? '<div class="rare-badge">✨ RARE CHARACTER ✨</div>' : ''}
         <div class="character-label">✦ ご先祖キャラクター ✦</div>
-        <div class="character-emoji-wrap">${data.emoji}</div>
+        <div class="character-emoji-wrap">${svgIcon}</div>
         <div class="character-name">${data.ancestorName}</div>
         <div class="character-type-badge">${data.typeName}｜${data.typeDesc}</div>
-        <div class="character-divider">
-          <div class="cdline"></div>
-          <div class="cdicon">❧</div>
-          <div class="cdline"></div>
-        </div>
+        <div class="character-divider"><div class="cdline"></div><div class="cdicon">❧</div><div class="cdline"></div></div>
         <p class="character-feature">${data.feature}</p>
         <div class="character-comment-wrap">
           <div class="character-comment-label">ご先祖さまより</div>
           <p class="character-comment">「${data.comment}」</p>
         </div>
       `;
-      characterDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ── 名字ルーツ ────────────────────────────────────────────────
+    async function fetchNameroot(myoji) {
+      const div = document.getElementById('namerootResult');
+      div.innerHTML = '<div class="character-loading" style="color:#6a9a6a">✦ 名字のルーツを調査中... ✦</div>';
+      div.style.display = 'block';
+      try {
+        const res = await fetch('/api/nameroot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ myoji }),
+        });
+        if (!res.ok) throw new Error('failed');
+        renderNameroot(myoji, await res.json());
+      } catch {
+        div.innerHTML = '<div class="character-loading" style="color:#c9a8b0">名字ルーツの取得に失敗しました</div>';
+      }
+    }
+
+    function renderNameroot(myoji, data) {
+      const div = document.getElementById('namerootResult');
+      div.innerHTML = `
+        <div class="nameroot-label">✦ あなたの名字のルーツ ✦</div>
+        <div class="nameroot-title">「${myoji}」という名字</div>
+        <div class="nameroot-grid">
+          <div class="nameroot-item">
+            <div class="nameroot-item-label">発祥・分布地域</div>
+            <div class="nameroot-item-value">${data.birthplace}</div>
+          </div>
+          <div class="nameroot-item">
+            <div class="nameroot-item-label">広まった時代</div>
+            <div class="nameroot-item-value">${data.era}</div>
+          </div>
+        </div>
+        <div class="nameroot-desc">
+          <div class="nameroot-desc-label">由来</div>
+          <p class="nameroot-desc-text">${data.origin}</p>
+        </div>
+        <div class="nameroot-meaning-wrap">
+          <div class="nameroot-meaning-label">名字の意味</div>
+          <p class="nameroot-meaning-text">${data.meaning}</p>
+        </div>
+      `;
     }
 
     // 花びらアニメーション

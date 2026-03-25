@@ -164,6 +164,38 @@ weaver, mountain_folk, tea_master, noble_exile
   }
 });
 
+app.post("/api/nameroot", async (req, res) => {
+  const { myoji } = req.body;
+  if (!myoji) return res.status(400).json({ error: "名字を入力してください" });
+  try {
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      max_tokens: 400,
+      stream: false,
+      response_format: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content: `あなたは日本の名字の歴史に詳しい研究者です。
+入力された名字の由来・発祥地・歴史的背景を調査し、以下のJSON形式のみで返してください：
+{
+  "origin": "名字の由来を2〜3文で簡潔に",
+  "birthplace": "発祥地・主な分布地域（都道府県・地方名）",
+  "era": "主に広まった・活躍した歴史的時代",
+  "meaning": "名字に込められた意味や漢字の解説（1〜2文）"
+}
+事実に基づき、不明な場合は「諸説あります」などと記してください。`,
+        },
+        { role: "user", content: `名字：${myoji}` },
+      ],
+    });
+    res.json(JSON.parse(completion.choices[0].message.content));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "名字ルーツの取得に失敗しました" });
+  }
+});
+
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`ルーツ・クエスト起動中 → http://localhost:${PORT}`);
