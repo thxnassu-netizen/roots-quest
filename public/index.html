@@ -4,752 +4,522 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ルーツ・クエスト</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=Shippori+Mincho:wght@400;500;600;800&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    :root {
+      --bg:    #09080f;
+      --card:  rgba(16, 12, 26, 0.97);
+      --gold:  #d4af37;
+      --gold-l:#f0d870;
+      --gold-d:#a88820;
+      --rose:  #c9758a;
+      --text:  #f0ead8;
+      --sub:   #8a7a68;
+      --border:rgba(212,175,55,0.22);
+      --borderS:rgba(212,175,55,0.52);
     }
+    * { box-sizing:border-box; margin:0; padding:0; }
 
     body {
-      font-family: 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
-      min-height: 100%;
-      background-color: #f7f3ee;
-      background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      color: #3d2b1f;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 20px;
-      position: relative;
-      overflow-y: auto;
+      font-family:'Noto Serif JP','Hiragino Mincho ProN',serif;
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:40px 20px 70px;
+      position:relative;
+      overflow-x:hidden;
     }
-
-    /* 桜の花びら装飾 */
-    .petal {
-      position: fixed;
-      pointer-events: none;
-      opacity: 0;
-      animation: fall linear infinite;
-    }
-
-    @keyframes fall {
-      0%   { transform: translateY(-20px) rotate(0deg); opacity: 0; }
-      10%  { opacity: 0.6; }
-      90%  { opacity: 0.4; }
-      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-    }
-
-    /* 背景の和柄装飾 */
     body::before {
-      content: '';
-      position: fixed;
-      top: -60px;
-      right: -60px;
-      width: 320px;
-      height: 320px;
-      background: radial-gradient(circle, rgba(230, 180, 190, 0.18) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
+      content:'';
+      position:fixed; top:-120px; right:-120px;
+      width:560px; height:560px;
+      background:radial-gradient(circle,rgba(100,55,150,0.22) 0%,transparent 70%);
+      pointer-events:none;
     }
-
     body::after {
-      content: '';
-      position: fixed;
-      bottom: -80px;
-      left: -80px;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(160, 190, 160, 0.15) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
+      content:'';
+      position:fixed; bottom:-120px; left:-120px;
+      width:640px; height:640px;
+      background:radial-gradient(circle,rgba(180,120,30,0.14) 0%,transparent 70%);
+      pointer-events:none;
     }
 
-    .wrapper {
-      width: 100%;
-      max-width: 480px;
-      position: relative;
-      z-index: 1;
+    /* ── 金の花びら ── */
+    .petal { position:fixed; pointer-events:none; opacity:0; animation:fall linear infinite; z-index:0; }
+    @keyframes fall {
+      0%   { transform:translateY(-20px) rotate(0deg); opacity:0; }
+      10%  { opacity:0.45; }
+      90%  { opacity:0.28; }
+      100% { transform:translateY(110vh) rotate(360deg); opacity:0; }
     }
 
-    /* ヘッダー装飾ライン */
-    .header-deco {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 28px;
+    /* ── パーティクル ── */
+    @keyframes sparkFly {
+      0%   { opacity:1; transform:translate(-50%,-50%) scale(1); }
+      100% { opacity:0; transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(0.2); }
+    }
+    @keyframes shockwave {
+      0%   { width:0; height:0; opacity:0.9; }
+      100% { width:340px; height:340px; opacity:0; }
     }
 
-    .header-deco .line {
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(to right, transparent, #c9a8b0);
+    /* ── カード演出 ── */
+    @keyframes cardReveal {
+      0%   { opacity:0; transform:scale(0.82) translateY(18px); filter:brightness(2.5); }
+      55%  { filter:brightness(1.4); }
+      100% { opacity:1; transform:scale(1) translateY(0); filter:brightness(1); }
     }
-
-    .header-deco .line.right {
-      background: linear-gradient(to left, transparent, #c9a8b0);
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(12px); }
+      to   { opacity:1; transform:translateY(0); }
     }
-
-    .header-deco .icon {
-      font-size: 1.1rem;
-      color: #c9a8b0;
-    }
-
-    /* タイトル */
-    .title-block {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-    .title-en {
-      font-family: 'Shippori Mincho', serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.4em;
-      color: #b08a90;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
-
-    .title-ja {
-      font-family: 'Shippori Mincho', serif;
-      font-size: 2.4rem;
-      font-weight: 600;
-      color: #3d2b1f;
-      letter-spacing: 0.2em;
-      margin-bottom: 14px;
-      line-height: 1.2;
-    }
-
-    .title-dot {
-      color: #c9a8b0;
-    }
-
-    .title-sub {
-      font-size: 0.8rem;
-      color: #9a7e76;
-      letter-spacing: 0.12em;
-      line-height: 1.8;
-      font-weight: 300;
-    }
-
-    /* カード */
-    .card {
-      background: rgba(255, 252, 249, 0.88);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(201, 168, 176, 0.35);
-      border-radius: 20px;
-      padding: 40px 36px;
-      box-shadow:
-        0 4px 24px rgba(120, 80, 70, 0.08),
-        0 1px 4px rgba(120, 80, 70, 0.06);
-    }
-
-    /* 桜の小枝装飾（カード上部） */
-    .card-deco {
-      text-align: center;
-      font-size: 1.3rem;
-      margin-bottom: 28px;
-      opacity: 0.55;
-      letter-spacing: 0.4em;
-    }
-
-    /* フォーム */
-    .form-group {
-      margin-bottom: 22px;
-    }
-
-    label {
-      display: block;
-      font-size: 0.75rem;
-      color: #9a7e76;
-      margin-bottom: 8px;
-      letter-spacing: 0.18em;
-      font-weight: 400;
-    }
-
-    .label-ja {
-      font-size: 0.9rem;
-      color: #5c3f36;
-      letter-spacing: 0.1em;
-      margin-right: 8px;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 13px 18px;
-      background: rgba(247, 243, 238, 0.7);
-      border: 1px solid rgba(201, 168, 176, 0.4);
-      border-radius: 10px;
-      color: #3d2b1f;
-      font-size: 1rem;
-      font-family: 'Noto Serif JP', serif;
-      outline: none;
-      transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
-    }
-
-    input[type="text"]:focus {
-      border-color: #b08a90;
-      background: rgba(255, 252, 249, 0.95);
-      box-shadow: 0 0 0 3px rgba(176, 138, 144, 0.12);
-    }
-
-    input[type="text"]::placeholder {
-      color: rgba(90, 60, 50, 0.3);
-      font-size: 0.9rem;
-    }
-
-    /* ボタン */
-    .btn {
-      width: 100%;
-      padding: 15px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 50px;
-      font-size: 0.9rem;
-      font-family: 'Shippori Mincho', serif;
-      font-weight: 500;
-      letter-spacing: 0.25em;
-      cursor: pointer;
-      transition: all 0.25s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #c9a8b0, #d4b8be);
-      color: #fff;
-      box-shadow: 0 4px 16px rgba(176, 138, 144, 0.35);
-    }
-
-    .btn-primary:hover {
-      background: linear-gradient(135deg, #b8979f, #c9a8b0);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(176, 138, 144, 0.4);
-    }
-
-    .btn-primary:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 8px rgba(176, 138, 144, 0.3);
-    }
-
-    /* セカンダリボタン（抹茶） */
-    .btn-secondary {
-      background: linear-gradient(135deg, #8fa88f, #a3baa3);
-      color: #fff;
-      box-shadow: 0 4px 16px rgba(130, 160, 130, 0.3);
-      margin-top: 12px;
-    }
-
-    .btn-secondary:hover {
-      background: linear-gradient(135deg, #7d977d, #8fa88f);
-      transform: translateY(-2px);
-    }
-
-    /* 仕切り */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 28px 0 0;
-    }
-
-    .divider .line {
-      flex: 1;
-      height: 1px;
-      background: rgba(201, 168, 176, 0.3);
-    }
-
-    .divider .text {
-      font-size: 0.7rem;
-      color: #c9a8b0;
-      letter-spacing: 0.2em;
-    }
-
-    /* 結果エリア */
-    .result {
-      margin-top: 28px;
-      padding: 24px;
-      background: linear-gradient(135deg, rgba(247, 243, 238, 0.9), rgba(240, 235, 228, 0.9));
-      border: 1px solid rgba(201, 168, 176, 0.3);
-      border-radius: 14px;
-      display: none;
-      animation: fadeIn 0.5s ease;
-      max-height: 320px;
-      overflow-y: auto;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .result-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.25em;
-      color: #b08a90;
-      margin-bottom: 12px;
-    }
-
-    .result p {
-      font-size: 0.95rem;
-      line-height: 2;
-      color: #5c3f36;
-    }
-
-    .result .highlight {
-      color: #9a5f6a;
-      font-weight: 500;
-    }
-
-    /* フッター */
-    .footer {
-      text-align: center;
-      margin-top: 32px;
-      font-size: 0.65rem;
-      color: #c0a89e;
-      letter-spacing: 0.2em;
-    }
-
-    /* 季節の花装飾（SVG） */
-    .seasonal-deco {
-      position: fixed;
-      pointer-events: none;
-      opacity: 0.12;
-    }
-
-    .deco-top-left {
-      top: 0;
-      left: 0;
-      width: 200px;
-    }
-
-    .deco-bottom-right {
-      bottom: 0;
-      right: 0;
-      width: 200px;
-      transform: rotate(180deg);
-    }
-
-    /* ご先祖キャラクター */
-    .character-result {
-      margin-top: 20px;
-      padding: 28px 24px;
-      background: linear-gradient(135deg, rgba(247, 243, 238, 0.95), rgba(240, 235, 228, 0.95));
-      border: 1px solid rgba(201, 168, 176, 0.4);
-      border-radius: 16px;
-      display: none;
-      animation: fadeIn 0.6s ease;
-      text-align: center;
-    }
-
-    .character-result.rare {
-      border: 1.5px solid rgba(212, 175, 55, 0.6);
-      background: linear-gradient(135deg, rgba(255, 252, 240, 0.97), rgba(248, 240, 218, 0.97));
-      animation: fadeIn 0.6s ease, rareGlow 2.5s ease-in-out infinite alternate;
-    }
-
     @keyframes rareGlow {
-      from { box-shadow: 0 0 12px rgba(212, 175, 55, 0.18), 0 4px 16px rgba(180, 140, 20, 0.08); }
-      to   { box-shadow: 0 0 30px rgba(212, 175, 55, 0.35), 0 4px 24px rgba(180, 140, 20, 0.14); }
+      from { box-shadow:0 0 22px rgba(212,175,55,0.28), 0 10px 50px rgba(0,0,0,0.55); }
+      to   { box-shadow:0 0 50px rgba(212,175,55,0.5),  0 10px 70px rgba(0,0,0,0.65); }
     }
+    @keyframes shimmer {
+      from { background-position:0% center; }
+      to   { background-position:200% center; }
+    }
+    @keyframes spin  { 100% { transform:rotate(360deg); } }
+    @keyframes pulse { 0%,100% { opacity:0.45; } 50% { opacity:1; } }
 
-    .character-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.25em;
-      color: #b08a90;
-      margin-bottom: 16px;
+    /* ── ラッパー ── */
+    .wrapper { width:100%; max-width:430px; position:relative; z-index:1; }
+
+    /* ── タイトル ── */
+    .title-area { text-align:center; margin-bottom:28px; }
+    .title-crest {
+      font-size:0.65rem; letter-spacing:0.55em; color:var(--gold);
+      margin-bottom:8px; opacity:0.75;
+    }
+    .title-main {
+      font-family:'Shippori Mincho',serif; font-size:2.7rem; font-weight:800;
+      background:linear-gradient(135deg,var(--gold-l),var(--gold),var(--gold-d));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text;
+      letter-spacing:0.22em; line-height:1.1; margin-bottom:10px;
+    }
+    .title-sub { font-size:0.73rem; color:var(--sub); letter-spacing:0.15em; line-height:1.8; }
+    .title-rule {
+      display:flex; align-items:center; gap:12px; margin-top:16px;
+    }
+    .title-rule::before,.title-rule::after {
+      content:''; flex:1; height:1px;
+      background:linear-gradient(to right,transparent,var(--gold));
+    }
+    .title-rule::after { background:linear-gradient(to left,transparent,var(--gold)); }
+    .title-rule-icon { color:var(--gold); font-size:0.85rem; opacity:0.8; }
+
+    /* ── フォームカード ── */
+    .form-card {
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:20px;
+      padding:30px 26px;
+      box-shadow:0 8px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04);
+      margin-bottom:18px;
+    }
+    .form-card::before {
+      content:''; display:block; height:1px;
+      background:linear-gradient(to right,transparent,var(--borderS),transparent);
+      margin-bottom:22px;
+    }
+    .form-group { margin-bottom:16px; }
+    label { display:block; font-size:0.7rem; color:var(--sub); letter-spacing:0.2em; margin-bottom:7px; }
+    .lj { font-size:0.88rem; color:var(--text); margin-right:7px; }
+    input[type="text"] {
+      width:100%; padding:12px 15px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(212,175,55,0.2);
+      border-radius:10px; color:var(--text);
+      font-size:0.97rem; font-family:'Noto Serif JP',serif;
+      outline:none;
+      transition:border-color 0.2s, box-shadow 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color:var(--gold);
+      box-shadow:0 0 0 3px rgba(212,175,55,0.1);
+    }
+    input[type="text"]::placeholder { color:rgba(240,234,216,0.18); }
+    .btn-primary {
+      width:100%; padding:14px; margin-top:6px;
+      border:none; border-radius:50px;
+      background:linear-gradient(135deg,#c9a020,#f0d060,#c9a020);
+      background-size:200% auto;
+      color:#1a1000;
+      font-size:0.91rem; font-family:'Shippori Mincho',serif;
+      font-weight:700; letter-spacing:0.32em;
+      cursor:pointer; transition:all 0.25s;
+      box-shadow:0 4px 22px rgba(212,175,55,0.32);
+    }
+    .btn-primary:hover { background-position:100% center; transform:translateY(-2px); box-shadow:0 6px 30px rgba(212,175,55,0.48); }
+    .btn-primary:disabled { opacity:0.55; cursor:default; transform:none; }
+
+    /* ── 結果エリア ── */
+    .results-area { display:none; }
+
+    /* ── キャラクターカード ── */
+    .char-card {
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:22px;
+      padding:26px 22px 22px;
+      box-shadow:0 8px 40px rgba(0,0,0,0.6);
+      margin-bottom:14px;
+      position:relative;
+      overflow:hidden;
+      text-align:center;
+      min-height:200px;
+    }
+    .char-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:1px;
+      background:linear-gradient(to right,transparent,var(--gold),transparent);
+    }
+    .char-card.rare { border-color:var(--borderS); }
+    .char-card.revealed        { animation:cardReveal 0.7s ease-out forwards; }
+    .char-card.rare.revealed   { animation:cardReveal 0.7s ease-out forwards, rareGlow 2.8s 0.7s ease-in-out infinite alternate; }
+
+    .char-bg-glow {
+      position:absolute; top:30%; left:50%; transform:translate(-50%,-50%);
+      width:260px; height:260px; border-radius:50%;
+      background:radial-gradient(circle,rgba(90,50,140,0.22) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .char-card.rare .char-bg-glow {
+      background:radial-gradient(circle,rgba(212,175,55,0.18) 0%,transparent 70%);
     }
 
     .rare-badge {
-      display: inline-block;
-      background: linear-gradient(90deg, #c9a227, #e8c84a, #c9a227);
-      background-size: 200% auto;
-      color: #5c3a00;
-      font-size: 0.6rem;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      padding: 4px 14px;
-      border-radius: 20px;
-      margin-bottom: 14px;
-      animation: shimmer 2.5s linear infinite;
+      display:inline-block;
+      background:linear-gradient(90deg,#b89020,#f0d060,#b89020);
+      background-size:200% auto;
+      color:#1a1000; font-size:0.6rem; font-weight:800;
+      letter-spacing:0.32em; padding:4px 16px; border-radius:20px;
+      margin-bottom:14px;
+      animation:shimmer 2.2s linear infinite;
+    }
+    .char-sec-label {
+      font-size:0.62rem; letter-spacing:0.32em; color:var(--sub); margin-bottom:14px;
     }
 
-    @keyframes shimmer {
-      from { background-position: 0% center; }
-      to   { background-position: 200% center; }
+    /* ── キャラアイコン ── */
+    .char-icon-wrap {
+      width:155px; height:175px;
+      margin:0 auto 18px; position:relative;
+    }
+    .char-icon-wrap svg { width:100%; height:100%; }
+    .char-shadow {
+      position:absolute; bottom:-8px; left:50%; transform:translateX(-50%);
+      width:110px; height:26px; border-radius:50%;
+      background:radial-gradient(ellipse,rgba(212,175,55,0.32) 0%,transparent 70%);
+    }
+    .char-card.rare .char-shadow {
+      background:radial-gradient(ellipse,rgba(212,175,55,0.55) 0%,transparent 70%);
     }
 
-    .character-emoji-wrap {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 14px;
-      border-radius: 50%;
-      background: rgba(255, 252, 249, 0.95);
-      border: 1px solid rgba(201, 168, 176, 0.45);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 12px rgba(120, 80, 70, 0.1);
-      overflow: hidden;
+    /* ── 名前 ── */
+    .char-name {
+      font-family:'Shippori Mincho',serif;
+      font-size:1.52rem; font-weight:800;
+      color:var(--text); letter-spacing:0.12em;
+      margin-bottom:10px; line-height:1.3;
+      text-shadow:0 0 22px rgba(212,175,55,0.18);
+    }
+    .char-card.rare .char-name {
+      background:linear-gradient(135deg,#f5f0e0,var(--gold-l),#f5f0e0);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .char-type-badge {
+      display:inline-flex; align-items:center; gap:6px;
+      background:rgba(212,175,55,0.08);
+      border:1px solid var(--border); border-radius:20px;
+      padding:5px 16px; font-size:0.76rem;
+      color:rgba(212,175,55,0.9); letter-spacing:0.1em;
+      margin-bottom:18px;
+    }
+    .char-divider {
+      display:flex; align-items:center; gap:8px; margin:0 0 13px;
+    }
+    .char-divider .cl { flex:1; height:1px; background:var(--border); }
+    .char-divider .ci { font-size:0.7rem; color:var(--gold); opacity:0.6; }
+    .char-feature {
+      font-size:0.84rem; line-height:1.95;
+      color:rgba(240,234,216,0.72);
+      text-align:left; margin-bottom:15px;
     }
 
-    .rare .character-emoji-wrap {
-      border-color: rgba(212, 175, 55, 0.55);
-      box-shadow: 0 2px 18px rgba(212, 175, 55, 0.22);
+    /* ── 吹き出し ── */
+    .speech-bubble {
+      background:rgba(212,175,55,0.06);
+      border:1px solid rgba(212,175,55,0.26);
+      border-radius:14px; padding:13px 16px 13px 22px;
+      text-align:left; position:relative;
+    }
+    .speech-bubble::before {
+      content:'❝'; position:absolute; top:6px; left:8px;
+      font-size:1.3rem; color:var(--gold); opacity:0.35; line-height:1;
+    }
+    .speech-lbl {
+      font-size:0.6rem; color:var(--gold); opacity:0.75;
+      letter-spacing:0.22em; margin-bottom:4px;
+    }
+    .speech-text { font-size:0.88rem; color:var(--text); line-height:1.8; }
+
+    /* ── ローディング ── */
+    .loading-wrap { text-align:center; padding:38px 0 28px; }
+    .summon-ring {
+      width:60px; height:60px;
+      border:2px solid rgba(212,175,55,0.15);
+      border-top:2px solid var(--gold);
+      border-radius:50%;
+      animation:spin 1s linear infinite;
+      margin:0 auto 14px;
+    }
+    .loading-text {
+      font-size:0.78rem; color:var(--sub); letter-spacing:0.22em;
+      animation:pulse 1.6s ease-in-out infinite;
     }
 
-    .character-name {
-      font-family: 'Shippori Mincho', serif;
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #3d2b1f;
-      letter-spacing: 0.15em;
-      margin-bottom: 10px;
+    /* ── 情報カード共通 ── */
+    .info-card {
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px; padding:20px 20px;
+      box-shadow:0 4px 24px rgba(0,0,0,0.5);
+      margin-bottom:14px;
+      animation:fadeUp 0.5s ease forwards;
+    }
+    .info-card::before {
+      content:''; display:block; height:1px;
+      background:linear-gradient(to right,transparent,var(--borderS),transparent);
+      margin-bottom:15px;
+    }
+    .card-hdr {
+      font-family:'Shippori Mincho',serif;
+      font-size:0.83rem; font-weight:600;
+      color:var(--gold); letter-spacing:0.22em;
+      margin-bottom:13px; opacity:0.9;
     }
 
-    .character-type-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(201, 168, 176, 0.15);
-      border: 1px solid rgba(201, 168, 176, 0.35);
-      border-radius: 20px;
-      padding: 5px 16px;
-      font-size: 0.77rem;
-      color: #7a5a60;
-      letter-spacing: 0.1em;
-      margin-bottom: 20px;
+    /* ── 名字ルーツリスト ── */
+    .nr-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+    .nr-list li {
+      display:flex; align-items:baseline; gap:10px;
+      padding:8px 12px;
+      background:rgba(255,255,255,0.025);
+      border-radius:8px;
+      border-left:2px solid var(--border);
+    }
+    .nr-icon  { font-size:0.88rem; flex-shrink:0; }
+    .nr-lbl   { font-size:0.66rem; color:var(--sub); letter-spacing:0.15em; flex-shrink:0; min-width:2.4em; }
+    .nr-val   { font-size:0.84rem; color:var(--text); flex:1; line-height:1.55; }
+
+    /* ── ストーリー ── */
+    .story-text { font-size:0.87rem; line-height:2.05; color:rgba(240,234,216,0.75); }
+
+    /* ── 区切り ── */
+    .divider-or {
+      display:flex; align-items:center; gap:12px;
+      margin:8px 0 14px;
+    }
+    .divider-or::before,.divider-or::after {
+      content:''; flex:1; height:1px; background:var(--border);
+    }
+    .divider-or span { font-size:0.62rem; color:var(--sub); letter-spacing:0.22em; }
+
+    .btn-secondary {
+      width:100%; padding:13px;
+      border:1px solid rgba(143,168,143,0.3); border-radius:50px;
+      background:rgba(100,140,100,0.1);
+      color:rgba(180,220,180,0.75);
+      font-size:0.87rem; font-family:'Shippori Mincho',serif;
+      font-weight:500; letter-spacing:0.26em;
+      cursor:pointer; transition:all 0.25s;
+    }
+    .btn-secondary:hover { background:rgba(100,140,100,0.2); transform:translateY(-2px); }
+
+    .footer {
+      text-align:center; margin-top:30px;
+      font-size:0.6rem; color:rgba(138,122,104,0.45); letter-spacing:0.2em;
     }
 
-    .rare .character-type-badge {
-      background: rgba(212, 175, 55, 0.1);
-      border-color: rgba(212, 175, 55, 0.4);
-      color: #7a5500;
+    /* ── 背景枝装飾 ── */
+    .deco {
+      position:fixed; pointer-events:none; opacity:0.07;
     }
-
-    .character-divider {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 0 0 16px;
-    }
-
-    .character-divider .cdline {
-      flex: 1;
-      height: 1px;
-      background: rgba(201, 168, 176, 0.3);
-    }
-
-    .character-divider .cdicon {
-      font-size: 0.75rem;
-      color: #c9a8b0;
-    }
-
-    .character-feature {
-      font-size: 0.87rem;
-      line-height: 2;
-      color: #5c3f36;
-      text-align: left;
-      margin-bottom: 16px;
-    }
-
-    .character-comment-wrap {
-      background: rgba(201, 168, 176, 0.1);
-      border-left: 2px solid rgba(201, 168, 176, 0.6);
-      border-radius: 0 8px 8px 0;
-      padding: 12px 16px;
-      text-align: left;
-    }
-
-    .rare .character-comment-wrap {
-      background: rgba(212, 175, 55, 0.07);
-      border-left-color: rgba(212, 175, 55, 0.5);
-    }
-
-    .character-comment-label {
-      font-size: 0.65rem;
-      color: #b08a90;
-      letter-spacing: 0.2em;
-      margin-bottom: 6px;
-    }
-
-    .rare .character-comment-label {
-      color: #a07830;
-    }
-
-    .character-comment {
-      font-size: 0.9rem;
-      color: #5c3f36;
-      line-height: 1.8;
-    }
-
-    .character-loading {
-      padding: 20px 0;
-      color: #c9a8b0;
-      font-size: 0.85rem;
-      letter-spacing: 0.15em;
-    }
-
-    /* 名字ルーツ */
-    .nameroot-result {
-      margin-top: 20px;
-      padding: 26px 24px;
-      background: linear-gradient(135deg, rgba(238, 245, 238, 0.95), rgba(228, 238, 228, 0.95));
-      border: 1px solid rgba(143, 168, 143, 0.4);
-      border-radius: 16px;
-      display: none;
-      animation: fadeIn 0.6s ease;
-    }
-
-    .nameroot-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.25em;
-      color: #6a9a6a;
-      margin-bottom: 12px;
-      text-align: center;
-    }
-
-    .nameroot-title {
-      font-family: 'Shippori Mincho', serif;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #3d4a3d;
-      letter-spacing: 0.15em;
-      margin-bottom: 16px;
-      text-align: center;
-    }
-
-    .nameroot-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .nameroot-item {
-      background: rgba(255, 255, 255, 0.55);
-      border: 1px solid rgba(143, 168, 143, 0.25);
-      border-radius: 10px;
-      padding: 10px 12px;
-    }
-
-    .nameroot-item-label {
-      font-size: 0.63rem;
-      color: #7a9a7a;
-      letter-spacing: 0.15em;
-      margin-bottom: 4px;
-    }
-
-    .nameroot-item-value {
-      font-size: 0.82rem;
-      color: #3d4a3d;
-      line-height: 1.5;
-      font-weight: 500;
-    }
-
-    .nameroot-desc {
-      background: rgba(255, 255, 255, 0.55);
-      border: 1px solid rgba(143, 168, 143, 0.25);
-      border-radius: 10px;
-      padding: 12px 14px;
-      margin-bottom: 12px;
-    }
-
-    .nameroot-desc-label {
-      font-size: 0.63rem;
-      color: #7a9a7a;
-      letter-spacing: 0.15em;
-      margin-bottom: 6px;
-    }
-
-    .nameroot-desc-text {
-      font-size: 0.87rem;
-      line-height: 2;
-      color: #3d4a3d;
-    }
-
-    .nameroot-meaning-wrap {
-      background: rgba(143, 168, 143, 0.1);
-      border-left: 2px solid rgba(143, 168, 143, 0.5);
-      border-radius: 0 8px 8px 0;
-      padding: 12px 16px;
-    }
-
-    .nameroot-meaning-label {
-      font-size: 0.63rem;
-      color: #7a9a7a;
-      letter-spacing: 0.2em;
-      margin-bottom: 6px;
-    }
-
-    .nameroot-meaning-text {
-      font-size: 0.9rem;
-      color: #3d4a3d;
-      line-height: 1.8;
-    }
+    .deco-tl { top:0; left:0; width:200px; }
+    .deco-br { bottom:0; right:0; width:200px; transform:rotate(180deg); }
   </style>
 </head>
 <body>
 
-  <!-- 左上の枝装飾 -->
-  <svg class="seasonal-deco deco-top-left" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0,180 Q40,120 80,100 Q120,80 150,40 Q160,20 180,0" stroke="#b08a90" stroke-width="1.5" fill="none"/>
-    <circle cx="80" cy="100" r="5" fill="#c9a8b0"/>
-    <circle cx="100" cy="88" r="4" fill="#d4b8be"/>
-    <circle cx="120" cy="80" r="3" fill="#c9a8b0"/>
-    <circle cx="150" cy="40" r="5" fill="#c9a8b0"/>
-    <circle cx="165" cy="28" r="3" fill="#d4b8be"/>
-    <circle cx="60" cy="112" r="4" fill="#d4b8be"/>
-    <circle cx="140" cy="60" r="3" fill="#c9a8b0"/>
-    <!-- 桜の花 -->
-    <g transform="translate(78,96) scale(0.7)" opacity="0.8">
-      <circle cx="0" cy="-6" r="3.5" fill="#e8c8cc"/>
-      <circle cx="5.7" cy="-1.9" r="3.5" fill="#e8c8cc"/>
-      <circle cx="3.5" cy="5.2" r="3.5" fill="#e8c8cc"/>
-      <circle cx="-3.5" cy="5.2" r="3.5" fill="#e8c8cc"/>
-      <circle cx="-5.7" cy="-1.9" r="3.5" fill="#e8c8cc"/>
-      <circle cx="0" cy="0" r="2" fill="#f5d0d4"/>
-    </g>
-    <g transform="translate(148,38) scale(0.6)" opacity="0.8">
-      <circle cx="0" cy="-6" r="3.5" fill="#e8c8cc"/>
-      <circle cx="5.7" cy="-1.9" r="3.5" fill="#e8c8cc"/>
-      <circle cx="3.5" cy="5.2" r="3.5" fill="#e8c8cc"/>
-      <circle cx="-3.5" cy="5.2" r="3.5" fill="#e8c8cc"/>
-      <circle cx="-5.7" cy="-1.9" r="3.5" fill="#e8c8cc"/>
-      <circle cx="0" cy="0" r="2" fill="#f5d0d4"/>
+  <!-- 背景枝 -->
+  <svg class="deco deco-tl" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,180 Q40,120 80,100 Q120,80 150,40 Q160,20 180,0" stroke="#d4af37" stroke-width="1.5" fill="none"/>
+    <circle cx="80" cy="100" r="5" fill="#d4af37"/>
+    <circle cx="120" cy="80" r="4" fill="#d4af37"/>
+    <circle cx="150" cy="40" r="5" fill="#d4af37"/>
+    <g transform="translate(78,96) scale(0.7)">
+      <circle cx="0" cy="-6" r="3.5" fill="#d4af37"/><circle cx="5.7" cy="-1.9" r="3.5" fill="#d4af37"/>
+      <circle cx="3.5" cy="5.2" r="3.5" fill="#d4af37"/><circle cx="-3.5" cy="5.2" r="3.5" fill="#d4af37"/>
+      <circle cx="-5.7" cy="-1.9" r="3.5" fill="#d4af37"/>
     </g>
   </svg>
-
-  <!-- 右下の枝装飾 -->
-  <svg class="seasonal-deco deco-bottom-right" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0,180 Q40,120 80,100 Q120,80 150,40 Q160,20 180,0" stroke="#8fa88f" stroke-width="1.5" fill="none"/>
-    <circle cx="80" cy="100" r="5" fill="#a3baa3"/>
-    <circle cx="120" cy="80" r="4" fill="#8fa88f"/>
-    <circle cx="150" cy="40" r="5" fill="#a3baa3"/>
-    <circle cx="60" cy="112" r="3" fill="#8fa88f"/>
+  <svg class="deco deco-br" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,180 Q40,120 80,100 Q120,80 150,40 Q160,20 180,0" stroke="#d4af37" stroke-width="1.5" fill="none"/>
+    <circle cx="80" cy="100" r="5" fill="#d4af37"/>
+    <circle cx="150" cy="40" r="5" fill="#d4af37"/>
   </svg>
-
-  <!-- 落ちる花びら（JS で動的生成） -->
 
   <div class="wrapper">
 
-    <div class="header-deco">
-      <div class="line"></div>
-      <div class="icon">✿</div>
-      <div class="line right"></div>
+    <!-- タイトル -->
+    <div class="title-area">
+      <div class="title-crest">— ANCESTRAL LEGEND —</div>
+      <h1 class="title-main">ルーツ・クエスト</h1>
+      <p class="title-sub">名字と出身地から、あなたのご先祖さまへ</p>
+      <div class="title-rule"><span class="title-rule-icon">✦</span></div>
     </div>
 
-    <div class="title-block">
-      <div class="title-en">Roots Quest</div>
-      <h1 class="title-ja">ルーツ<span class="title-dot">・</span>クエスト</h1>
-      <p class="title-sub">名字と出身地から、あなたのご先祖さまへ<br>歴史の旅へ、出発しましょう</p>
-    </div>
-
-    <div class="card">
-      <div class="card-deco">✿ ❀ ✿</div>
-
+    <!-- フォーム -->
+    <div class="form-card">
       <form id="rootsForm">
         <div class="form-group">
           <label>
-            <span class="label-ja">名字</span>
-            <span style="font-size:0.7rem; letter-spacing:0.15em; color:#b08a90;">FAMILY NAME</span>
+            <span class="lj">名字</span>
+            <span style="font-size:0.66rem;letter-spacing:0.15em;color:var(--sub)">FAMILY NAME</span>
           </label>
           <input type="text" id="myoji" name="myoji" placeholder="例：田中、鈴木、佐藤" required>
         </div>
-
         <div class="form-group">
           <label>
-            <span class="label-ja">出身地</span>
-            <span style="font-size:0.7rem; letter-spacing:0.15em; color:#b08a90;">BIRTHPLACE</span>
+            <span class="lj">出身地</span>
+            <span style="font-size:0.66rem;letter-spacing:0.15em;color:var(--sub)">BIRTHPLACE</span>
           </label>
           <input type="text" id="shusshinchi" name="shusshinchi" placeholder="例：京都府、薩摩、陸奥" required>
         </div>
-
-        <button type="submit" class="btn btn-primary">ご先祖さまを探る</button>
+        <button type="submit" class="btn-primary">ご先祖さまを探る</button>
       </form>
-
-      <div class="result" id="result">
-        <div class="result-label">✦ あなたのルーツ ✦</div>
-        <p id="resultText"></p>
-      </div>
-
-      <div class="character-result" id="characterResult"></div>
-
-      <div class="nameroot-result" id="namerootResult"></div>
-
-      <div class="divider">
-        <div class="line"></div>
-        <div class="text">または</div>
-        <div class="line"></div>
-      </div>
-
-      <button class="btn btn-secondary" onclick="alert('近日公開予定です')">歴史マップで探す</button>
     </div>
 
-    <div class="footer">
-      &copy; 2025 Roots Quest &nbsp;&#xFF5C;&nbsp; あなたの物語が、ここから始まる
+    <!-- ── 結果エリア ── -->
+    <div class="results-area" id="resultsArea">
+
+      <!-- 1. キャラクターカード -->
+      <div class="char-card" id="charCard">
+        <div class="char-bg-glow"></div>
+        <div class="loading-wrap" id="charLoading">
+          <div class="summon-ring"></div>
+          <p class="loading-text">ご先祖を召喚中...</p>
+        </div>
+        <div id="charContent" style="display:none"></div>
+      </div>
+
+      <!-- 2. 名字ルーツカード -->
+      <div class="info-card" id="namerootCard" style="display:none">
+        <div class="card-hdr">📖 名字のルーツ</div>
+        <div id="namerootContent">
+          <div class="loading-wrap" style="padding:12px 0">
+            <p class="loading-text">調査中...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. ストーリーカード -->
+      <div class="info-card" id="storyCard" style="display:none">
+        <div class="card-hdr">📜 ご先祖の物語</div>
+        <p class="story-text" id="resultText"></p>
+      </div>
+
     </div>
+
+    <div class="divider-or"><span>または</span></div>
+    <button class="btn-secondary" onclick="alert('近日公開予定です')">歴史マップで探す</button>
+    <div class="footer">&copy; 2025 Roots Quest ｜ あなたの物語が、ここから始まる</div>
 
   </div>
 
   <script>
-    // ── アニメ風キャラクターSVG生成 ──────────────────────────────
-    function ch({h, hf='', ha='', xtra='', c, s='#fde8d0', e='#2d1b0e', sad=false, blush=true}) {
-      const bl = blush
-        ? `<ellipse cx="21" cy="31" rx="3.5" ry="2" fill="#f4a0a0" opacity="0.35"/>
-           <ellipse cx="39" cy="31" rx="3.5" ry="2" fill="#f4a0a0" opacity="0.35"/>`
-        : '';
+    // ══════════════════════════════════════════
+    // アニメ風SVGキャラクター生成
+    // ══════════════════════════════════════════
+    function ch({h, hf='', ha='', xtra='', c, s='#fce8d8', e='#2d1b0e', sad=false, blush=true}) {
+      const bl = blush ? `
+        <ellipse cx="17" cy="40" rx="6.5" ry="3" fill="#f4a0b0" opacity="0.38"/>
+        <ellipse cx="43" cy="40" rx="6.5" ry="3" fill="#f4a0b0" opacity="0.38"/>` : '';
+
+      const mkEye = (cx) => `
+        <ellipse cx="${cx}" cy="32" rx="5.5" ry="6.5" fill="${e}"/>
+        <ellipse cx="${cx}" cy="30" rx="4.5" ry="4" fill="#4068b8" opacity="0.42"/>
+        <circle  cx="${cx-2}" cy="27.5" r="2.6" fill="white"/>
+        <circle  cx="${cx+2.5}" cy="35" r="1.2" fill="white" opacity="0.5"/>
+        <ellipse cx="${cx}" cy="25.5" rx="5.2" ry="1.9" fill="${e}" opacity="0.95"/>`;
+
+      const brows = sad ? `
+        <path d="M14,24 Q18,22.5 24,24.5" stroke="#3a2010" stroke-width="1.9" fill="none" stroke-linecap="round"/>
+        <path d="M36,24.5 Q42,22.5 46,24" stroke="#3a2010" stroke-width="1.9" fill="none" stroke-linecap="round"/>` : `
+        <path d="M14,24 Q18,21 24,23" stroke="#3a2010" stroke-width="1.9" fill="none" stroke-linecap="round"/>
+        <path d="M36,23 Q42,21 46,24" stroke="#3a2010" stroke-width="1.9" fill="none" stroke-linecap="round"/>`;
+
       const mouth = sad
-        ? `<path d="M26,36 Q30,33.5 34,36" stroke="#c07870" stroke-width="1.2" fill="none" stroke-linecap="round"/>`
-        : `<path d="M26,34.5 Q30,37.5 34,34.5" stroke="#c07870" stroke-width="1.2" fill="none" stroke-linecap="round"/>`;
-      return `<svg viewBox="0 0 60 66" xmlns="http://www.w3.org/2000/svg">
+        ? `<path d="M23,50 Q30,46.5 37,50" stroke="#c07870" stroke-width="1.5" fill="none" stroke-linecap="round"/>`
+        : `<path d="M23,50 Q30,54 37,50"  stroke="#c07870" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
+
+      return `<svg viewBox="0 0 60 82" xmlns="http://www.w3.org/2000/svg">
         ${h}
-        <circle cx="30" cy="28" r="15" fill="${s}"/>
-        ${bl}
-        <ellipse cx="24" cy="27" rx="2.8" ry="3.2" fill="${e}"/>
-        <circle cx="25.2" cy="25.8" r="1" fill="white"/>
-        <ellipse cx="36" cy="27" rx="2.8" ry="3.2" fill="${e}"/>
-        <circle cx="37.2" cy="25.8" r="1" fill="white"/>
-        <path d="M21,22.5 Q24,21 27,22.5" stroke="#5a3010" stroke-width="1.2" fill="none"/>
-        <path d="M33,22.5 Q36,21 39,22.5" stroke="#5a3010" stroke-width="1.2" fill="none"/>
-        <circle cx="30" cy="31" r="1" fill="#e8b89e"/>
-        ${mouth}
-        ${hf}${ha}${xtra}
-        <path d="M15,56 Q30,48 45,56 L46,66 L14,66 Z" fill="${c}"/>
-        <path d="M25,49 L30,55 L35,49" stroke="${c}" stroke-width="2.5" fill="none"/>
+        <path d="M16,18 Q16,4 30,4 Q44,4 44,18 L43,44 Q41,61 30,65 Q19,61 17,44 Z" fill="${s}"/>
+        ${bl}${mkEye(21)}${mkEye(39)}${brows}
+        <path d="M28,43 Q30,45.5 32,43" stroke="#d8a888" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+        ${mouth}${hf}${ha}${xtra}
+        <path d="M8,82 Q17,69 30,65 Q43,69 52,82 Z" fill="${c}"/>
+        <path d="M23,65 L30,74 L37,65" stroke="${c}" stroke-width="3.2" fill="none" stroke-linecap="round"/>
       </svg>`;
     }
-    const H = (col, ex='') => `<ellipse cx="30" cy="22" rx="16" ry="14" fill="${col}"/>${ex}`;
+
+    // ハイライト付きヘア（60x82 viewBox用）
+    const H = (col, ex='') => `
+      <path d="M14,19 Q14,2 30,1 Q46,2 46,19 L46,26 Q40,17 30,15 Q20,17 14,26 Z" fill="${col}"/>
+      <ellipse cx="30" cy="9" rx="16" ry="12" fill="${col}"/>
+      ${ex}
+      <ellipse cx="27" cy="6" rx="11" ry="5" fill="white" opacity="0.15"/>`;
+
+    // 長髪（サイドカーテン付き）
+    const HL = (col, ex='') => `
+      ${H(col, ex)}
+      <rect x="10" y="24" width="8" height="30" rx="4" fill="${col}"/>
+      <rect x="42" y="24" width="8" height="30" rx="4" fill="${col}"/>`;
 
     const CHARACTER_SVGS = {
       farmer: ch({
-        h: H('#8b5e3c', `<ellipse cx="30" cy="12" rx="6" ry="6" fill="#7a5030"/>`),
-        ha: `<rect x="13" y="19" width="34" height="5" rx="2.5" fill="#d49060" opacity="0.85"/>`,
+        h: H('#8b5e3c', `<ellipse cx="30" cy="11" rx="7" ry="7" fill="#7a5030"/>`),
+        ha: `<rect x="12" y="21" width="36" height="5" rx="2.5" fill="#d49060" opacity="0.88"/>`,
         c: '#a89060'
       }),
       warrior: ch({
-        h: H('#2d1b0e', `<rect x="26" y="8" width="8" height="14" rx="4" fill="#2d1b0e"/>
-          <rect x="36" y="16" width="11" height="4" rx="2" fill="#2d1b0e"/>`),
+        h: H('#2d1b0e', `<rect x="25" y="7" width="10" height="17" rx="5" fill="#2d1b0e"/>
+          <rect x="36" y="16" width="13" height="4" rx="2" fill="#2d1b0e"/>`),
         c: '#2d4a6b', blush: false
       }),
       merchant: ch({
-        h: H('#3d2810', `<ellipse cx="30" cy="13" rx="8" ry="7" fill="#3d2810"/>`),
-        ha: `<circle cx="30" cy="10" r="3.5" fill="#d4a820" opacity="0.9"/>
-          <circle cx="30" cy="10" r="1.8" fill="#f0d850"/>`,
+        h: H('#3d2810', `<ellipse cx="30" cy="10" rx="9" ry="8" fill="#3d2810"/>`),
+        ha: `<circle cx="30" cy="7" r="4" fill="#d4a820" opacity="0.92"/>
+          <circle cx="30" cy="7" r="2" fill="#f8e060"/>`,
         c: '#c97820'
       }),
       christian: ch({
         h: H('#c8b8d0'),
-        ha: `<line x1="30" y1="41" x2="30" y2="47" stroke="#8060a0" stroke-width="1.5"/>
-          <line x1="27" y1="43.5" x2="33" y2="43.5" stroke="#8060a0" stroke-width="1.5"/>`,
+        ha: `<line x1="30" y1="44" x2="30" y2="51" stroke="#9070b8" stroke-width="1.9"/>
+          <line x1="27" y1="47" x2="33" y2="47" stroke="#9070b8" stroke-width="1.9"/>`,
         c: '#7a60a0', e: '#5a3a80'
       }),
       craftsman: ch({
         h: H('#5c3a1e'),
-        ha: `<path d="M13,22 Q30,16 47,22 L47,27 Q30,23 13,27 Z" fill="#c08040" opacity="0.8"/>`,
+        ha: `<path d="M12,22 Q30,16 48,22 L48,27 Q30,21 12,27 Z" fill="#c08040" opacity="0.88"/>`,
         c: '#7a6850'
       }),
       seafarer: ch({
@@ -757,37 +527,35 @@
         c: '#3a7ab0', s: '#f0d0a8'
       }),
       scholar: ch({
-        h: H('#2d1b0e', `<rect x="25" y="9" width="10" height="13" rx="5" fill="#2d1b0e"/>
-          <ellipse cx="30" cy="9" rx="4" ry="3" fill="#3a2818"/>`),
-        ha: `<ellipse cx="23" cy="28" rx="4" ry="3" fill="none" stroke="#8a7060" stroke-width="1.2"/>
-          <ellipse cx="37" cy="28" rx="4" ry="3" fill="none" stroke="#8a7060" stroke-width="1.2"/>
-          <line x1="27" y1="28" x2="33" y2="28" stroke="#8a7060" stroke-width="1.2"/>`,
+        h: H('#2d1b0e', `<rect x="24" y="7" width="12" height="16" rx="6" fill="#2d1b0e"/>`),
+        ha: `<ellipse cx="21" cy="32" rx="4.8" ry="3.6" fill="none" stroke="#9a8070" stroke-width="1.4"/>
+          <ellipse cx="39" cy="32" rx="4.8" ry="3.6" fill="none" stroke="#9a8070" stroke-width="1.4"/>
+          <line x1="25.8" y1="32" x2="34.2" y2="32" stroke="#9a8070" stroke-width="1.4"/>`,
         c: '#8a8a78'
       }),
       castle_samurai: ch({
-        h: H('#1a1008', `<rect x="26" y="8" width="8" height="16" rx="4" fill="#1a1008"/>
-          <ellipse cx="30" cy="8" rx="5" ry="3.5" fill="#1a1008"/>`),
+        h: H('#1a1008', `<rect x="25" y="6" width="10" height="19" rx="5" fill="#1a1008"/>
+          <ellipse cx="30" cy="6" rx="6" ry="4" fill="#1a1008"/>`),
         c: '#1a2d5a', blush: false
       }),
       court_noble: ch({
-        h: `<ellipse cx="30" cy="26" rx="18" ry="20" fill="#5c3a20"/>
-          <rect x="12" y="24" width="7" height="24" rx="3.5" fill="#5c3a20"/>
-          <rect x="41" y="24" width="7" height="24" rx="3.5" fill="#5c3a20"/>
-          <ellipse cx="30" cy="16" rx="16" ry="10" fill="#5c3a20"/>`,
-        ha: `<circle cx="22" cy="18" r="3" fill="#e890a8" opacity="0.85"/>
-          <circle cx="38" cy="18" r="3" fill="#e890a8" opacity="0.85"/>`,
-        c: '#d4758a'
+        h: HL('#5c3a20'),
+        ha: `<circle cx="20" cy="17" r="4" fill="#e890a8" opacity="0.88"/>
+          <circle cx="40" cy="17" r="4" fill="#e890a8" opacity="0.88"/>`,
+        c: '#c46080'
       }),
       shugenja: ch({
-        h: `<ellipse cx="30" cy="20" rx="18" ry="16" fill="#3a2050"/>
-          <path d="M13,20 Q18,8 25,14 Q30,8 35,14 Q42,8 47,20" fill="#3a2050"/>`,
-        ha: `<path d="M30,13 L32,7 L34,12 L30,10 Z" fill="#e8c040" opacity="0.9"/>
-          <circle cx="30" cy="7" r="2" fill="#f0d050"/>`,
+        h: `<path d="M12,22 Q12,0 30,0 Q48,0 48,22 L48,27 Q42,17 30,15 Q18,17 12,27 Z" fill="#3a2050"/>
+          <ellipse cx="30" cy="9" rx="18" ry="13" fill="#3a2050"/>
+          <path d="M10,20 Q14,5 22,12 M50,20 Q46,5 38,12" stroke="#3a2050" stroke-width="4.5" fill="none"/>
+          <ellipse cx="27" cy="6" rx="11" ry="5" fill="white" opacity="0.1"/>`,
+        ha: `<path d="M30,13 L33,5.5 L36,12 L30,10 Z" fill="#f0c840" opacity="0.92"/>
+          <circle cx="30" cy="4.5" r="2.8" fill="#f8e060" opacity="0.95"/>`,
         c: '#e8e0d0', e: '#6a3a9a', blush: false
       }),
       performer: ch({
-        h: H('#c94878', `<ellipse cx="30" cy="10" rx="7" ry="8" fill="#c94878"/>
-          <path d="M37,13 Q44,9 47,16" stroke="#c94878" stroke-width="4" fill="none" stroke-linecap="round"/>`),
+        h: H('#c94878', `<ellipse cx="30" cy="9" rx="8" ry="9" fill="#c94878"/>
+          <path d="M37,11 Q46,6 50,14" stroke="#c94878" stroke-width="5" fill="none" stroke-linecap="round"/>`),
         c: '#c94878'
       }),
       hunter: ch({
@@ -795,107 +563,155 @@
         c: '#5a7040', blush: false, e: '#3a2808'
       }),
       blacksmith: ch({
-        h: `<ellipse cx="30" cy="20" rx="16" ry="13" fill="#c84028"/>
-          <path d="M14,20 Q20,10 30,14 Q40,10 46,20" fill="#c84028"/>`,
-        ha: `<ellipse cx="42" cy="23" rx="2" ry="3" fill="#90d0e8" opacity="0.7"/>`,
+        h: `<path d="M14,19 Q14,2 30,1 Q46,2 46,19 L46,26 Q40,15 30,13 Q20,15 14,26 Z" fill="#c84028"/>
+          <ellipse cx="30" cy="9" rx="16" ry="12" fill="#c84028"/>
+          <path d="M12,19 Q18,5 26,10 Q34,5 48,19" fill="#c84028"/>
+          <ellipse cx="27" cy="6" rx="11" ry="5" fill="white" opacity="0.12"/>`,
+        ha: `<ellipse cx="44" cy="27" rx="2.5" ry="3.5" fill="#90d0ea" opacity="0.78"/>`,
         c: '#c04028', s: '#f0c898'
       }),
       healer: ch({
         h: H('#6b8a40'),
-        ha: `<circle cx="39" cy="18" r="5" fill="#e8c0d0"/>
-          <circle cx="39" cy="18" r="3" fill="#e890a8"/>
-          <circle cx="39" cy="18" r="1.5" fill="#f8d0e0"/>`,
+        ha: `<circle cx="41" cy="17" r="6" fill="#f0c8d8"/>
+          <circle cx="41" cy="17" r="4" fill="#e890a8"/>
+          <circle cx="41" cy="17" r="2" fill="#f8d8e8"/>`,
         c: '#5a9060'
       }),
       trader: ch({
         h: H('#c89840'),
         c: '#3070a8'
       }),
-      ninja: `<svg viewBox="0 0 60 66" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="30" cy="26" rx="17" ry="15" fill="#1a1a2a"/>
-        <ellipse cx="30" cy="16" rx="15" ry="10" fill="#1a1a2a"/>
-        <rect x="14" y="28" width="32" height="14" rx="2" fill="#1a1a2a"/>
-        <ellipse cx="24" cy="25" rx="3.8" ry="4" fill="#7040b0"/>
-        <circle cx="25.5" cy="23.5" r="1.3" fill="white"/>
-        <ellipse cx="36" cy="25" rx="3.8" ry="4" fill="#7040b0"/>
-        <circle cx="37.5" cy="23.5" r="1.3" fill="white"/>
-        <path d="M15,56 Q30,48 45,56 L46,66 L14,66 Z" fill="#1a1a2a"/>
+      ninja: `<svg viewBox="0 0 60 82" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12,22 Q12,2 30,1 Q48,2 48,22 L47,47 Q45,62 30,65 Q15,62 13,47 Z" fill="#1a1a2a"/>
+        <ellipse cx="30" cy="9" rx="18" ry="13" fill="#1a1a2a"/>
+        <rect x="12" y="34" width="36" height="22" rx="4" fill="#1a1a2a"/>
+        <ellipse cx="21" cy="31" rx="5.5" ry="6.5" fill="#7040b8"/>
+        <ellipse cx="21" cy="29" rx="4.5" ry="4" fill="#5060c8" opacity="0.48"/>
+        <circle  cx="19"   cy="26.5" r="2.6" fill="white"/>
+        <circle  cx="23.5" cy="33.5" r="1.2" fill="white" opacity="0.5"/>
+        <ellipse cx="39" cy="31" rx="5.5" ry="6.5" fill="#7040b8"/>
+        <ellipse cx="39" cy="29" rx="4.5" ry="4" fill="#5060c8" opacity="0.48"/>
+        <circle  cx="37"   cy="26.5" r="2.6" fill="white"/>
+        <circle  cx="41.5" cy="33.5" r="1.2" fill="white" opacity="0.5"/>
+        <path d="M8,82 Q17,69 30,65 Q43,69 52,82 Z" fill="#1a1a2a"/>
+        <path d="M23,65 L30,74 L37,65" stroke="#1a1a2a" stroke-width="3.2" fill="none" stroke-linecap="round"/>
       </svg>`,
       weaver: ch({
-        h: H('#6a40a0', `<ellipse cx="30" cy="12" rx="8" ry="7" fill="#6a40a0"/>`),
-        ha: `<line x1="36" y1="14" x2="43" y2="9" stroke="#e8c0f0" stroke-width="1.5"/>
-          <circle cx="43" cy="8" r="2.5" fill="#d4a0e8"/>`,
+        h: H('#6a40a0', `<ellipse cx="30" cy="10" rx="9" ry="9" fill="#6a40a0"/>`),
+        ha: `<line x1="38" y1="12" x2="47" y2="6" stroke="#e8c0f8" stroke-width="1.9"/>
+          <circle cx="47" cy="5" r="3.2" fill="#d4a0e8"/>`,
         c: '#8060a8'
       }),
       mountain_folk: ch({
         h: H('#5c6a3a'),
-        ha: `<ellipse cx="16" cy="21" rx="5" ry="3.5" fill="#5a8a30" opacity="0.85"/>
-          <path d="M14,23 Q16,18 20,21" stroke="#3a6020" stroke-width="1.5" fill="none"/>`,
+        ha: `<ellipse cx="15" cy="21" rx="6.5" ry="4" fill="#5a8a30" opacity="0.92"/>
+          <path d="M12,23 Q15,17 21,20" stroke="#3a6020" stroke-width="1.9" fill="none"/>`,
         c: '#4a6a3a'
       }),
       tea_master: ch({
-        h: H('#2a2840', `<ellipse cx="30" cy="13" rx="9" ry="7" fill="#2a2840"/>
-          <ellipse cx="30" cy="11" rx="6" ry="4" fill="#3a3860"/>`),
-        ha: `<line x1="38" y1="15" x2="45" y2="10" stroke="#c0b880" stroke-width="1.5"/>
-          <circle cx="45" cy="9" r="2.2" fill="#d4c890"/>`,
+        h: H('#2a2840', `<ellipse cx="30" cy="11" rx="10" ry="9" fill="#2a2840"/>
+          <ellipse cx="30" cy="9" rx="7" ry="5.5" fill="#3a3860"/>`),
+        ha: `<line x1="38" y1="14" x2="47" y2="8" stroke="#d4c880" stroke-width="1.9"/>
+          <circle cx="47" cy="7" r="2.8" fill="#e0d890"/>`,
         c: '#5a5a7a'
       }),
       noble_exile: ch({
-        h: H('#4a2860', `<ellipse cx="30" cy="12" rx="10" ry="8" fill="#4a2860"/>
-          <rect x="12" y="24" width="6" height="20" rx="3" fill="#4a2860"/>
-          <rect x="42" y="24" width="6" height="20" rx="3" fill="#4a2860"/>`),
-        ha: `<path d="M22,15 L26,10 L30,14 L34,10 L38,15" stroke="#d4c040" stroke-width="1.5" fill="none"/>`,
+        h: HL('#4a2860', `<ellipse cx="30" cy="11" rx="11" ry="9" fill="#4a2860"/>`),
+        ha: `<path d="M20,16 L25,9.5 L30,14 L35,9.5 L40,16" stroke="#d4c040" stroke-width="1.9" fill="none" stroke-linecap="round"/>`,
         c: '#6a3a7a', e: '#3a2040', sad: true, blush: false
       }),
     };
 
-    // ── フォーム送信 ──────────────────────────────────────────────
+    // ══════════════════════════════════════════
+    // パーティクル演出
+    // ══════════════════════════════════════════
+    function launchSparkles(el, count) {
+      const r = el.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 3;
+      const colors = ['#f0d060','#d4af37','#ffffff','#f5c842','#ffe88a','#ffd700'];
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.PI * 2 * i / count) + (Math.random() - 0.5) * 0.55;
+        const dist  = 65 + Math.random() * 140;
+        const size  = 2.5 + Math.random() * 5.5;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const dur   = 0.5 + Math.random() * 0.45;
+        const s = document.createElement('div');
+        s.style.cssText = `position:fixed;z-index:9999;
+          left:${cx}px;top:${cy}px;
+          width:${size}px;height:${size}px;border-radius:50%;
+          background:${color};box-shadow:0 0 ${size*2.5}px ${color};
+          pointer-events:none;transform:translate(-50%,-50%);
+          animation:sparkFly ${dur}s ease-out forwards;`;
+        s.style.setProperty('--dx', Math.cos(angle)*dist+'px');
+        s.style.setProperty('--dy', Math.sin(angle)*dist+'px');
+        document.body.appendChild(s);
+        setTimeout(() => s.remove(), dur*1000 + 120);
+      }
+    }
+
+    function launchShockwave(el) {
+      const r = el.getBoundingClientRect();
+      const d = document.createElement('div');
+      d.style.cssText = `position:fixed;z-index:9998;
+        left:${r.left+r.width/2}px;top:${r.top+r.height/3}px;
+        width:0;height:0;border-radius:50%;
+        border:3px solid rgba(212,175,55,0.85);
+        pointer-events:none;transform:translate(-50%,-50%);
+        animation:shockwave 0.65s ease-out forwards;`;
+      document.body.appendChild(d);
+      setTimeout(() => d.remove(), 780);
+    }
+
+    // ══════════════════════════════════════════
+    // フォーム送信
+    // ══════════════════════════════════════════
     document.getElementById('rootsForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-
-      const myoji = document.getElementById('myoji').value;
+      const myoji       = document.getElementById('myoji').value;
       const shusshinchi = document.getElementById('shusshinchi').value;
-      const submitBtn = this.querySelector('button[type="submit"]');
-      const resultDiv = document.getElementById('result');
-      const resultText = document.getElementById('resultText');
-      const characterDiv = document.getElementById('characterResult');
-      const namerootDiv = document.getElementById('namerootResult');
+      const submitBtn   = this.querySelector('button[type="submit"]');
+      const resultsArea = document.getElementById('resultsArea');
+      const charCard    = document.getElementById('charCard');
+      const storyCard   = document.getElementById('storyCard');
+      const namerootCard= document.getElementById('namerootCard');
+      const resultText  = document.getElementById('resultText');
 
       submitBtn.disabled = true;
-      submitBtn.textContent = '探索中...';
-      resultText.innerHTML = `<span class="highlight">「${myoji}」</span> 家のルーツを辿っています...`;
-      resultDiv.style.display = 'block';
-      characterDiv.style.display = 'none';
-      characterDiv.className = 'character-result';
-      namerootDiv.style.display = 'none';
-      resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      submitBtn.textContent = '召喚中...';
+      document.getElementById('charLoading').innerHTML =
+        '<div class="summon-ring"></div><p class="loading-text">ご先祖を召喚中...</p>';
+      document.getElementById('charLoading').style.display = 'block';
+      document.getElementById('charContent').style.display = 'none';
+      charCard.className = 'char-card';
+      document.getElementById('namerootContent').innerHTML =
+        '<div class="loading-wrap" style="padding:10px 0"><p class="loading-text">調査中...</p></div>';
+      resultText.textContent = '';
+      resultsArea.style.display   = 'block';
+      storyCard.style.display     = 'block';
+      namerootCard.style.display  = 'block';
+      charCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
       let story = '';
-
       try {
-        const response = await fetch('/api/story', {
+        const res = await fetch('/api/story', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ myoji, shusshinchi }),
         });
+        if (res.status === 429) throw new Error('rate_limit');
+        if (!res.ok) throw new Error('error');
 
-        if (response.status === 429) throw new Error('rate_limit');
-        if (!response.ok) throw new Error('サーバーエラー');
-
-        const reader = response.body.getReader();
+        const reader  = res.body.getReader();
         const decoder = new TextDecoder();
-        resultText.innerHTML = '';
-
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          const chunk = decoder.decode(value, { stream: true });
-          for (const line of chunk.split('\n')) {
-            if (line.startsWith('data: ')) {
-              const data = line.slice(6);
-              if (data === '[DONE]') break;
-              try { const { text } = JSON.parse(data); story += text; resultText.textContent = story; } catch {}
-            }
+          for (const line of decoder.decode(value, { stream: true }).split('\n')) {
+            if (!line.startsWith('data: ')) continue;
+            const d = line.slice(6);
+            if (d === '[DONE]') break;
+            try { const { text } = JSON.parse(d); story += text; resultText.textContent = story; } catch {}
           }
         }
 
@@ -909,139 +725,121 @@
         const msg = err.message === 'rate_limit'
           ? 'アクセスが集中しています。しばらくしてからお試しください。'
           : 'エラーが発生しました。もう一度お試しください。';
-        resultText.innerHTML = `<span style="color:#c9a8b0">${msg}</span>`;
+        resultText.innerHTML = `<span style="color:rgba(200,160,110,0.7)">${msg}</span>`;
+        document.getElementById('charLoading').innerHTML = `<p class="loading-text" style="color:rgba(200,160,110,0.7)">${msg}</p>`;
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'ご先祖さまを探る';
       }
     });
 
-    // ── キャラクター ──────────────────────────────────────────────
+    // ══════════════════════════════════════════
+    // キャラクター
+    // ══════════════════════════════════════════
     async function fetchCharacter(myoji, shusshinchi, story) {
-      const div = document.getElementById('characterResult');
-      div.className = 'character-result';
-      div.innerHTML = '<div class="character-loading">✦ ご先祖キャラクター霊視中... ✦</div>';
-      div.style.display = 'block';
-      div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       try {
         const res = await fetch('/api/character', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ myoji, shusshinchi, story }),
         });
-        if (!res.ok) throw new Error('failed');
+        if (!res.ok) throw new Error();
         renderCharacter(await res.json());
       } catch {
-        div.innerHTML = '<div class="character-loading" style="color:#c9a8b0">キャラクター判定に失敗しました</div>';
+        document.getElementById('charLoading').innerHTML =
+          '<p class="loading-text" style="color:rgba(200,160,110,0.7)">キャラクター判定に失敗しました</p>';
       }
     }
 
     function renderCharacter(data) {
-      const div = document.getElementById('characterResult');
-      div.className = 'character-result' + (data.isRare ? ' rare' : '');
-      const svgIcon = CHARACTER_SVGS[data.key] || CHARACTER_SVGS.farmer;
-      div.innerHTML = `
-        ${data.isRare ? '<div class="rare-badge">✨ RARE CHARACTER ✨</div>' : ''}
-        <div class="character-label">✦ ご先祖キャラクター ✦</div>
-        <div class="character-emoji-wrap">${svgIcon}</div>
-        <div class="character-name">${data.ancestorName}</div>
-        <div class="character-type-badge">${data.typeName}｜${data.typeDesc}</div>
-        <div class="character-divider"><div class="cdline"></div><div class="cdicon">❧</div><div class="cdline"></div></div>
-        <p class="character-feature">${data.feature}</p>
-        <div class="character-comment-wrap">
-          <div class="character-comment-label">ご先祖さまより</div>
-          <p class="character-comment">「${data.comment}」</p>
+      const card    = document.getElementById('charCard');
+      const loading = document.getElementById('charLoading');
+      const content = document.getElementById('charContent');
+      const svg     = CHARACTER_SVGS[data.key] || CHARACTER_SVGS.farmer;
+
+      card.className = 'char-card' + (data.isRare ? ' rare' : '');
+      content.innerHTML = `
+        ${data.isRare ? '<div class="rare-badge">✨ RARE CHARACTER ✨</div><br>' : ''}
+        <div class="char-sec-label">✦ ご先祖キャラクター ✦</div>
+        <div class="char-icon-wrap">
+          ${svg}
+          <div class="char-shadow"></div>
+        </div>
+        <div class="char-name">${data.ancestorName}</div>
+        <div class="char-type-badge">${data.typeName}｜${data.typeDesc}</div>
+        <div class="char-divider"><div class="cl"></div><div class="ci">❧</div><div class="cl"></div></div>
+        <p class="char-feature">${data.feature}</p>
+        <div class="speech-bubble">
+          <div class="speech-lbl">ご先祖さまより</div>
+          <p class="speech-text">${data.comment}</p>
         </div>
       `;
-      div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      loading.style.display = 'none';
+      content.style.display = 'block';
+      card.classList.add('revealed');
+
+      setTimeout(() => {
+        launchSparkles(card, data.isRare ? 42 : 24);
+        if (data.isRare) launchShockwave(card);
+      }, 120);
     }
 
-    // ── 名字ルーツ ────────────────────────────────────────────────
+    // ══════════════════════════════════════════
+    // 名字ルーツ
+    // ══════════════════════════════════════════
     async function fetchNameroot(myoji) {
-      const div = document.getElementById('namerootResult');
-      div.innerHTML = '<div class="character-loading" style="color:#6a9a6a">✦ 名字のルーツを調査中... ✦</div>';
-      div.style.display = 'block';
       try {
         const res = await fetch('/api/nameroot', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ myoji }),
         });
-        if (!res.ok) throw new Error('failed');
+        if (!res.ok) throw new Error();
         renderNameroot(myoji, await res.json());
       } catch {
-        div.innerHTML = '<div class="character-loading" style="color:#c9a8b0">名字ルーツの取得に失敗しました</div>';
+        document.getElementById('namerootContent').innerHTML =
+          '<p style="font-size:0.8rem;color:var(--sub)">取得に失敗しました</p>';
       }
     }
 
     function renderNameroot(myoji, data) {
-      const div = document.getElementById('namerootResult');
-      div.innerHTML = `
-        <div class="nameroot-label">✦ あなたの名字のルーツ ✦</div>
-        <div class="nameroot-title">「${myoji}」という名字</div>
-        <div class="nameroot-grid">
-          <div class="nameroot-item">
-            <div class="nameroot-item-label">発祥・分布地域</div>
-            <div class="nameroot-item-value">${data.birthplace}</div>
-          </div>
-          <div class="nameroot-item">
-            <div class="nameroot-item-label">広まった時代</div>
-            <div class="nameroot-item-value">${data.era}</div>
-          </div>
-        </div>
-        <div class="nameroot-desc">
-          <div class="nameroot-desc-label">由来</div>
-          <p class="nameroot-desc-text">${data.origin}</p>
-        </div>
-        <div class="nameroot-meaning-wrap">
-          <div class="nameroot-meaning-label">名字の意味</div>
-          <p class="nameroot-meaning-text">${data.meaning}</p>
-        </div>
+      document.getElementById('namerootContent').innerHTML = `
+        <p style="font-family:'Shippori Mincho',serif;font-size:1.05rem;font-weight:700;
+          color:var(--text);letter-spacing:0.15em;margin-bottom:12px;text-align:center">
+          「${myoji}」という名字
+        </p>
+        <ul class="nr-list">
+          <li><span class="nr-icon">📍</span><span class="nr-lbl">発祥</span><span class="nr-val">${data.birthplace}</span></li>
+          <li><span class="nr-icon">⏳</span><span class="nr-lbl">時代</span><span class="nr-val">${data.era}</span></li>
+          <li><span class="nr-icon">📜</span><span class="nr-lbl">由来</span><span class="nr-val">${data.origin}</span></li>
+          <li><span class="nr-icon">✨</span><span class="nr-lbl">意味</span><span class="nr-val">${data.meaning}</span></li>
+        </ul>
       `;
     }
 
-    // 花びらアニメーション
+    // ══════════════════════════════════════════
+    // 金の花びら
+    // ══════════════════════════════════════════
     function createPetal() {
-      const petal = document.createElement('div');
-      petal.className = 'petal';
-
-      const size = Math.random() * 10 + 8;
+      const p = document.createElement('div');
+      p.className = 'petal';
+      const size = Math.random() * 10 + 7;
       const left = Math.random() * 100;
-      const duration = Math.random() * 8 + 8;
-      const delay = Math.random() * 5;
-
-      // 桜の花びら（SVG）
-      petal.innerHTML = `
-        <svg width="${size}" height="${size}" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-          <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,180,0.7)" transform="rotate(0 10 10)"/>
-          <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,180,0.7)" transform="rotate(72 10 10)"/>
-          <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,180,0.7)" transform="rotate(144 10 10)"/>
-          <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,180,0.7)" transform="rotate(216 10 10)"/>
-          <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,180,0.7)" transform="rotate(288 10 10)"/>
-        </svg>`;
-
-      petal.style.cssText = `
-        position: fixed;
-        left: ${left}vw;
-        top: -30px;
-        pointer-events: none;
-        animation: fall ${duration}s ${delay}s linear infinite;
-        z-index: 0;
-      `;
-
-      document.body.appendChild(petal);
-
-      // 一定時間後に削除して再生成
-      setTimeout(() => {
-        petal.remove();
-        createPetal();
-      }, (duration + delay) * 1000);
+      const dur  = Math.random() * 8 + 10;
+      const delay= Math.random() * 5;
+      p.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(212,175,55,0.42)" transform="rotate(0 10 10)"/>
+        <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(212,175,55,0.42)" transform="rotate(72 10 10)"/>
+        <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(212,175,55,0.42)" transform="rotate(144 10 10)"/>
+        <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(212,175,55,0.42)" transform="rotate(216 10 10)"/>
+        <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(212,175,55,0.42)" transform="rotate(288 10 10)"/>
+      </svg>`;
+      p.style.cssText = `position:fixed;left:${left}vw;top:-30px;pointer-events:none;
+        animation:fall ${dur}s ${delay}s linear infinite;z-index:0;`;
+      document.body.appendChild(p);
+      setTimeout(() => { p.remove(); createPetal(); }, (dur + delay) * 1000);
     }
-
-    // 花びらを12枚生成
-    for (let i = 0; i < 12; i++) {
-      setTimeout(() => createPetal(), i * 600);
-    }
+    for (let i = 0; i < 10; i++) setTimeout(() => createPetal(), i * 700);
   </script>
 </body>
 </html>
