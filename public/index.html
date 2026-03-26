@@ -204,6 +204,7 @@
       animation:float 3.5s ease-in-out infinite;
     }
     .char-icon-wrap svg { width:100%; height:100%; }
+    .char-img { width:100%; height:100%; object-fit:contain; display:block; }
     .char-shadow {
       position:absolute; bottom:-10px; left:50%; transform:translateX(-50%);
       width:100px; height:22px; border-radius:50%;
@@ -499,331 +500,29 @@
 
   <script>
     // ══════════════════════════════════════════
-    // 守護獣 SVG（すみっコぐらし / ちいかわ風・かわいい動物）
+    // 守護獣画像マップ（PNG画像 → public/images/characters/）
     // ══════════════════════════════════════════
-
-    // ══════════════════════════════════════════
-    // 守護獣SVG（素材ラボ風・太輪郭・ぽんぽん目）
-    // ══════════════════════════════════════════
-    const SK  = 'stroke="#5D4037" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"';
-    function gEye(cx,cy,col){col=col||'#2a1208';return'<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="'+col+'" '+SK+'/><circle cx="'+(cx-1.3)+'" cy="'+(cy-1.3)+'" r="1.3" fill="white"/>';}
-    function gNose(cx,cy){return'<circle cx="'+(cx||50)+'" cy="'+(cy||89)+'" r="2.2" fill="#5D4037"/>';}
-    function gMouth(cx,cy){cx=cx||50;cy=cy||95;return'<path d="M'+(cx-8)+','+cy+' Q'+(cx-4)+','+(cy+5)+' '+cx+','+cy+' Q'+(cx+4)+','+(cy+5)+' '+(cx+8)+','+cy+'" fill="none" stroke="#5D4037" stroke-width="2.2" stroke-linecap="round"/>';}
-    function gBlush(lx,rx,y){lx=lx||36;rx=rx||64;y=y||87;return'<ellipse cx="'+lx+'" cy="'+y+'" rx="7" ry="4" fill="#ffb0c0" opacity="0.5"/><ellipse cx="'+rx+'" cy="'+y+'" rx="7" ry="4" fill="#ffb0c0" opacity="0.5"/>';}
-    function gBody(c){return'<ellipse cx="50" cy="68" rx="28" ry="32" fill="'+c+'" '+SK+'/>';}
-    function gFace(ey,lx,rx,ec){ey=ey||83;lx=lx||40;rx=rx||60;return gBlush()+gEye(lx,ey,ec)+gEye(rx,ey,ec)+gNose()+gMouth();}
-    function wSVG(c){return'<svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">'+c+'</svg>';}
-
-    const CHARACTER_SVGS = {
-      // ①武士：柴犬（兜）
-      warrior: wSVG(
-        '<ellipse cx="28" cy="34" rx="11" ry="14" fill="#e8a060" '+SK+' transform="rotate(-25,28,34)"/>'
-        +'<ellipse cx="28" cy="34" rx="6.5" ry="9" fill="#f8c898" transform="rotate(-25,28,34)"/>'
-        +'<ellipse cx="72" cy="34" rx="11" ry="14" fill="#e8a060" '+SK+' transform="rotate(25,72,34)"/>'
-        +'<ellipse cx="72" cy="34" rx="6.5" ry="9" fill="#f8c898" transform="rotate(25,72,34)"/>'
-        +gBody('#e8a060')
-        +'<ellipse cx="50" cy="90" rx="13" ry="9" fill="#f8e0c0" '+SK+'/>'
-        +'<path d="M24,52 Q24,34 50,28 Q76,34 76,52 L70,52 Q68,38 50,34 Q32,38 30,52 Z" fill="#4a5880" '+SK+'/>'
-        +'<rect x="24" y="50" width="52" height="7" rx="3.5" fill="#3a4870" '+SK+'/>'
-        +'<path d="M24,52 L20,63 Q22,65 26,61 L30,52" fill="#3a4870" '+SK+'/>'
-        +'<path d="M76,52 L80,63 Q78,65 74,61 L70,52" fill="#3a4870" '+SK+'/>'
-        +'<path d="M46,28 L50,18 L54,28" fill="#d4a820" '+SK+'/>'
-        +'<circle cx="50" cy="17" r="4" fill="#f0c830" '+SK+'/>'
-        +gFace(83)
-      ),
-      // ②忍者：黒猫（頭巾）
-      ninja: wSVG(
-        '<polygon points="26,42 20,22 36,36" fill="#1a1a2a" '+SK+'/>'
-        +'<polygon points="27,41 22,26 34,35" fill="#3a3060"/>'
-        +'<polygon points="74,42 80,22 64,36" fill="#1a1a2a" '+SK+'/>'
-        +'<polygon points="73,41 78,26 66,35" fill="#3a3060"/>'
-        +gBody('#2c2c3c')
-        +'<path d="M22,54 Q22,32 50,26 Q78,32 78,54" fill="#1a1a2a" '+SK+'/>'
-        +'<rect x="18" y="50" width="64" height="8" rx="4" fill="#141420" '+SK+'/>'
-        +gBlush(36,64,87)+gEye(40,83,'#b0d8ff')+gEye(60,83,'#b0d8ff')+gNose()+gMouth()
-      ),
-      // ③貴族：白うさぎ（冠）
-      court_noble: wSVG(
-        '<ellipse cx="34" cy="14" rx="9" ry="22" fill="#f0f0f8" '+SK+'/>'
-        +'<ellipse cx="34" cy="14" rx="5.5" ry="17" fill="#ffb8d0" opacity="0.8"/>'
-        +'<ellipse cx="66" cy="14" rx="9" ry="22" fill="#f0f0f8" '+SK+'/>'
-        +'<ellipse cx="66" cy="14" rx="5.5" ry="17" fill="#ffb8d0" opacity="0.8"/>'
-        +gBody('#f0f0f8')
-        +'<rect x="24" y="48" width="52" height="7" rx="3.5" fill="#c8a020" '+SK+'/>'
-        +'<path d="M28,48 L30,34 L36,44 L42,30 L50,42 L58,30 L64,44 L70,34 L72,48" fill="#d4ac28" '+SK+'/>'
-        +'<circle cx="50" cy="30" r="4" fill="#f08090" '+SK+'/>'
-        +'<circle cx="36" cy="37" r="2.5" fill="#80d0e8" '+SK+'/>'
-        +'<circle cx="64" cy="37" r="2.5" fill="#80d0e8" '+SK+'/>'
-        +gFace(83)
-      ),
-      // ④農民：タヌキ（麦わら帽子）
-      farmer: wSVG(
-        '<circle cx="28" cy="34" r="12" fill="#c0956a" '+SK+'/>'
-        +'<circle cx="28" cy="34" r="7" fill="#2a1808" opacity="0.7"/>'
-        +'<circle cx="72" cy="34" r="12" fill="#c0956a" '+SK+'/>'
-        +'<circle cx="72" cy="34" r="7" fill="#2a1808" opacity="0.7"/>'
-        +gBody('#c0956a')
-        +'<ellipse cx="40" cy="83" rx="9" ry="7" fill="#2a1808" opacity="0.22"/>'
-        +'<ellipse cx="60" cy="83" rx="9" ry="7" fill="#2a1808" opacity="0.22"/>'
-        +'<ellipse cx="50" cy="50" rx="34" ry="6" fill="#d4a820" '+SK+'/>'
-        +'<path d="M26,50 Q28,40 50,36 Q72,40 74,50" fill="#e8c030" '+SK+'/>'
-        +'<ellipse cx="50" cy="36" rx="16" ry="5" fill="#d4a820" '+SK+'/>'
-        +gFace(83)
-      ),
-      // ⑤修験者：シカ（角・宝珠）
-      shugenja: wSVG(
-        '<ellipse cx="26" cy="40" rx="8" ry="13" fill="#d4a878" '+SK+' transform="rotate(-30,26,40)"/>'
-        +'<ellipse cx="26" cy="40" rx="5" ry="8" fill="#f8c8a0" transform="rotate(-30,26,40)"/>'
-        +'<ellipse cx="74" cy="40" rx="8" ry="13" fill="#d4a878" '+SK+' transform="rotate(30,74,40)"/>'
-        +'<ellipse cx="74" cy="40" rx="5" ry="8" fill="#f8c8a0" transform="rotate(30,74,40)"/>'
-        +'<path d="M34,40 Q28,28 22,20 Q18,14 16,10" stroke="#a08050" stroke-width="3" fill="none" stroke-linecap="round" '+SK+'/>'
-        +'<path d="M24,22 Q18,18 14,22" stroke="#a08050" stroke-width="2.5" fill="none" stroke-linecap="round"/>'
-        +'<path d="M66,40 Q72,28 78,20 Q82,14 84,10" stroke="#a08050" stroke-width="3" fill="none" stroke-linecap="round" '+SK+'/>'
-        +'<path d="M76,22 Q82,18 86,22" stroke="#a08050" stroke-width="2.5" fill="none" stroke-linecap="round"/>'
-        +gBody('#d4a878')
-        +'<circle cx="42" cy="70" r="4" fill="white" opacity="0.55"/>'
-        +'<circle cx="56" cy="63" r="3" fill="white" opacity="0.55"/>'
-        +'<circle cx="50" cy="78" r="3" fill="white" opacity="0.55"/>'
-        +'<circle cx="72" cy="98" r="11" fill="rgba(160,210,255,0.85)" '+SK+'/>'
-        +'<circle cx="68" cy="94" r="4.5" fill="white" opacity="0.7"/>'
-        +gFace(83)
-      ),
-      // ⑥職人：三毛猫（鉢巻・ハンマー）
-      craftsman: wSVG(
-        '<polygon points="28,40 20,18 40,34" fill="#f5deb3" '+SK+'/>'
-        +'<polygon points="29,39 23,22 37,33" fill="#f8c060"/>'
-        +'<polygon points="72,40 80,18 60,34" fill="#f5deb3" '+SK+'/>'
-        +'<polygon points="71,39 77,22 63,33" fill="#1a1a1a"/>'
-        +gBody('#f5deb3')
-        +'<ellipse cx="38" cy="56" rx="10" ry="8" fill="#f8a020" opacity="0.7"/>'
-        +'<ellipse cx="64" cy="70" rx="8" ry="11" fill="#1a1a1a" opacity="0.5"/>'
-        +'<rect x="22" y="50" width="56" height="8" rx="4" fill="#f04040" '+SK+'/>'
-        +'<path d="M78,54 Q84,50 87,54 Q84,60 78,58" fill="#f04040" '+SK+'/>'
-        +'<rect x="72" y="84" width="16" height="8" rx="3" fill="#6a4030" '+SK+'/>'
-        +'<rect x="78" y="89" width="5" height="22" rx="2.5" fill="#8b5e3c" '+SK+'/>'
-        +gFace(83)
-      ),
-      // ⑦商人：パンダ（そろばん）
-      merchant: wSVG(
-        '<circle cx="28" cy="32" r="14" fill="#1a1a1a" '+SK+'/>'
-        +'<circle cx="72" cy="32" r="14" fill="#1a1a1a" '+SK+'/>'
-        +gBody('#f0f0f0')
-        +'<ellipse cx="40" cy="83" rx="11" ry="9.5" fill="#1a1a1a" opacity="0.75"/>'
-        +'<ellipse cx="60" cy="83" rx="11" ry="9.5" fill="#1a1a1a" opacity="0.75"/>'
-        +'<rect x="62" y="85" width="22" height="16" rx="3" fill="#8b5e3c" '+SK+'/>'
-        +'<line x1="67" y1="85" x2="67" y2="101" stroke="#5D4037" stroke-width="1.5"/>'
-        +'<line x1="72" y1="85" x2="72" y2="101" stroke="#5D4037" stroke-width="1.5"/>'
-        +'<line x1="77" y1="85" x2="77" y2="101" stroke="#5D4037" stroke-width="1.5"/>'
-        +'<circle cx="67" cy="90" r="2.5" fill="#d4a820" '+SK+'/>'
-        +'<circle cx="72" cy="93" r="2.5" fill="#d4a820" '+SK+'/>'
-        +'<circle cx="77" cy="90" r="2.5" fill="#d4a820" '+SK+'/>'
-        +gBlush(26,74,84)+gEye(40,83)+gEye(60,83)+gNose()+gMouth()
-      ),
-      // ⑧漁師：ペンギン（笠・魚）
-      seafarer: wSVG(
-        gBody('#1a2a40')
-        +'<ellipse cx="50" cy="72" rx="18" ry="24" fill="#f0f0f8" stroke="#5D4037" stroke-width="1.5"/>'
-        +'<ellipse cx="18" cy="72" rx="9" ry="21" fill="#1a2a40" '+SK+' transform="rotate(15,18,72)"/>'
-        +'<ellipse cx="82" cy="72" rx="9" ry="21" fill="#1a2a40" '+SK+' transform="rotate(-15,82,72)"/>'
-        +'<ellipse cx="50" cy="50" rx="32" ry="6" fill="#c8a020" '+SK+'/>'
-        +'<path d="M26,50 Q28,42 50,38 Q72,42 74,50" fill="#dab828" '+SK+'/>'
-        +'<ellipse cx="80" cy="96" rx="11" ry="5.5" fill="#70c8d0" '+SK+' transform="rotate(-20,80,96)"/>'
-        +'<path d="M87,90 L94,86 L92,94 Z" fill="#70c8d0" '+SK+' transform="rotate(-20,80,96)"/>'
-        +gBlush(40,60,87)+gEye(40,83)+gEye(60,83)
-        +'<ellipse cx="50" cy="91" rx="4" ry="3" fill="#e8a020" '+SK+'/>'
-        +gMouth()
-      ),
-      // ⑨僧侶：ハムスター（数珠）
-      scholar: wSVG(
-        '<circle cx="26" cy="38" r="11" fill="#f0c878" '+SK+'/>'
-        +'<circle cx="26" cy="38" r="6.5" fill="#ffaaa0" opacity="0.75"/>'
-        +'<circle cx="74" cy="38" r="11" fill="#f0c878" '+SK+'/>'
-        +'<circle cx="74" cy="38" r="6.5" fill="#ffaaa0" opacity="0.75"/>'
-        +gBody('#f0c878')
-        +'<ellipse cx="30" cy="83" rx="14" ry="10" fill="#f8d898" opacity="0.65"/>'
-        +'<ellipse cx="70" cy="83" rx="14" ry="10" fill="#f8d898" opacity="0.65"/>'
-        +'<path d="M30,60 Q50,56 70,60" fill="none" stroke="#a04020" stroke-width="2" stroke-linecap="round" opacity="0.5"/>'
-        +'<path d="M32,79 Q50,90 68,79" fill="none" stroke="#8b2020" stroke-width="1.5"/>'
-        +'<circle cx="34" cy="80" r="3" fill="#8b2020" stroke="#5D4037" stroke-width="1.5"/>'
-        +'<circle cx="39" cy="83" r="3" fill="#8b2020" stroke="#5D4037" stroke-width="1.5"/>'
-        +'<circle cx="44" cy="86" r="3" fill="#8b2020" stroke="#5D4037" stroke-width="1.5"/>'
-        +'<circle cx="50" cy="87" r="3" fill="#8b2020" stroke="#5D4037" stroke-width="1.5"/>'
-        +'<circle cx="56" cy="86" r="3" fill="#8b2020" stroke="#5D4037" stroke-width="1.5"/>'
-        +'<circle cx="61" cy="83" r="3" fill="#8b2020" stroke="#5D4037" stroke-width="1.5"/>'
-        +'<circle cx="66" cy="80" r="3" fill="#8b2020" stroke="#5D4037" stroke-width="1.5"/>'
-        +gFace(83)
-      ),
-      // ⑩陰陽師：キツネ（烏帽子）
-      healer: wSVG(
-        '<polygon points="28,38 20,14 42,32" fill="#e09040" '+SK+'/>'
-        +'<polygon points="29,37 23,18 38,31" fill="#f8c080"/>'
-        +'<polygon points="72,38 80,14 58,32" fill="#e09040" '+SK+'/>'
-        +'<polygon points="71,37 77,18 62,31" fill="#f8c080"/>'
-        +gBody('#e09040')
-        +'<ellipse cx="50" cy="91" rx="14" ry="9" fill="#f8e8d0" stroke="#5D4037" stroke-width="1.5"/>'
-        +'<path d="M28,50 Q28,28 50,22 Q72,28 72,50" fill="#1a1a1a" '+SK+'/>'
-        +'<path d="M46,22 L50,8 L54,22" fill="#1a1a1a" '+SK+'/>'
-        +'<circle cx="50" cy="70" r="7" fill="white" opacity="0.22" stroke="#d0d0d0" stroke-width="1"/>'
-        +'<circle cx="50" cy="67" r="2.5" fill="#1a1a1a" opacity="0.4"/>'
-        +'<circle cx="50" cy="73" r="2.5" fill="white" opacity="0.5"/>'
-        +gFace(83)
-      ),
-      // ⑪マタギ：クマ（鉢巻・弓）
-      hunter: wSVG(
-        '<circle cx="26" cy="34" r="13" fill="#8b5e3c" '+SK+'/>'
-        +'<circle cx="26" cy="34" r="8" fill="#a07050" opacity="0.65"/>'
-        +'<circle cx="74" cy="34" r="13" fill="#8b5e3c" '+SK+'/>'
-        +'<circle cx="74" cy="34" r="8" fill="#a07050" opacity="0.65"/>'
-        +gBody('#8b5e3c')
-        +'<rect x="22" y="50" width="56" height="7" rx="3.5" fill="#f0f0c0" '+SK+'/>'
-        +'<path d="M78,53 Q85,50 88,53 Q85,59 78,57" fill="#f0f0c0" '+SK+'/>'
-        +'<path d="M76,50 Q84,68 76,86" stroke="#8b5e3c" stroke-width="3.5" fill="none" stroke-linecap="round" '+SK+'/>'
-        +'<path d="M76,50 L76,86" stroke="#d0c090" stroke-width="1.2" stroke-linecap="round"/>'
-        +gFace(83)
-      ),
-      // ⑫飛脚：リス（鉢巻・文箱）
-      trader: wSVG(
-        '<circle cx="26" cy="32" r="14" fill="#d2691e" '+SK+'/>'
-        +'<circle cx="26" cy="32" r="9" fill="#e8903c" opacity="0.8"/>'
-        +'<circle cx="74" cy="32" r="14" fill="#d2691e" '+SK+'/>'
-        +'<circle cx="74" cy="32" r="9" fill="#e8903c" opacity="0.8"/>'
-        +'<ellipse cx="84" cy="80" rx="14" ry="28" fill="#d2691e" '+SK+' transform="rotate(15,84,80)"/>'
-        +'<ellipse cx="84" cy="80" rx="9" ry="22" fill="#f0a040" opacity="0.7" transform="rotate(15,84,80)"/>'
-        +gBody('#d2691e')
-        +'<rect x="22" y="50" width="56" height="7" rx="3.5" fill="#4a6a9a" '+SK+'/>'
-        +'<rect x="63" y="88" width="20" height="16" rx="3" fill="#f0e0c0" '+SK+'/>'
-        +'<path d="M63,88 L73,96 L83,88" fill="none" stroke="#5D4037" stroke-width="1.5"/>'
-        +gFace(83)
-      ),
-      // ⑬長老：フクロウ（えぼし・巻物）
-      performer: wSVG(
-        '<polygon points="28,38 22,14 40,30" fill="#9b8b6b" '+SK+'/>'
-        +'<polygon points="29,37 24,18 37,29" fill="#c8b898"/>'
-        +'<polygon points="72,38 78,14 60,30" fill="#9b8b6b" '+SK+'/>'
-        +'<polygon points="71,37 76,18 63,29" fill="#c8b898"/>'
-        +gBody('#9b8b6b')
-        +'<circle cx="40" cy="82" r="11" fill="#d8c8a8" opacity="0.5" stroke="#5D4037" stroke-width="1.5"/>'
-        +'<circle cx="60" cy="82" r="11" fill="#d8c8a8" opacity="0.5" stroke="#5D4037" stroke-width="1.5"/>'
-        +'<path d="M32,52 Q32,38 50,32 Q68,38 68,52" fill="#1a1a1a" '+SK+'/>'
-        +'<path d="M50,32 L52,16 Q54,8 50,8 Q46,8 48,16 Z" fill="#1a1a1a" '+SK+'/>'
-        +'<rect x="65" y="85" width="18" height="13" rx="2" fill="#f0e0b0" '+SK+'/>'
-        +'<rect x="63" y="83" width="5" height="17" rx="2.5" fill="#c8a060" '+SK+'/>'
-        +'<rect x="80" y="83" width="5" height="17" rx="2.5" fill="#c8a060" '+SK+'/>'
-        +gFace(82)
-      ),
-      // ⑭歌舞伎役者：カエル（隈取り）
-      weaver: wSVG(
-        '<circle cx="36" cy="34" r="10" fill="#5cb05c" '+SK+'/>'
-        +'<circle cx="64" cy="34" r="10" fill="#5cb05c" '+SK+'/>'
-        +gBody('#5cb05c')
-        +'<ellipse cx="50" cy="78" rx="22" ry="19" fill="white" opacity="0.88"/>'
-        +'<path d="M28,70 Q34,62 42,72" stroke="#e02020" stroke-width="3" fill="none" stroke-linecap="round"/>'
-        +'<path d="M72,70 Q66,62 58,72" stroke="#e02020" stroke-width="3" fill="none" stroke-linecap="round"/>'
-        +'<path d="M35,83 Q50,92 65,83" stroke="#e02020" stroke-width="2.5" fill="none" stroke-linecap="round"/>'
-        +'<path d="M22,52 L24,36 L32,46 L42,30 L50,44 L58,30 L68,46 L76,36 L78,52" fill="#c80020" '+SK+'/>'
-        +gBlush(36,64,83)+gEye(40,79)+gEye(60,79)+gNose(50,86)+gMouth(50,93)
-      ),
-      // ⑮祭り囃子：サル（はちまき・太鼓）
-      mountain_folk: wSVG(
-        '<circle cx="24" cy="36" r="12" fill="#c47020" '+SK+'/>'
-        +'<circle cx="24" cy="36" r="7.5" fill="#e89040" opacity="0.65"/>'
-        +'<circle cx="76" cy="36" r="12" fill="#c47020" '+SK+'/>'
-        +'<circle cx="76" cy="36" r="7.5" fill="#e89040" opacity="0.65"/>'
-        +gBody('#c47020')
-        +'<ellipse cx="50" cy="79" rx="20" ry="16" fill="#f08060" opacity="0.4"/>'
-        +'<rect x="22" y="50" width="56" height="7" rx="3.5" fill="#e82020" '+SK+'/>'
-        +'<path d="M78,53 Q85,48 88,53 Q85,60 78,57" fill="#e82020" '+SK+'/>'
-        +'<ellipse cx="14" cy="90" rx="12" ry="14" fill="#8b3010" '+SK+'/>'
-        +'<ellipse cx="14" cy="90" rx="9" ry="11" fill="#c04020" '+SK+'/>'
-        +'<line x1="14" y1="76" x2="14" y2="104" stroke="#5D4037" stroke-width="1.5"/>'
-        +'<line x1="20" y1="79" x2="29" y2="70" stroke="#8b5e3c" stroke-width="3" stroke-linecap="round"/>'
-        +'<circle cx="29" cy="70" r="3.5" fill="#8b5e3c" '+SK+'/>'
-        +gFace(83)
-      ),
-      // ⑯船頭：カワウソ（笠・竿）
-      christian: wSVG(
-        '<circle cx="28" cy="36" r="10" fill="#7b5b3a" '+SK+'/>'
-        +'<circle cx="28" cy="36" r="6" fill="#9b7b5a" opacity="0.7"/>'
-        +'<circle cx="72" cy="36" r="10" fill="#7b5b3a" '+SK+'/>'
-        +'<circle cx="72" cy="36" r="6" fill="#9b7b5a" opacity="0.7"/>'
-        +gBody('#7b5b3a')
-        +'<ellipse cx="50" cy="84" rx="18" ry="14" fill="#d8c8a8" opacity="0.55"/>'
-        +'<ellipse cx="50" cy="48" rx="34" ry="6" fill="#c8a020" '+SK+'/>'
-        +'<path d="M24,48 Q26,40 50,35 Q74,40 76,48" fill="#dab828" '+SK+'/>'
-        +'<line x1="76" y1="42" x2="88" y2="112" stroke="#8b5e3c" stroke-width="4" stroke-linecap="round" '+SK+'/>'
-        +gFace(83)
-      ),
-      // ⑰衛兵：イノシシ（兜・牙）
-      blacksmith: wSVG(
-        '<ellipse cx="26" cy="36" rx="10" ry="12" fill="#7a6a5a" '+SK+'/>'
-        +'<ellipse cx="26" cy="36" rx="6" ry="7.5" fill="#9a8a78" opacity="0.7"/>'
-        +'<ellipse cx="74" cy="36" rx="10" ry="12" fill="#7a6a5a" '+SK+'/>'
-        +'<ellipse cx="74" cy="36" rx="6" ry="7.5" fill="#9a8a78" opacity="0.7"/>'
-        +gBody('#7a6a5a')
-        +'<path d="M38,98 Q33,108 28,112" stroke="white" stroke-width="4" fill="none" stroke-linecap="round" '+SK+'/>'
-        +'<path d="M62,98 Q67,108 72,112" stroke="white" stroke-width="4" fill="none" stroke-linecap="round" '+SK+'/>'
-        +'<path d="M22,54 Q22,34 50,28 Q78,34 78,54 L72,54 Q70,38 50,34 Q30,38 28,54 Z" fill="#506070" '+SK+'/>'
-        +'<rect x="22" y="52" width="56" height="7" rx="3.5" fill="#405060" '+SK+'/>'
-        +'<path d="M22,54 L18,65 Q20,67 24,63 L28,54" fill="#405060" '+SK+'/>'
-        +'<path d="M78,54 L82,65 Q80,67 76,63 L72,54" fill="#405060" '+SK+'/>'
-        +gFace(84)
-      ),
-      // ⑱茶人：コアラ（茶碗・湯気）
-      tea_master: wSVG(
-        '<circle cx="22" cy="32" r="18" fill="#a8a8b0" '+SK+'/>'
-        +'<circle cx="22" cy="32" r="12" fill="#c0c0c8" opacity="0.6"/>'
-        +'<circle cx="78" cy="32" r="18" fill="#a8a8b0" '+SK+'/>'
-        +'<circle cx="78" cy="32" r="12" fill="#c0c0c8" opacity="0.6"/>'
-        +gBody('#a8a8b0')
-        +'<ellipse cx="50" cy="89" rx="8" ry="6" fill="#4a3a40" '+SK+'/>'
-        +'<path d="M33,94 Q33,108 50,110 Q67,108 67,94 Z" fill="#5a3820" '+SK+'/>'
-        +'<ellipse cx="50" cy="94" rx="17" ry="5.5" fill="#6a4830" '+SK+'/>'
-        +'<path d="M43,88 Q41,82 43,76" stroke="#d8e8e0" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.65"/>'
-        +'<path d="M50,86 Q48,80 50,74" stroke="#d8e8e0" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.65"/>'
-        +'<path d="M57,88 Q59,82 57,76" stroke="#d8e8e0" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.65"/>'
-        +gBlush(34,66,83)+gEye(40,79)+gEye(60,79)+gMouth(50,92)
-      ),
-      // ⑲異国商人：ゾウ（ターバン・鼻）
-      castle_samurai: wSVG(
-        '<ellipse cx="12" cy="68" rx="14" ry="24" fill="#b0a8c0" '+SK+' transform="rotate(-12,12,68)"/>'
-        +'<ellipse cx="12" cy="68" rx="9" ry="17" fill="#c8c0d8" opacity="0.6" transform="rotate(-12,12,68)"/>'
-        +'<ellipse cx="88" cy="68" rx="14" ry="24" fill="#b0a8c0" '+SK+' transform="rotate(12,88,68)"/>'
-        +'<ellipse cx="88" cy="68" rx="9" ry="17" fill="#c8c0d8" opacity="0.6" transform="rotate(12,88,68)"/>'
-        +gBody('#b0a8c0')
-        +'<path d="M42,94 Q36,104 34,112 Q36,118 44,116 Q46,108 46,100" fill="#b0a8c0" '+SK+'/>'
-        +'<path d="M22,52 Q22,32 50,26 Q78,32 78,52" fill="#d03060" '+SK+'/>'
-        +'<ellipse cx="50" cy="52" rx="28" ry="6" fill="#b02050" '+SK+'/>'
-        +'<circle cx="50" cy="38" r="7" fill="#f0d020" '+SK+'/>'
-        +'<circle cx="50" cy="38" r="4" fill="#50c8f0"/>'
-        +gBlush(36,64,82)+gEye(40,78)+gEye(60,78)+gNose(50,84)+gMouth(50,91)
-      ),
-      // ⑳龍神：タツ（レア・雲・宝珠）
-      noble_exile: wSVG(
-        '<path d="M32,40 Q26,28 22,18 Q18,10 20,6" stroke="#c8a020" stroke-width="4" fill="none" stroke-linecap="round" '+SK+'/>'
-        +'<path d="M26,24 Q20,20 16,24" stroke="#c8a020" stroke-width="3" fill="none" stroke-linecap="round"/>'
-        +'<path d="M68,40 Q74,28 78,18 Q82,10 80,6" stroke="#c8a020" stroke-width="4" fill="none" stroke-linecap="round" '+SK+'/>'
-        +'<path d="M74,24 Q80,20 84,24" stroke="#c8a020" stroke-width="3" fill="none" stroke-linecap="round"/>'
-        +'<circle cx="12" cy="98" r="8" fill="white" opacity="0.72"/>'
-        +'<circle cx="20" cy="94" r="10" fill="white" opacity="0.72"/>'
-        +'<circle cx="30" cy="98" r="8" fill="white" opacity="0.65"/>'
-        +'<circle cx="88" cy="98" r="8" fill="white" opacity="0.72"/>'
-        +'<circle cx="80" cy="94" r="10" fill="white" opacity="0.72"/>'
-        +'<circle cx="70" cy="98" r="8" fill="white" opacity="0.65"/>'
-        +gBody('#3a80d0')
-        +'<path d="M28,52 Q34,47 40,52 Q34,56 28,52" fill="rgba(100,180,255,0.28)" stroke="rgba(60,130,200,0.4)" stroke-width="1"/>'
-        +'<path d="M40,52 Q46,47 52,52 Q46,56 40,52" fill="rgba(100,180,255,0.28)" stroke="rgba(60,130,200,0.4)" stroke-width="1"/>'
-        +'<path d="M52,52 Q58,47 64,52 Q58,56 52,52" fill="rgba(100,180,255,0.28)" stroke="rgba(60,130,200,0.4)" stroke-width="1"/>'
-        +'<path d="M34,62 Q40,57 46,62 Q40,66 34,62" fill="rgba(100,180,255,0.28)" stroke="rgba(60,130,200,0.4)" stroke-width="1"/>'
-        +'<path d="M46,62 Q52,57 58,62 Q52,66 46,62" fill="rgba(100,180,255,0.28)" stroke="rgba(60,130,200,0.4)" stroke-width="1"/>'
-        +'<path d="M58,62 Q64,57 70,62 Q64,66 58,62" fill="rgba(100,180,255,0.28)" stroke="rgba(60,130,200,0.4)" stroke-width="1"/>'
-        +'<circle cx="50" cy="62" r="12" fill="rgba(200,240,255,0.75)" '+SK+'/>'
-        +'<circle cx="46" cy="58" r="5" fill="white" opacity="0.8"/>'
-        +'<path d="M32,88 Q18,84 12,86" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.9"/>'
-        +'<path d="M32,93 Q18,92 10,97" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.9"/>'
-        +'<path d="M68,88 Q82,84 88,86" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.9"/>'
-        +'<path d="M68,93 Q82,92 90,97" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.9"/>'
-        +gBlush(36,64,86)+gEye(40,82,'#f0e050')+gEye(60,82,'#f0e050')+gNose()+gMouth()
-      ),
+    const CHARACTER_IMAGES = {
+      warrior:        '/images/characters/1_samurai_shiba.png',
+      ninja:          '/images/characters/2_ninja_blackcat.png',
+      court_noble:    '/images/characters/3_noble_rabbit.png',
+      farmer:         '/images/characters/4_farmer_tanuki.png',
+      shugenja:       '/images/characters/5_ascetic_deer.png',
+      craftsman:      '/images/characters/6_craftsman_calicocat.png',
+      merchant:       '/images/characters/7_merchant_panda.png',
+      seafarer:       '/images/characters/8_fisherman_penguin.png',
+      scholar:        '/images/characters/9_monk_hamster.png',
+      healer:         '/images/characters/10_onmyoji_fox.png',
+      hunter:         '/images/characters/11_hunter_bear.png',
+      trader:         '/images/characters/12_courier_squirrel.png',
+      performer:      '/images/characters/13_elder_owl.png',
+      weaver:         '/images/characters/14_kabuki_frog.png',
+      mountain_folk:  '/images/characters/15_festival_monkey.png',
+      christian:      '/images/characters/16_boatman_otter.png',
+      blacksmith:     '/images/characters/17_guard_boar.png',
+      tea_master:     '/images/characters/18_teaster_koala.png',
+      castle_samurai: '/images/characters/19_foreign_merchant_elephant.png',
+      noble_exile:    '/images/characters/20_dragon_god_tatsu.png',
     };
 
     // ══════════════════════════════════════════
@@ -978,13 +677,13 @@
       const card    = document.getElementById('charCard');
       const loading = document.getElementById('charLoading');
       const content = document.getElementById('charContent');
-      const svg     = CHARACTER_SVGS[data.key] || CHARACTER_SVGS.farmer;
+      const imgSrc  = CHARACTER_IMAGES[data.key] || CHARACTER_IMAGES.farmer;
 
       card.className = 'char-card' + (data.isRare ? ' rare' : '');
       content.innerHTML = `
         ${data.isRare ? '<div class="rare-badge">✨ めったに出ない守護獣です ✨</div><br>' : ''}
         <div class="char-sec-label">✦ あなたの守護獣 ✦</div>
-        <div class="char-icon-wrap">${svg}<div class="char-shadow"></div></div>
+        <div class="char-icon-wrap"><img src="${imgSrc}" alt="${data.typeName}" class="char-img"><div class="char-shadow"></div></div>
         <div class="char-name">${data.ancestorName}</div>
         <div class="char-type-badge">${data.typeName}｜${data.typeDesc}</div>
         <div class="char-divider"><div class="cl"></div><div class="ci">❧</div><div class="cl"></div></div>

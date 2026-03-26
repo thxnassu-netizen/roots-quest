@@ -1,0 +1,204 @@
+{
+  "characters": [
+    {
+      "id": 1,
+      "key": "warrior",
+      "typeName": "柴犬の武神",
+      "typeDesc": "勇気・忠義をつかさどる守護獣",
+      "emoji": "🐕",
+      "imagePath": "/images/characters/1_samurai_shiba.png",
+      "isRare": false,
+      "description": "武士の魂を宿した忠実な柴犬。かつて戦場を駆けたご先祖さまの勇気を受け継ぎ、今もあなたを強く守り続けています。"
+    },
+    {
+      "id": 2,
+      "key": "ninja",
+      "typeName": "黒猫の忍神",
+      "typeDesc": "俊敏・秘密をつかさどる守護獣",
+      "emoji": "🐱",
+      "imagePath": "/images/characters/2_ninja_blackcat.png",
+      "isRare": true,
+      "description": "闇に紛れて歴史を動かした忍びの末裔。めったに姿を現さない幻の守護獣で、その存在を知る者は限られています。"
+    },
+    {
+      "id": 3,
+      "key": "court_noble",
+      "typeName": "白うさぎの雅神",
+      "typeDesc": "美・気品をつかさどる守護獣",
+      "emoji": "🐇",
+      "imagePath": "/images/characters/3_noble_rabbit.png",
+      "isRare": false,
+      "description": "宮廷の雅を知り尽くした白うさぎ。和歌や音楽に親しんだご先祖さまの気品が、あなたの中に受け継がれています。"
+    },
+    {
+      "id": 4,
+      "key": "farmer",
+      "typeName": "たぬきの豊穣神",
+      "typeDesc": "豊作・大地をつかさどる守護獣",
+      "emoji": "🦝",
+      "imagePath": "/images/characters/4_farmer_tanuki.png",
+      "isRare": false,
+      "description": "大地を耕し命をつないだ農民の心を持つたぬき。実直に生きたご先祖さまの温かさが、あなたの根っこになっています。"
+    },
+    {
+      "id": 5,
+      "key": "shugenja",
+      "typeName": "しかの霊験神",
+      "typeDesc": "神秘・霊力をつかさどる守護獣",
+      "emoji": "🦌",
+      "imagePath": "/images/characters/5_ascetic_deer.png",
+      "isRare": true,
+      "description": "霊山を駆けた修験者の霊力を宿す神鹿。自然の奥深い力と交信できたご先祖さまの神秘が、あなたに宿っています。"
+    },
+    {
+      "id": 6,
+      "key": "craftsman",
+      "typeName": "三毛猫の匠神",
+      "typeDesc": "器用・創造をつかさどる守護獣",
+      "emoji": "🐱",
+      "imagePath": "/images/characters/6_craftsman_calicocat.png",
+      "isRare": false,
+      "description": "名匠の技を受け継いだ三毛猫。一本の釘まで心を込めて作り続けたご先祖さまの手仕事の魂が、あなたの中に生きています。"
+    },
+    {
+      "id": 7,
+      "key": "merchant",
+      "typeName": "パンダの商才神",
+      "typeDesc": "知恵・金運をつかさどる守護獣",
+      "emoji": "🐼",
+      "imagePath": "/images/characters/7_merchant_panda.png",
+      "isRare": false,
+      "description": "市場を渡り歩いた商人の知恵を持つパンダ。人の心を読み商売を繁盛させたご先祖さまの才覚が、あなたに流れています。"
+    },
+    {
+      "id": 8,
+      "key": "seafarer",
+      "typeName": "ペンギンの海神",
+      "typeDesc": "冒険・自由をつかさどる守護獣",
+      "emoji": "🐧",
+      "imagePath": "/images/characters/8_fisherman_penguin.png",
+      "isRare": false,
+      "description": "海原を自由に泳ぐペンギン。嵐をも恐れずに船を出したご先祖さまの勇気と冒険心が、あなたの血に刻まれています。"
+    },
+    {
+      "id": 9,
+      "key": "scholar",
+      "typeName": "ハムスターの仏神",
+      "typeDesc": "信心・慈悲をつかさどる守護獣",
+      "emoji": "🐹",
+      "imagePath": "/images/characters/9_monk_hamster.png",
+      "isRare": false,
+      "description": "経典を読み続けた僧侶の心を持つハムスター。すべての命を慈しんだご先祖さまの慈悲の心が、あなたを照らしています。"
+    },
+    {
+      "id": 10,
+      "key": "healer",
+      "typeName": "きつねの陰陽神",
+      "typeDesc": "知恵・神秘をつかさどる守護獣",
+      "emoji": "🦊",
+      "imagePath": "/images/characters/10_onmyoji_fox.png",
+      "isRare": false,
+      "description": "天地の理を読んだ陰陽師の知恵を宿すきつね。見えないものを見通す力を持ったご先祖さまの霊感が、あなたを守ります。"
+    },
+    {
+      "id": 11,
+      "key": "hunter",
+      "typeName": "くまのマタギ神",
+      "typeDesc": "自然・直感をつかさどる守護獣",
+      "emoji": "🐻",
+      "imagePath": "/images/characters/11_hunter_bear.png",
+      "isRare": false,
+      "description": "山の神と対話したマタギの魂を持つ熊。自然と共に生きたご先祖さまの直感と野性の知恵が、あなたの中に受け継がれています。"
+    },
+    {
+      "id": 12,
+      "key": "trader",
+      "typeName": "りすの速神",
+      "typeDesc": "素早さ・誠実をつかさどる守護獣",
+      "emoji": "🐿",
+      "imagePath": "/images/characters/12_courier_squirrel.png",
+      "isRare": false,
+      "description": "街道を駆け抜けた飛脚の素早さを持つりす。どんな荷物も確かに届けたご先祖さまの誠実さと脚力が、あなたの力になります。"
+    },
+    {
+      "id": 13,
+      "key": "performer",
+      "typeName": "ふくろうの長老神",
+      "typeDesc": "学問・洞察をつかさどる守護獣",
+      "emoji": "🦉",
+      "imagePath": "/images/characters/13_elder_owl.png",
+      "isRare": false,
+      "description": "古の書物を読み解いた学者の洞察力を持つふくろう。時代の真理を追い求めたご先祖さまの知恵が、あなたを導いています。"
+    },
+    {
+      "id": 14,
+      "key": "weaver",
+      "typeName": "かえるの芸神",
+      "typeDesc": "魅力・表現をつかさどる守護獣",
+      "emoji": "🐸",
+      "imagePath": "/images/characters/14_kabuki_frog.png",
+      "isRare": false,
+      "description": "舞台を踏みしめた役者の魅力を宿すかえる。観衆を魅了した歌舞伎役者のご先祖さまの表現力が、あなたに生き続けています。"
+    },
+    {
+      "id": 15,
+      "key": "mountain_folk",
+      "typeName": "さるの祭神",
+      "typeDesc": "陽気・縁起をつかさどる守護獣",
+      "emoji": "🐒",
+      "imagePath": "/images/characters/15_festival_monkey.png",
+      "isRare": false,
+      "description": "村祭りを賑わせたさる。太鼓を叩き神輿を担いで里に喜びをもたらしたご先祖さまの陽気な魂が、あなたを包んでいます。"
+    },
+    {
+      "id": 16,
+      "key": "christian",
+      "typeName": "かわうその川神",
+      "typeDesc": "誠実・奉仕をつかさどる守護獣",
+      "emoji": "🦦",
+      "imagePath": "/images/characters/16_boatman_otter.png",
+      "isRare": false,
+      "description": "川を行き来した船頭の誠実さを持つかわうそ。人と人をつなぐ渡し守だったご先祖さまの奉仕の心が、あなたを支えています。"
+    },
+    {
+      "id": 17,
+      "key": "blacksmith",
+      "typeName": "いのししの守神",
+      "typeDesc": "力強さ・守護をつかさどる守護獣",
+      "emoji": "🐗",
+      "imagePath": "/images/characters/17_guard_boar.png",
+      "isRare": false,
+      "description": "鉄を打ち続けた鍛冶師・門番の力を宿すいのしし。揺るぎない意志で人々を守ったご先祖さまの強さが、あなたの盾となります。"
+    },
+    {
+      "id": 18,
+      "key": "tea_master",
+      "typeName": "コアラの風雅神",
+      "typeDesc": "侘び寂び・癒しをつかさどる守護獣",
+      "emoji": "🐨",
+      "imagePath": "/images/characters/18_teaster_koala.png",
+      "isRare": false,
+      "description": "茶室に静寂をもたらしたコアラ。一服の茶に宇宙を見出したご先祖さまの侘び寂びの心が、あなたに穏やかな癒しを与えます。"
+    },
+    {
+      "id": 19,
+      "key": "castle_samurai",
+      "typeName": "ぞうの縁神",
+      "typeDesc": "縁・繁栄をつかさどる守護獣",
+      "emoji": "🐘",
+      "imagePath": "/images/characters/19_foreign_merchant_elephant.png",
+      "isRare": false,
+      "description": "異国の地を渡り歩いた商人の縁を持つぞう。海を越えて人と文化をつないだご先祖さまの広い視野が、あなたに繁栄をもたらします。"
+    },
+    {
+      "id": 20,
+      "key": "noble_exile",
+      "typeName": "たつの龍神",
+      "typeDesc": "天地万物をつかさどる伝説の守護獣",
+      "emoji": "🐉",
+      "imagePath": "/images/characters/20_dragon_god_tatsu.png",
+      "isRare": true,
+      "description": "天地を統べる伝説の龍神。大名や伝説の血筋を持つ者にしか宿らない至高の守護獣で、その出現は時代を変える兆しとされています。"
+    }
+  ]
+}
