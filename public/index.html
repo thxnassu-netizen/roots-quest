@@ -420,17 +420,6 @@
 
     </div>
 
-    <div class="divider-or"><span>または</span></div>
-    <button class="btn-secondary" id="mapOnlyBtn">🗾 名字だけで分布マップを見る</button>
-    <div id="mapOnlySection" style="display:none;margin-top:12px;">
-      <div class="form-card" style="margin-bottom:0">
-        <div class="form-group" style="margin-bottom:14px">
-          <label><span class="lj">名字</span><span style="font-size:0.68rem;letter-spacing:0.15em;color:var(--sub)">FAMILY NAME</span></label>
-          <input type="text" id="hmInput" placeholder="例：田中、鈴木、佐藤">
-        </div>
-        <button type="button" class="btn-secondary" id="hmSearchBtn">分布マップを表示</button>
-      </div>
-    </div>
     <div class="footer">&copy; 2025 Roots Quest ｜ あなたの守護獣が、そっと見守っています</div>
   </div>
 
@@ -1008,7 +997,7 @@
         // マップ初期化 or レイヤーだけ更新
         if (!_jpMap) {
           _jpMap = L.map('mapContainer', { zoomControl: true, attributionControl: false })
-                   .setView([36.5, 137.5], 5);
+                   .setView([36.5, 136.0], 6);
           L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '©OpenStreetMap ©CartoDB',
           }).addTo(_jpMap);
@@ -1044,28 +1033,6 @@
         loading.innerHTML = `<p style="font-size:0.8rem;color:var(--sub);padding:8px 0">${err.message || '分布データの取得に失敗しました。'}</p>`;
       }
     }
-
-    // スタンドアロン: 名字だけで調べるボタン
-    document.getElementById('mapOnlyBtn').addEventListener('click', function() {
-      const sec = document.getElementById('mapOnlySection');
-      sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
-    });
-
-    document.getElementById('hmSearchBtn').addEventListener('click', async function() {
-      const myoji = document.getElementById('hmInput').value.trim();
-      if (!myoji) return;
-      const card = document.getElementById('heatmapCard');
-      const loading = document.getElementById('heatmapLoading');
-      document.getElementById('mapContainer').style.display = 'none';
-      document.getElementById('mapLegend').style.display = 'none';
-      loading.style.display = 'block';
-      loading.innerHTML = '<div class="summon-ring"></div><p class="loading-text">都道府県データを取得中...</p>';
-      card.style.display = 'block';
-      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      this.disabled = true;
-      await fetchHeatmap(myoji);
-      this.disabled = false;
-    });
 
     // ══════════════════════════════════════════
     // 桜の花びら
