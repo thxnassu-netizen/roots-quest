@@ -294,6 +294,36 @@
 
     .footer { text-align:center; margin-top:30px; font-size:0.62rem; color:rgba(154,120,136,0.55); letter-spacing:0.2em; }
 
+    /* ── 歴史IFストーリー ── */
+    .ifstory-card {
+      background:linear-gradient(135deg,rgba(18,14,26,0.97),rgba(32,22,42,0.97));
+      border:1.5px solid rgba(180,140,60,0.48); border-radius:18px;
+      padding:28px 24px; margin-bottom:14px;
+      box-shadow:0 8px 36px rgba(60,30,10,0.32), 0 0 90px rgba(120,80,20,0.07),
+                 inset 0 1px 0 rgba(220,180,80,0.14);
+      animation:fadeUp 0.5s ease forwards; position:relative; overflow:hidden;
+    }
+    .ifstory-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(to right,transparent,rgba(212,175,55,0.8),transparent);
+    }
+    .ifstory-card::after {
+      content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+      background:linear-gradient(to right,transparent,rgba(212,175,55,0.35),transparent);
+    }
+    .ifstory-hdr {
+      font-family:'Shippori Mincho',serif; font-size:0.86rem; font-weight:700;
+      color:#d4af37; letter-spacing:0.26em; margin-bottom:18px;
+    }
+    .ifstory-body {
+      font-size:0.88rem; line-height:2.25; color:rgba(228,215,198,0.9);
+      letter-spacing:0.05em; min-height:32px;
+    }
+    .ifstory-card .summon-ring {
+      border-color:rgba(212,175,55,0.18); border-top-color:rgba(212,175,55,0.85);
+    }
+    .ifstory-card .loading-text { color:rgba(212,175,55,0.65); }
+
     /* ── SNSシェア ── */
     .share-hdg {
       display:flex; align-items:center; gap:10px; justify-content:center;
@@ -421,7 +451,17 @@
         <p class="story-text" id="resultText"></p>
       </div>
 
-      <!-- 4. シェアカード -->
+      <!-- 4. 歴史IFストーリーカード -->
+      <div class="ifstory-card" id="ifstoryCard" style="display:none">
+        <div class="ifstory-hdr">✨ 知られざる歴史の痕跡</div>
+        <div id="ifstoryLoading" class="loading-wrap" style="padding:12px 0">
+          <div class="summon-ring"></div>
+          <p class="loading-text">歴史の記憶を探っています...</p>
+        </div>
+        <p class="ifstory-body" id="ifstoryText" style="display:none"></p>
+      </div>
+
+      <!-- 5. シェアカード -->
       <div class="info-card" id="shareCard" style="display:none;text-align:center;">
         <div class="share-hdg">✦ 結果をシェアする ✦</div>
         <div class="share-btns">
@@ -850,6 +890,17 @@
       document.getElementById('namerootContent').innerHTML =
         '<div class="loading-wrap" style="padding:10px 0"><p class="loading-text">調べています...</p></div>';
       resultText.textContent = '';
+      // myoji/shusshinchi を後続の関数から参照できるよう保存
+      _lastMyoji = myoji; _lastShusshinchi = shusshinchi;
+
+      // 歴史IFストーリーカードをリセット
+      document.getElementById('ifstoryCard').style.display = 'block';
+      document.getElementById('ifstoryText').style.display = 'none';
+      document.getElementById('ifstoryText').textContent = '';
+      document.getElementById('ifstoryLoading').style.display = 'block';
+      document.getElementById('ifstoryLoading').innerHTML =
+        '<div class="summon-ring"></div><p class="loading-text">歴史の記憶を探っています...</p>';
+
       // シェアカードをリセット
       document.getElementById('shareCard').style.display = 'none';
 
@@ -951,6 +1002,9 @@
         if (data.isRare) launchShockwave(card);
       }, 120);
 
+      // 歴史IFストーリーを取得（キャラクターデータが揃ってから）
+      fetchIfStory(_lastMyoji, _lastShusshinchi, data.key, data.typeName);
+
       // シェアカードを更新・表示
       const APP_URL = 'https://roots-quest.vercel.app';
       const shareText = `私のご先祖さまは『${data.ancestorName}』でした！${data.emoji} #ルーツクエスト ${APP_URL}`;
@@ -993,8 +1047,45 @@
     }
 
     // ══════════════════════════════════════════
+    // 歴史IFストーリー
+    // ══════════════════════════════════════════
+    async function fetchIfStory(myoji, shusshinchi, charKey, typeName) {
+      const loading = document.getElementById('ifstoryLoading');
+      const textEl  = document.getElementById('ifstoryText');
+      try {
+        const res = await fetch('/api/ifstory', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ myoji, shusshinchi, charKey, typeName }),
+        });
+        if (!res.ok) throw new Error();
+
+        loading.style.display = 'none';
+        textEl.style.display  = 'block';
+
+        const reader = res.body.getReader(), decoder = new TextDecoder();
+        let buf = '';
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          for (const line of decoder.decode(value, { stream: true }).split('\n')) {
+            if (!line.startsWith('data: ')) continue;
+            const d = line.slice(6);
+            if (d === '[DONE]') break;
+            try { const { text } = JSON.parse(d); buf += text; textEl.textContent = buf; } catch {}
+          }
+        }
+      } catch {
+        loading.innerHTML =
+          '<p style="font-size:0.8rem;color:rgba(212,175,55,0.6);padding:4px 0">歴史の痕跡を辿れませんでした。</p>';
+      }
+    }
+
+    // ══════════════════════════════════════════
     // 名字ヒートマップ
     // ══════════════════════════════════════════
+    // フォームから渡す名字・出身地（renderCharacter から参照するため）
+    let _lastMyoji = '', _lastShusshinchi = '';
+
     let _jpMap = null;
     let _geoLayer = null;
 

@@ -251,6 +251,72 @@ app.post("/api/nameroot", async (req, res) => {
   }
 });
 
+// ── 歴史IFストーリー ──
+app.post("/api/ifstory", async (req, res) => {
+  const { myoji, shusshinchi, charKey, typeName } = req.body;
+  if (!myoji || !shusshinchi || !charKey) {
+    return res.status(400).json({ error: "必要な情報が不足しています" });
+  }
+  try {
+    const stream = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      max_tokens: 700,
+      stream: true,
+      messages: [
+        {
+          role: "system",
+          content: `あなたは日本の歴史に精通した幻想的な語り部です。
+ユーザーの名字・出身地・先祖タイプをもとに、歴史のIFストーリーを一段落で生成してください。
+
+【必須ルール】
+- 200〜260字程度の濃密な一段落
+- 「あなたの先祖は、」で始める
+- 有名な歴史的事件・人物（関ヶ原の戦い・本能寺の変・大塩平八郎の乱・西南戦争・明治維新・桶狭間の戦い・赤穂事件など）に1〜2つ絞って絡める
+- 「〜だったかもしれません」「〜していた可能性があります」「〜と伝わっています」の表現を必ず使う
+- 断定は絶対にしない。あくまで「かもしれない」トーンを貫く
+- 読んでいてゾクッとするような歴史の分岐点・秘密の関与・知られざる役割を描く
+- 絵文字は使わない`,
+        },
+        {
+          role: "user",
+          content: `名字：${myoji}\n出身地：${shusshinchi}\n先祖タイプ：${typeName}`,
+        },
+      ],
+    });
+
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    const SPECIAL_TOKENS = /<\|[^|>]*\|>/g;
+    let pendingBuf = '';
+    for await (const chunk of stream) {
+      const raw = chunk.choices[0]?.delta?.content ?? "";
+      if (!raw) continue;
+      pendingBuf += raw;
+      const lt = pendingBuf.lastIndexOf('<|');
+      let safe, hold;
+      if (lt !== -1 && pendingBuf.indexOf('|>', lt) === -1) {
+        safe = pendingBuf.slice(0, lt); hold = pendingBuf.slice(lt);
+      } else {
+        safe = pendingBuf; hold = '';
+      }
+      const text = safe.replace(SPECIAL_TOKENS, '');
+      if (text) res.write(`data: ${JSON.stringify({ text })}\n\n`);
+      pendingBuf = hold;
+    }
+    if (pendingBuf) {
+      const text = pendingBuf.replace(SPECIAL_TOKENS, '');
+      if (text) res.write(`data: ${JSON.stringify({ text })}\n\n`);
+    }
+    res.write("data: [DONE]\n\n");
+    res.end();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "歴史IFストーリーの生成に失敗しました" });
+  }
+});
+
 // ── 名字ヒートマップ: 都道府県別分布スクレイピング ──
 const ALL_PREFECTURES = [
   "北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県",
