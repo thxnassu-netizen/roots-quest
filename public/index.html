@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ルーツ・クエスト</title>
   <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&family=Shippori+Mincho:wght@400;500;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     :root {
       --bg:     #fdf4f8;
@@ -96,13 +98,25 @@
 
     /* ── タイトル ── */
     .title-area { text-align:center; margin-bottom:30px; }
-    .title-crest { font-size:0.65rem; letter-spacing:0.5em; color:var(--pink); margin-bottom:8px; opacity:0.9; }
+    .logo-lockup {
+      display:flex; align-items:center; justify-content:center;
+      gap:20px; margin-bottom:14px;
+    }
+    .logo-kamon {
+      width:68px; height:68px; flex-shrink:0;
+      filter:drop-shadow(0 2px 10px rgba(200,130,150,0.28));
+    }
+    .logo-wordmark { text-align:left; }
+    .title-crest {
+      font-size:0.54rem; letter-spacing:0.58em; color:var(--pink);
+      opacity:0.72; margin-bottom:4px; font-weight:400;
+    }
     .title-main {
-      font-family:'Shippori Mincho',serif; font-size:2.6rem; font-weight:800;
-      color:var(--text); letter-spacing:0.22em; line-height:1.1; margin-bottom:10px;
+      font-family:'Shippori Mincho',serif; font-size:2.2rem; font-weight:800;
+      color:var(--text); letter-spacing:0.42em; line-height:1.05; margin:0;
     }
     .title-dot { color:var(--pink); }
-    .title-sub { font-size:0.75rem; color:var(--sub); letter-spacing:0.13em; line-height:1.8; }
+    .title-sub { font-size:0.74rem; color:var(--sub); letter-spacing:0.14em; line-height:1.9; margin-top:4px; }
     .title-rule { display:flex; align-items:center; gap:12px; margin-top:16px; }
     .title-rule::before,.title-rule::after {
       content:''; flex:1; height:1px;
@@ -280,6 +294,11 @@
 
     .footer { text-align:center; margin-top:30px; font-size:0.62rem; color:rgba(154,120,136,0.55); letter-spacing:0.2em; }
 
+    /* ── ヒートマップ ── */
+    #mapContainer { height:350px; border-radius:12px; overflow:hidden; }
+    .map-legend { display:flex; justify-content:center; align-items:center; gap:8px; font-size:0.72rem; color:var(--sub); margin-top:10px; }
+    .map-legend-bar { width:110px; height:10px; border-radius:5px; background:linear-gradient(to right,#0000ff,#00ffff,#00ff00,#ffff00,#ff0000); }
+
     /* 背景枝装飾 */
     .seasonal-deco { position:fixed; pointer-events:none; opacity:0.1; }
     .deco-tl { top:0; left:0; width:200px; }
@@ -308,8 +327,35 @@
 
     <!-- タイトル -->
     <div class="title-area">
-      <div class="title-crest">✿ ROOTS QUEST ✿</div>
-      <h1 class="title-main">ルーツ<span class="title-dot">・</span>クエスト</h1>
+      <div class="logo-lockup">
+        <!-- 家紋風サクラアイコン -->
+        <svg class="logo-kamon" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+          <!-- 外枠二重円 -->
+          <circle cx="40" cy="40" r="37" fill="none" stroke="#d4a0b0" stroke-width="1.8"/>
+          <circle cx="40" cy="40" r="31" fill="none" stroke="#d4a0b0" stroke-width="0.7" stroke-dasharray="3,5"/>
+          <!-- 内側の薄塗り -->
+          <circle cx="40" cy="40" r="30" fill="rgba(253,244,248,0.5)"/>
+          <!-- 5枚の花びら（楕円を中心から72°ずつ回転） -->
+          <ellipse cx="40" cy="20" rx="6.5" ry="10.5" fill="#f5d0e2" stroke="#c890a5" stroke-width="1.2"/>
+          <ellipse cx="40" cy="20" rx="6.5" ry="10.5" fill="#f5d0e2" stroke="#c890a5" stroke-width="1.2" transform="rotate(72,40,40)"/>
+          <ellipse cx="40" cy="20" rx="6.5" ry="10.5" fill="#f5d0e2" stroke="#c890a5" stroke-width="1.2" transform="rotate(144,40,40)"/>
+          <ellipse cx="40" cy="20" rx="6.5" ry="10.5" fill="#f5d0e2" stroke="#c890a5" stroke-width="1.2" transform="rotate(216,40,40)"/>
+          <ellipse cx="40" cy="20" rx="6.5" ry="10.5" fill="#f5d0e2" stroke="#c890a5" stroke-width="1.2" transform="rotate(288,40,40)"/>
+          <!-- 花芯 -->
+          <circle cx="40" cy="40" r="7" fill="#ebb8cc" stroke="#c890a5" stroke-width="1"/>
+          <circle cx="40" cy="40" r="3" fill="#c87090"/>
+          <!-- おしべ5本 -->
+          <line x1="40" y1="34" x2="40" y2="31" stroke="#d09090" stroke-width="1" stroke-linecap="round"/>
+          <line x1="40" y1="34" x2="40" y2="31" stroke="#d09090" stroke-width="1" stroke-linecap="round" transform="rotate(72,40,40)"/>
+          <line x1="40" y1="34" x2="40" y2="31" stroke="#d09090" stroke-width="1" stroke-linecap="round" transform="rotate(144,40,40)"/>
+          <line x1="40" y1="34" x2="40" y2="31" stroke="#d09090" stroke-width="1" stroke-linecap="round" transform="rotate(216,40,40)"/>
+          <line x1="40" y1="34" x2="40" y2="31" stroke="#d09090" stroke-width="1" stroke-linecap="round" transform="rotate(288,40,40)"/>
+        </svg>
+        <div class="logo-wordmark">
+          <div class="title-crest">ROOTS  QUEST</div>
+          <h1 class="title-main">ルーツ<span class="title-dot">・</span>クエスト</h1>
+        </div>
+      </div>
       <p class="title-sub">名字と出身地から、あなたを守る<br>かわいい動物の守護獣に出会えます</p>
       <div class="title-rule"><span class="title-rule-icon">✦</span></div>
     </div>
@@ -356,10 +402,35 @@
         <p class="story-text" id="resultText"></p>
       </div>
 
+      <!-- 4. ヒートマップカード -->
+      <div class="info-card" id="heatmapCard" style="display:none">
+        <div class="card-hdr">🗾 名字の分布ヒートマップ</div>
+        <div id="heatmapLoading" class="loading-wrap" style="padding:16px 0">
+          <div class="summon-ring"></div>
+          <p class="loading-text">都道府県データを取得中...</p>
+        </div>
+        <div id="mapContainer" style="display:none"></div>
+        <div class="map-legend" id="mapLegend" style="display:none">
+          <span>少ない</span>
+          <div class="map-legend-bar"></div>
+          <span>多い</span>
+          <span style="margin-left:8px;color:#bbb">■</span><span>データなし</span>
+        </div>
+      </div>
+
     </div>
 
     <div class="divider-or"><span>または</span></div>
-    <button class="btn-secondary" onclick="alert('近日公開予定です。楽しみにお待ちください🗾')">歴史マップで探してみる</button>
+    <button class="btn-secondary" id="mapOnlyBtn">🗾 名字だけで分布マップを見る</button>
+    <div id="mapOnlySection" style="display:none;margin-top:12px;">
+      <div class="form-card" style="margin-bottom:0">
+        <div class="form-group" style="margin-bottom:14px">
+          <label><span class="lj">名字</span><span style="font-size:0.68rem;letter-spacing:0.15em;color:var(--sub)">FAMILY NAME</span></label>
+          <input type="text" id="hmInput" placeholder="例：田中、鈴木、佐藤">
+        </div>
+        <button type="button" class="btn-secondary" id="hmSearchBtn">分布マップを表示</button>
+      </div>
+    </div>
     <div class="footer">&copy; 2025 Roots Quest ｜ あなたの守護獣が、そっと見守っています</div>
   </div>
 
@@ -756,6 +827,15 @@
       document.getElementById('namerootContent').innerHTML =
         '<div class="loading-wrap" style="padding:10px 0"><p class="loading-text">調べています...</p></div>';
       resultText.textContent = '';
+      // ヒートマップカードをリセット
+      const heatmapCard = document.getElementById('heatmapCard');
+      document.getElementById('heatmapLoading').style.display = 'block';
+      document.getElementById('heatmapLoading').innerHTML =
+        '<div class="summon-ring"></div><p class="loading-text">都道府県データを取得中...</p>';
+      document.getElementById('mapContainer').style.display = 'none';
+      document.getElementById('mapLegend').style.display = 'none';
+      heatmapCard.style.display = 'block';
+
       resultsArea.style.display   = 'block';
       storyCard.style.display     = 'block';
       namerootCard.style.display  = 'block';
@@ -785,6 +865,7 @@
           await Promise.all([
             fetchCharacter(myoji, shusshinchi, story),
             fetchNameroot(myoji),
+            fetchHeatmap(myoji),
           ]);
         }
       } catch (err) {
@@ -875,6 +956,116 @@
           <li><span class="nr-icon">✨</span><span class="nr-lbl">意味</span><span class="nr-val">${data.meaning}</span></li>
         </ul>`;
     }
+
+    // ══════════════════════════════════════════
+    // 名字ヒートマップ
+    // ══════════════════════════════════════════
+    let _jpMap = null;
+    let _geoLayer = null;
+
+    async function fetchHeatmap(myoji) {
+      const loading  = document.getElementById('heatmapLoading');
+      const mapDiv   = document.getElementById('mapContainer');
+      const legend   = document.getElementById('mapLegend');
+
+      try {
+        const [heatRes, geoRes] = await Promise.all([
+          fetch(`/api/heatmap?myoji=${encodeURIComponent(myoji)}`),
+          fetch('/api/japan-geojson'),
+        ]);
+
+        if (!heatRes.ok) {
+          const err = await heatRes.json().catch(() => ({}));
+          throw new Error(err.error || 'データ取得エラー');
+        }
+        const { prefectures } = await heatRes.json();
+        const geo = await geoRes.json();
+
+        loading.style.display = 'none';
+        mapDiv.style.display  = 'block';
+
+        // サーモグラフィカラー (青→シアン→緑→黄→赤)
+        function thermoColor(t) {
+          let r, g, b;
+          if      (t < 0.25) { r = 0;              g = t*4*255;        b = 255; }
+          else if (t < 0.5)  { r = 0;              g = 255;            b = (0.5-t)*4*255; }
+          else if (t < 0.75) { r = (t-0.5)*4*255;  g = 255;            b = 0; }
+          else               { r = 255;             g = (1-t)*4*255;   b = 0; }
+          return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
+        }
+
+        const vals = Object.values(prefectures).filter(v => v > 0);
+        const maxV = Math.max(...vals, 1);
+        const minV = Math.min(...vals, 0);
+
+        function colorOf(namJa) {
+          const v = prefectures[namJa];
+          if (v == null) return '#cccccc';
+          const t = maxV === minV ? 1 : (v - minV) / (maxV - minV);
+          return thermoColor(t);
+        }
+
+        // マップ初期化 or レイヤーだけ更新
+        if (!_jpMap) {
+          _jpMap = L.map('mapContainer', { zoomControl: true, attributionControl: false })
+                   .setView([36.5, 137.5], 5);
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '©OpenStreetMap ©CartoDB',
+          }).addTo(_jpMap);
+          L.control.attribution({ prefix: false })
+           .addAttribution('©<a href="https://openstreetmap.org">OSM</a> ©<a href="https://carto.com">CARTO</a>')
+           .addTo(_jpMap);
+        } else {
+          if (_geoLayer) _jpMap.removeLayer(_geoLayer);
+        }
+
+        _geoLayer = L.geoJSON(geo, {
+          style: f => ({
+            fillColor:   colorOf(f.properties.nam_ja),
+            fillOpacity: 0.78,
+            color:       '#ffffff',
+            weight:      1.2,
+          }),
+          onEachFeature: (f, lyr) => {
+            const n = f.properties.nam_ja;
+            const v = prefectures[n];
+            const label = v != null ? `${v.toLocaleString()}人` : 'データなし';
+            lyr.bindTooltip(`<b>${n}</b><br>${label}`, { sticky: true });
+            lyr.on('mouseover', function() { this.setStyle({ fillOpacity: 0.95, weight: 2 }); });
+            lyr.on('mouseout',  function() { this.setStyle({ fillOpacity: 0.78, weight: 1.2 }); });
+          },
+        }).addTo(_jpMap);
+
+        _jpMap.fitBounds(_geoLayer.getBounds(), { padding: [8, 8] });
+        _jpMap.invalidateSize();
+        legend.style.display = 'flex';
+
+      } catch (err) {
+        loading.innerHTML = `<p style="font-size:0.8rem;color:var(--sub);padding:8px 0">${err.message || '分布データの取得に失敗しました。'}</p>`;
+      }
+    }
+
+    // スタンドアロン: 名字だけで調べるボタン
+    document.getElementById('mapOnlyBtn').addEventListener('click', function() {
+      const sec = document.getElementById('mapOnlySection');
+      sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
+    });
+
+    document.getElementById('hmSearchBtn').addEventListener('click', async function() {
+      const myoji = document.getElementById('hmInput').value.trim();
+      if (!myoji) return;
+      const card = document.getElementById('heatmapCard');
+      const loading = document.getElementById('heatmapLoading');
+      document.getElementById('mapContainer').style.display = 'none';
+      document.getElementById('mapLegend').style.display = 'none';
+      loading.style.display = 'block';
+      loading.innerHTML = '<div class="summon-ring"></div><p class="loading-text">都道府県データを取得中...</p>';
+      card.style.display = 'block';
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      this.disabled = true;
+      await fetchHeatmap(myoji);
+      this.disabled = false;
+    });
 
     // ══════════════════════════════════════════
     // 桜の花びら

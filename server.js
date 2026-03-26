@@ -126,6 +126,18 @@ app.post("/api/story", async (req, res) => {
   }
 });
 
+// 名字+出身地のハッシュで守護獣タイプを決定論的に選ぶフォールバック
+function hashType(myoji, shusshinchi) {
+  const s = myoji + shusshinchi;
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = (h * 16777619) >>> 0;
+  }
+  const keys = Object.keys(CHARACTER_TYPES);
+  return keys[h % keys.length];
+}
+
 app.post("/api/character", async (req, res) => {
   const { myoji, shusshinchi, story } = req.body;
   if (!myoji || !shusshinchi || !story) {
@@ -140,21 +152,40 @@ app.post("/api/character", async (req, res) => {
       messages: [
         {
           role: "system",
-          content: `あなたは動物の守護獣を呼び出す、やさしい神秘の占い師です。
-名字・出身地・ご先祖のストーリーをもとに、以下20種類の守護獣タイプから最も適切なものを1つ選んでください。
+          content: `あなたは守護獣を判定する神秘の占い師です。
+名字・出身地・ご先祖のストーリーをもとに、以下20種類の守護獣タイプから最も適切なものを厳密に1つ選んでください。
 JSON形式のみで返してください。
 
-守護獣タイプ（key）：
-warrior（柴犬武神）, ninja（黒猫忍神・レア）, court_noble（白うさぎ雅神）, farmer（たぬき豊穣神）,
-shugenja（しか霊験神・レア）, craftsman（三毛猫匠神）, merchant（パンダ商才神）, seafarer（ペンギン海神）,
-scholar（ハムスター仏神）, healer（きつね陰陽神）, hunter（くまマタギ神）, trader（りす速神）,
-performer（ふくろう長老神）, weaver（かえる芸神）, mountain_folk（さる祭神）,
-christian（かわうそ川神）, blacksmith（いのしし守神）, tea_master（コアラ風雅神）,
-castle_samurai（ぞう縁神）, noble_exile（たつ龍神・レア）
+【守護獣の選び方：ストーリーのキーワードで判断する】
+- 田畑・農業・豊作・里山の暮らし → farmer（たぬきの豊穣神）
+- 武士・合戦・刀・剣術・忠義 → warrior（柴犬の武神）
+- 忍び・隠密・スパイ・秘密工作 → ninja（黒猫の忍神）★レア
+- 公家・朝廷・宮廷・雅楽・和歌 → court_noble（白うさぎの雅神）
+- 修験道・山岳修行・呪術・霊山 → shugenja（しかの霊験神）★レア
+- 大工・左官・建築・木工・鍛冶以外の職人 → craftsman（三毛猫の匠神）
+- 商売・両替・問屋・市場・行商 → merchant（パンダの商才神）
+- 海・漁・船乗り・漁村・港 → seafarer（ペンギンの海神）
+- 寺・仏教・僧侶・念仏・写経 → scholar（ハムスターの仏神）
+- 陰陽師・呪い・占い・神道・神社神職 → healer（きつねの陰陽神）
+- 山・猟・狩り・マタギ・山村 → hunter（くまのマタギ神）
+- 飛脚・早馬・使者・旅・行商の旅人 → trader（りすの速神）
+- 長老・学者・医者・儒学・書物 → performer（ふくろうの長老神）
+- 歌舞伎・能・芸能・踊り・祭り芸 → weaver（かえるの芸神）
+- 祭り・神輿・太鼓・民俗行事 → mountain_folk（さるの祭神）
+- 川・渡し舟・水運・船頭・漁師（川） → christian（かわうその川神）
+- 鍛冶・製鉄・炭焼き・衛兵・門番 → blacksmith（いのししの守神）
+- 茶道・華道・文人・文化人・茶人 → tea_master（コアラの風雅神）
+- 貿易商・異国・琉球・長崎・外国との縁 → castle_samurai（ぞうの縁神）
+- 大名・伝説・龍・神話・極めて特殊な血筋 → noble_exile（たつの龍神）★レア
+
+【重要】
+・必ず上記20種類のkeyを1つだけ返してください
+・「warrior」は武士・剣士の話のみ。農民や商人には使わないでください
+・ストーリーに複数の要素がある場合は、最も強調されているものを選んでください
 
 返すJSONの形式：
 {
-  "key": "上記のkeyから1つ",
+  "key": "上記20種類のkeyから1つ（例：farmer, merchant, ninja など）",
   "ancestorName": "名字や地域・動物を活かした守護獣の名前（例：陸奥の柴犬武神・鉄三郎権現）",
   "feature": "この守護獣の由来と特徴を2〜3文で。ご先祖の時代背景・ご加護の内容を含めてください。",
   "comment": "守護獣からあなたへの温かいひとこと。やさしく励ますような語り口で（40字程度）"
@@ -168,10 +199,12 @@ castle_samurai（ぞう縁神）, noble_exile（たつ龍神・レア）
     });
 
     const raw = JSON.parse(completion.choices[0].message.content);
-    const typeInfo = CHARACTER_TYPES[raw.key] || CHARACTER_TYPES.farmer;
+    // 有効なkeyかチェック。無効ならハッシュフォールバック
+    const resolvedKey = CHARACTER_TYPES[raw.key] ? raw.key : hashType(myoji, shusshinchi);
+    const typeInfo = CHARACTER_TYPES[resolvedKey];
 
     res.json({
-      key: raw.key,
+      key: resolvedKey,
       emoji: typeInfo.emoji,
       typeName: typeInfo.typeName,
       typeDesc: typeInfo.typeDesc,
@@ -215,6 +248,75 @@ app.post("/api/nameroot", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "名字ルーツの取得に失敗しました" });
+  }
+});
+
+// ── 名字ヒートマップ: 都道府県別分布スクレイピング ──
+const ALL_PREFECTURES = [
+  "北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県",
+  "茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県",
+  "新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県",
+  "静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県",
+  "奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県",
+  "徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県",
+  "熊本県","大分県","宮崎県","鹿児島県","沖縄県",
+];
+
+const SCRAPE_HEADERS = {
+  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "Accept-Language": "ja,en-US;q=0.9",
+  "Referer": "https://myoji-yurai.net/",
+};
+
+async function fetchPrefectureCount(myoji, pref) {
+  try {
+    const url = `https://myoji-yurai.net/myojiPrefectureDetail.htm?myojiKanji=${encodeURIComponent(myoji)}&prefecture=${encodeURIComponent(pref)}`;
+    const r = await fetch(url, { headers: SCRAPE_HEADERS });
+    if (!r.ok) return null;
+    const html = await r.text();
+    const m = html.match(/【.+?人数】\s*[\r\n]*およそ([\d,]+)人/);
+    return m ? parseInt(m[1].replace(/,/g, ""), 10) : null;
+  } catch {
+    return null;
+  }
+}
+
+app.get("/api/heatmap", async (req, res) => {
+  const { myoji } = req.query;
+  if (!myoji) return res.status(400).json({ error: "名字を入力してください" });
+  try {
+    const counts = await Promise.all(
+      ALL_PREFECTURES.map(pref => fetchPrefectureCount(myoji, pref))
+    );
+    const prefectures = {};
+    ALL_PREFECTURES.forEach((pref, i) => {
+      if (counts[i] != null) prefectures[pref] = counts[i];
+    });
+    if (Object.keys(prefectures).length === 0) {
+      return res.status(404).json({ error: "データが見つかりませんでした。名字を確認してください。" });
+    }
+    res.json({ myoji, prefectures });
+  } catch (e) {
+    console.error("heatmap error:", e);
+    res.status(500).json({ error: "データ取得に失敗しました" });
+  }
+});
+
+// ── Japan GeoJSON プロキシ（CORS回避・メモリキャッシュ） ──
+let _japanGeoJSON = null;
+app.get("/api/japan-geojson", async (req, res) => {
+  try {
+    if (!_japanGeoJSON) {
+      const r = await fetch(
+        "https://raw.githubusercontent.com/dataofjapan/land/master/japan.geojson"
+      );
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      _japanGeoJSON = await r.json();
+    }
+    res.json(_japanGeoJSON);
+  } catch (e) {
+    console.error("geojson error:", e);
+    res.status(500).json({ error: "地図データの取得に失敗しました" });
   }
 });
 
