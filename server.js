@@ -9,6 +9,7 @@ const app = express();
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 app.use(express.json());
+app.use(express.static(__dirname + "/public")); // 画像・JSON等の静的アセット配信
 app.use(express.static(__dirname));
 app.get("/", (req, res) => res.sendFile(__dirname + "/public/index.html"));
 

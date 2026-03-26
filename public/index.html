@@ -677,7 +677,7 @@
       const card    = document.getElementById('charCard');
       const loading = document.getElementById('charLoading');
       const content = document.getElementById('charContent');
-      const imgSrc  = CHARACTER_IMAGES[data.key] || CHARACTER_IMAGES.farmer;
+      const imgSrc  = CHARACTER_IMAGES[data.key];
 
       card.className = 'char-card' + (data.isRare ? ' rare' : '');
       content.innerHTML = `
