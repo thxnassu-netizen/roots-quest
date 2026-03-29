@@ -227,6 +227,7 @@
     .char-divider { display:flex; align-items:center; gap:8px; margin:0 0 13px; }
     .char-divider .cl { flex:1; height:1px; background:rgba(232,168,184,0.3); }
     .char-divider .ci { font-size:0.72rem; color:var(--pink); opacity:0.7; }
+    .char-arrival { font-size:0.72rem; color:var(--sub); text-align:center; letter-spacing:0.05em; margin:6px 0 10px; opacity:0.85; font-style:italic; }
     .char-story-lbl { font-size:0.7rem; letter-spacing:0.12em; color:var(--pink-d); text-align:center; margin-bottom:8px; opacity:0.8; }
     .char-feature { font-size:0.84rem; line-height:2; color:rgba(74,48,64,0.75); text-align:left; margin-bottom:15px; }
 
@@ -448,13 +449,13 @@
 
       <!-- 3. ストーリーカード -->
       <div class="info-card" id="storyCard" style="display:none">
-        <div class="card-hdr">📜 ご先祖さまの物語</div>
+        <div class="card-hdr">📜 守護獣の語り｜汝の血脈に眠る物語</div>
         <p class="story-text" id="resultText"></p>
       </div>
 
       <!-- 4. 歴史IFストーリーカード -->
       <div class="ifstory-card" id="ifstoryCard" style="display:none">
-        <div class="ifstory-hdr">✨ 知られざる歴史の痕跡</div>
+        <div class="ifstory-hdr">✨ 古の記憶｜歴史に刻まれた足跡</div>
         <div id="ifstoryLoading" class="loading-wrap" style="padding:12px 0">
           <div class="summon-ring"></div>
           <p class="loading-text">歴史の記憶を探っています...</p>
@@ -681,16 +682,17 @@
 
       card.className = 'char-card' + (data.isRare ? ' rare' : '');
       content.innerHTML = `
-        ${data.isRare ? '<div class="rare-badge">✨ めったに出ない守護獣です ✨</div><br>' : ''}
+        ${data.isRare ? '<div class="rare-badge">✨ 伝説の守護獣が、あなたの元へ ✨</div><br>' : ''}
         <div class="char-sec-label">✦ あなたの守護獣 ✦</div>
         <div class="char-icon-wrap"><img src="${imgSrc}" alt="${data.typeName}" class="char-img" onerror="this.style.display='none'"><div class="char-shadow"></div></div>
+        <div class="char-arrival">〜 ${data.typeName}が、あなたの元へ舞い降りました 〜</div>
         <div class="char-name">${data.ancestorName}</div>
-        <div class="char-type-badge">${data.typeName}｜${data.typeDesc}</div>
+        <div class="char-type-badge">${data.emoji} ${data.typeName}｜${data.typeDesc}</div>
         <div class="char-divider"><div class="cl"></div><div class="ci">❧</div><div class="cl"></div></div>
-        <div class="char-story-lbl">✦ 守護獣からの物語 ✦</div>
+        <div class="char-story-lbl">📜 守護獣の語り｜汝の血脈に眠る物語</div>
         <p class="char-feature">${data.feature}</p>
         <div class="speech-bubble">
-          <div class="speech-lbl">✦ 守護獣からの加護の言葉 ✦</div>
+          <div class="speech-lbl">✨ 加護の託宣｜汝への導き ✨</div>
           <p class="speech-text">${data.comment}</p>
         </div>`;
 
