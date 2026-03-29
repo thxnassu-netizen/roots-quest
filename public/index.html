@@ -327,23 +327,45 @@
     .ifstory-card .loading-text { color:rgba(212,175,55,0.65); }
 
     /* ── ガチャ（今日の加護）カード ── */
+    @keyframes tubeFloat {
+      0%,100% { transform:translateY(0); }
+      50%     { transform:translateY(-7px); }
+    }
     @keyframes shakeTube {
-      0%,100% { transform:rotate(0deg) translateX(0); }
-      10%  { transform:rotate(-9deg) translateX(-6px); }
-      20%  { transform:rotate(9deg)  translateX(6px); }
-      30%  { transform:rotate(-7deg) translateX(-5px); }
-      40%  { transform:rotate(7deg)  translateX(5px); }
-      50%  { transform:rotate(-5deg) translateX(-3px); }
-      60%  { transform:rotate(5deg)  translateX(3px); }
-      70%  { transform:rotate(-3deg) translateX(-2px); }
-      80%  { transform:rotate(3deg)  translateX(2px); }
-      90%  { transform:rotate(-1deg) translateX(-1px); }
+      0%   { transform:rotate(0deg) translateX(0); }
+      7%   { transform:rotate(-16deg) translateX(-12px); }
+      14%  { transform:rotate(16deg)  translateX(12px); }
+      21%  { transform:rotate(-14deg) translateX(-10px); }
+      28%  { transform:rotate(14deg)  translateX(10px); }
+      35%  { transform:rotate(-16deg) translateX(-12px); }
+      42%  { transform:rotate(16deg)  translateX(12px); }
+      49%  { transform:rotate(-12deg) translateX(-8px); }
+      56%  { transform:rotate(12deg)  translateX(8px); }
+      63%  { transform:rotate(-9deg)  translateX(-6px); }
+      70%  { transform:rotate(9deg)   translateX(6px); }
+      77%  { transform:rotate(-6deg)  translateX(-4px); }
+      84%  { transform:rotate(6deg)   translateX(4px); }
+      91%  { transform:rotate(-2deg)  translateX(-2px); }
+      100% { transform:rotate(0deg)  translateX(0); }
     }
-    @keyframes orbPulse {
-      0%,100% { box-shadow:0 0 18px rgba(200,150,230,0.4),0 0 40px rgba(200,150,230,0.15); }
-      50%     { box-shadow:0 0 30px rgba(200,150,230,0.7),0 0 60px rgba(200,150,230,0.3); }
+    @keyframes stickPeek1 {
+      0%,35% { opacity:0; transform:translateY(12px) rotate(6deg); }
+      50%    { opacity:0.85; transform:translateY(-10px) rotate(-10deg); }
+      70%,85%{ opacity:0.9; transform:translateY(-14px) rotate(8deg); }
+      100%   { opacity:0; transform:translateY(12px) rotate(6deg); }
     }
-    @keyframes ringRotate { 100% { transform:rotate(360deg); } }
+    @keyframes stickPeek2 {
+      0%,25% { opacity:0; transform:translateY(12px) rotate(-4deg); }
+      45%    { opacity:1; transform:translateY(-18px) rotate(2deg); }
+      70%,80%{ opacity:1; transform:translateY(-20px) rotate(-6deg); }
+      100%   { opacity:0; transform:translateY(12px) rotate(-4deg); }
+    }
+    @keyframes stickPeek3 {
+      0%,40% { opacity:0; transform:translateY(12px) rotate(-8deg); }
+      58%    { opacity:0.75; transform:translateY(-8px) rotate(12deg); }
+      75%,87%{ opacity:0.8; transform:translateY(-10px) rotate(-9deg); }
+      100%   { opacity:0; transform:translateY(12px) rotate(-8deg); }
+    }
     @keyframes fortunePop {
       0%   { transform:scale(0) rotate(-15deg); opacity:0; }
       55%  { transform:scale(1.25) rotate(4deg); opacity:1; }
@@ -351,9 +373,17 @@
       90%  { transform:scale(1.05) rotate(1deg); }
       100% { transform:scale(1) rotate(0deg); opacity:1; }
     }
+    @keyframes paperReveal {
+      from { opacity:0; transform:scaleY(0.3) translateY(-10px); transform-origin:top; }
+      to   { opacity:1; transform:scaleY(1) translateY(0); transform-origin:top; }
+    }
     @keyframes slideUp {
       from { opacity:0; transform:translateY(14px); }
       to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes dotBounce {
+      0%,100% { transform:translateY(0); opacity:0.5; }
+      50%     { transform:translateY(-6px); opacity:1; }
     }
     .gacha-card {
       background:linear-gradient(135deg,rgba(255,248,255,0.97),rgba(248,238,255,0.97));
@@ -370,35 +400,48 @@
       font-family:'Shippori Mincho',serif; font-size:0.84rem; font-weight:700;
       color:#8850b0; letter-spacing:0.24em; text-align:center; margin-bottom:20px;
     }
-    /* 御籤玉（おみくじ球） */
-    .gacha-orb {
-      width:90px; height:90px; margin:0 auto 16px;
-      position:relative; display:flex; align-items:center; justify-content:center;
+    /* ── おみくじ筒 ── */
+    .tube-wrap { position:relative; width:100px; margin:0 auto 20px; }
+    .omikuji-tube {
+      width:80px; height:160px; margin:0 auto;
+      border-radius:10px 10px 7px 7px;
+      background:linear-gradient(160deg,#7a3b18 0%,#9b4e1f 35%,#6a2e0f 70%,#5c2810 100%);
+      border:2px solid rgba(210,165,70,0.75);
+      box-shadow:4px 0 10px rgba(40,15,0,0.45),-1px 0 5px rgba(255,195,80,0.2),
+                 inset 3px 0 10px rgba(255,200,120,0.18);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      position:relative; overflow:hidden;
     }
-    .gacha-orb.shaking { animation:shakeTube 0.45s ease-in-out infinite; }
-    .gacha-orb-ring {
-      position:absolute; inset:0; border-radius:50%;
-      border:2px dashed rgba(190,140,220,0.5);
-      animation:orbPulse 2.5s ease-in-out infinite;
+    .tube-rim {
+      position:absolute; left:0; right:0; height:16px;
+      background:linear-gradient(180deg,rgba(225,175,65,0.95),rgba(175,125,35,0.8));
     }
-    .gacha-orb-ring.spinning-ring {
-      border-style:solid; border-color:rgba(190,140,220,0.7) transparent transparent transparent;
-      animation:ringRotate 0.7s linear infinite;
+    .tube-rim.top { top:0; border-bottom:1px solid rgba(195,145,45,0.6); border-radius:8px 8px 0 0; }
+    .tube-rim.bot { bottom:0; top:auto; border-top:1px solid rgba(195,145,45,0.6); border-radius:0 0 5px 5px;
+                   background:linear-gradient(0deg,rgba(225,175,65,0.95),rgba(175,125,35,0.8)); }
+    .tube-lbl {
+      font-family:'Shippori Mincho',serif; font-size:1.55rem; font-weight:900;
+      color:rgba(255,228,130,0.95); text-shadow:0 1px 4px rgba(0,0,0,0.55);
+      line-height:1.15; letter-spacing:0.05em;
     }
-    .gacha-orb-core {
-      width:72px; height:72px; border-radius:50%;
-      background:radial-gradient(circle at 35% 35%,rgba(230,200,255,0.95),rgba(190,140,230,0.85));
-      border:1.5px solid rgba(190,140,220,0.6);
-      box-shadow:0 4px 20px rgba(160,100,200,0.3), inset 0 2px 6px rgba(255,255,255,0.5);
-      display:flex; align-items:center; justify-content:center;
-      font-family:'Shippori Mincho',serif; font-size:1.4rem; color:rgba(80,30,110,0.85);
-      font-weight:800;
+    .omikuji-tube.idle { animation:tubeFloat 3.2s ease-in-out infinite; }
+    .omikuji-tube.shaking { animation:shakeTube 0.32s ease-in-out infinite; transform-origin:center bottom; overflow:visible; }
+    /* 筒から出る棒（tube内に配置してシェイクに同期） */
+    .tube-sticks { position:absolute; top:-50px; left:0; right:0; height:55px; pointer-events:none; }
+    .tube-stick {
+      position:absolute; width:9px; border-radius:4px 4px 2px 2px;
+      background:linear-gradient(to bottom,#f6e3c0,#d4a96a);
+      box-shadow:1px 0 3px rgba(0,0,0,0.3); bottom:0; opacity:0;
     }
+    .tube-stick.s1 { left:18px; height:36px; animation:stickPeek1 0.35s ease-in-out infinite; }
+    .tube-stick.s2 { left:34px; height:48px; animation:stickPeek2 0.35s ease-in-out infinite; }
+    .tube-stick.s3 { left:52px; height:38px; animation:stickPeek3 0.35s ease-in-out infinite; }
+    /* 光輪 */
+    .tube-glow { position:absolute; bottom:-10px; left:50%; transform:translateX(-50%);
+                 width:110px; height:22px;
+                 background:radial-gradient(ellipse,rgba(200,150,230,0.45),transparent 70%);
+                 pointer-events:none; }
     .gacha-desc { font-size:0.76rem; color:var(--sub); text-align:center; margin-bottom:18px; }
-    .gacha-shake-msg {
-      font-size:0.76rem; color:rgba(120,80,150,0.7); text-align:center;
-      margin-top:4px; letter-spacing:0.08em;
-    }
     /* ボタン */
     .gacha-btn {
       display:block; width:100%; padding:13px;
@@ -410,30 +453,60 @@
     }
     .gacha-btn:hover { transform:translateY(-2px); box-shadow:0 6px 22px rgba(150,90,200,0.4); }
     .gacha-btn:active { transform:scale(0.97); }
-    /* 結果 */
-    .gacha-date {
-      font-size:0.62rem; color:rgba(120,80,150,0.6); text-align:center;
-      letter-spacing:0.15em; margin-bottom:14px;
+    /* シェイク中 */
+    .gacha-shake-msg {
+      font-size:0.82rem; color:rgba(100,55,140,0.8); text-align:center;
+      margin-top:6px; letter-spacing:0.1em; font-weight:600;
     }
-    .gacha-fortune-reveal {
-      font-family:'Shippori Mincho',serif; font-size:3rem; font-weight:900;
-      text-align:center; letter-spacing:0.1em; margin-bottom:18px;
-      animation:fortunePop 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    .shake-dots { display:flex; justify-content:center; gap:7px; margin-top:10px; }
+    .shake-dots span {
+      width:7px; height:7px; border-radius:50%; background:rgba(140,80,180,0.65);
+      animation:dotBounce 0.75s ease-in-out infinite;
     }
-    .gacha-body { animation:slideUp 0.5s ease 0.5s both; }
-    .gacha-lucky-row {
-      margin-bottom:12px;
-      background:rgba(198,240,218,0.4); border-radius:10px; padding:10px 14px;
+    .shake-dots span:nth-child(2) { animation-delay:0.15s; }
+    .shake-dots span:nth-child(3) { animation-delay:0.30s; }
+    /* おみくじ紙スタイルの結果 */
+    .omikuji-paper {
+      background:linear-gradient(180deg,#fdf6e3 0%,#fffbf2 100%);
+      border:1px solid rgba(175,128,55,0.4); border-radius:4px 4px 16px 16px;
+      overflow:hidden; box-shadow:0 4px 22px rgba(100,60,20,0.16),inset 0 0 30px rgba(255,240,195,0.25);
+      animation:paperReveal 0.45s cubic-bezier(0.22,1,0.36,1) forwards;
     }
-    .gacha-lucky-lbl { font-size:0.60rem; color:var(--sub); letter-spacing:0.1em; display:block; margin-bottom:4px; }
-    .gacha-lucky-val { font-size:1.15rem; font-weight:700; color:#2a6a4a; display:block; }
-    .gacha-lucky-reason { font-size:0.72rem; color:#4a7a5a; line-height:1.6; margin-top:4px; display:block; }
-    .gacha-advice-box {
-      background:rgba(235,225,255,0.55); border-radius:12px;
-      padding:12px 14px; border:1px solid rgba(185,145,225,0.28);
+    .paper-hdr {
+      background:linear-gradient(135deg,#b03030,#d94040);
+      padding:13px 18px 11px; text-align:center;
     }
-    .gacha-advice-lbl { font-size:0.62rem; color:#8850b0; letter-spacing:0.18em; margin-bottom:6px; }
-    .gacha-advice-txt { font-size:0.84rem; line-height:1.95; color:rgba(74,48,64,0.82); }
+    .paper-hdr-title {
+      font-family:'Shippori Mincho',serif; font-size:0.68rem;
+      color:rgba(255,228,200,0.92); letter-spacing:0.32em;
+    }
+    .paper-hdr-date { font-size:0.56rem; color:rgba(255,200,180,0.8); letter-spacing:0.14em; margin-top:3px; }
+    .paper-fortune-area {
+      text-align:center; padding:22px 16px 18px;
+      border-bottom:1px solid rgba(175,128,55,0.2);
+    }
+    .paper-fortune-char {
+      font-family:'Shippori Mincho',serif; font-size:4.2rem; font-weight:900;
+      letter-spacing:-0.02em; display:inline-block;
+      animation:fortunePop 0.65s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+    .paper-body { padding:16px; animation:slideUp 0.5s ease 0.35s both; }
+    .paper-lucky {
+      background:rgba(195,240,210,0.52); border:1px solid rgba(90,175,120,0.28);
+      border-radius:9px; padding:13px 15px; margin-bottom:13px;
+    }
+    .paper-lucky-title {
+      font-size:0.58rem; color:#3d7a52; letter-spacing:0.22em;
+      display:block; margin-bottom:6px;
+    }
+    .paper-lucky-main { font-size:1.22rem; font-weight:700; color:#1e5e38; display:block; margin-bottom:5px; }
+    .paper-lucky-why  { font-size:0.73rem; color:#3d6a4a; line-height:1.7; }
+    .paper-advice {
+      background:rgba(232,220,255,0.52); border:1px solid rgba(175,135,225,0.25);
+      border-radius:9px; padding:13px 15px;
+    }
+    .paper-advice-title { font-size:0.58rem; color:#7840aa; letter-spacing:0.22em; display:block; margin-bottom:6px; }
+    .paper-advice-txt  { font-size:0.84rem; line-height:2.0; color:rgba(72,45,62,0.85); }
     /* 引き済み */
     .gacha-done-msg {
       font-size:0.72rem; color:rgba(120,80,150,0.7); text-align:center;
@@ -579,40 +652,61 @@
 
       <!-- 5. ガチャ（今日の加護）カード -->
       <div class="gacha-card" id="blessingCard" style="display:none">
-        <div class="gacha-hdr">🎋 今日の加護を授かる</div>
+        <div class="gacha-hdr">⛩️ 今日の御籤を引く</div>
 
-        <!-- 状態A: ボタン表示（未引き） -->
+        <!-- 状態A: 静止中・ボタン表示 -->
         <div id="gachaReady">
-          <div class="gacha-orb" id="gachaOrb">
-            <div class="gacha-orb-ring"></div>
-            <div class="gacha-orb-core">御</div>
+          <div class="tube-wrap">
+            <div class="omikuji-tube idle">
+              <div class="tube-rim top"></div>
+              <div class="tube-lbl">御</div>
+              <div class="tube-lbl">籤</div>
+              <div class="tube-rim bot"></div>
+            </div>
+            <div class="tube-glow"></div>
           </div>
           <p class="gacha-desc">守護獣が今日のお告げを授けてくれます</p>
-          <button class="gacha-btn" id="gachaBtn">✨ 加護を授かる ✨</button>
+          <button class="gacha-btn" id="gachaBtn">⛩️ おみくじを引く ⛩️</button>
         </div>
 
         <!-- 状態B: シェイクアニメーション中 -->
         <div id="gachaSpinning" style="display:none">
-          <div class="gacha-orb shaking">
-            <div class="gacha-orb-ring spinning-ring"></div>
-            <div class="gacha-orb-core">？</div>
+          <div class="tube-wrap" style="margin-top:40px;">
+            <div class="omikuji-tube shaking">
+              <div class="tube-sticks">
+                <div class="tube-stick s1"></div>
+                <div class="tube-stick s2"></div>
+                <div class="tube-stick s3"></div>
+              </div>
+              <div class="tube-rim top"></div>
+              <div class="tube-lbl">？</div>
+              <div class="tube-rim bot"></div>
+            </div>
           </div>
-          <p class="gacha-shake-msg">守護獣がお告げを紡いでいます…</p>
+          <p class="gacha-shake-msg">🎋 おみくじを振っています...</p>
+          <div class="shake-dots"><span></span><span></span><span></span></div>
         </div>
 
-        <!-- 状態C: 結果表示 -->
+        <!-- 状態C: 結果表示（おみくじ紙） -->
         <div id="gachaResult" style="display:none">
-          <div class="gacha-date" id="gachaDate"></div>
-          <div class="gacha-fortune-reveal" id="gachaFortune"></div>
-          <div class="gacha-body">
-            <div class="gacha-lucky-row">
-              <span class="gacha-lucky-lbl">🍀 ラッキーアイテム</span>
-              <span class="gacha-lucky-val" id="gachaLucky"></span>
-              <span class="gacha-lucky-reason" id="gachaLuckyReason"></span>
+          <div class="omikuji-paper">
+            <div class="paper-hdr">
+              <div class="paper-hdr-title">⛩ 今日の御籤 ⛩</div>
+              <div class="paper-hdr-date" id="gachaDate"></div>
             </div>
-            <div class="gacha-advice-box">
-              <div class="gacha-advice-lbl">🔮 守護獣からのお告げ</div>
-              <p class="gacha-advice-txt" id="gachaAdvice"></p>
+            <div class="paper-fortune-area">
+              <span class="paper-fortune-char" id="gachaFortune"></span>
+            </div>
+            <div class="paper-body">
+              <div class="paper-lucky">
+                <span class="paper-lucky-title">🍀 今日のラッキーアイテム</span>
+                <span class="paper-lucky-main" id="gachaLucky"></span>
+                <span class="paper-lucky-why" id="gachaLuckyReason"></span>
+              </div>
+              <div class="paper-advice">
+                <span class="paper-advice-title">🔮 守護獣からのお告げ</span>
+                <p class="paper-advice-txt" id="gachaAdvice"></p>
+              </div>
             </div>
           </div>
         </div>
@@ -969,23 +1063,25 @@
 
     function renderGachaResult(data) {
       const fc = FORTUNE_COLORS[data.fortune] || FORTUNE_COLORS['吉'];
+
       document.getElementById('gachaDate').textContent = `✦ ${data.dateJa}の託宣 ✦`;
 
       const fortuneEl = document.getElementById('gachaFortune');
       fortuneEl.textContent = data.fortune;
       fortuneEl.style.color = fc.color;
-      fortuneEl.style.background = fc.bg;
-      fortuneEl.style.border = `2px solid ${fc.border}`;
-      fortuneEl.style.borderRadius = '16px';
-      fortuneEl.style.padding = '6px 28px';
-      fortuneEl.style.display = 'inline-block';
 
       document.getElementById('gachaLucky').textContent       = `${data.luckyEmoji || '🍀'} ${data.luckyItem}`;
       document.getElementById('gachaLuckyReason').textContent = data.luckyReason || '';
       document.getElementById('gachaAdvice').textContent      = data.advice;
 
-      document.getElementById('gachaResult').style.display   = 'block';
-      document.getElementById('gachaDone').style.display     = 'none';
+      // おみくじ紙をリセットしてアニメーション再生
+      const paper = document.querySelector('#gachaResult .omikuji-paper');
+      paper.style.animation = 'none';
+      paper.offsetHeight; // reflow
+      paper.style.animation = '';
+
+      document.getElementById('gachaResult').style.display = 'block';
+      document.getElementById('gachaDone').style.display   = 'none';
     }
 
     function showGachaDone(data) {
@@ -996,21 +1092,25 @@
 
       const fc = FORTUNE_COLORS[data.fortune] || FORTUNE_COLORS['吉'];
       document.getElementById('gachaDoneResult').innerHTML = `
-        <div style="text-align:center;margin-bottom:10px">
-          <span style="font-family:'Shippori Mincho',serif;font-size:2.2rem;font-weight:900;
-            color:${fc.color};background:${fc.bg};border:2px solid ${fc.border};
-            border-radius:14px;padding:4px 22px;display:inline-block">
-            ${data.fortune}
-          </span>
-        </div>
-        <div style="background:rgba(198,240,218,0.4);border-radius:10px;padding:10px 14px;margin-bottom:10px">
-          <span style="font-size:0.60rem;color:var(--sub);letter-spacing:0.1em;display:block;margin-bottom:4px">🍀 ラッキーアイテム</span>
-          <span style="font-size:1.15rem;font-weight:700;color:#2a6a4a;display:block">${data.luckyEmoji || '🍀'} ${data.luckyItem}</span>
-          ${data.luckyReason ? `<span style="font-size:0.72rem;color:#4a7a5a;line-height:1.6;display:block;margin-top:4px">${data.luckyReason}</span>` : ''}
-        </div>
-        <div style="background:rgba(235,225,255,0.55);border-radius:12px;padding:12px 14px">
-          <div style="font-size:0.62rem;color:#8850b0;letter-spacing:0.18em;margin-bottom:6px">🔮 守護獣からのお告げ</div>
-          <p style="font-size:0.84rem;line-height:1.95;color:rgba(74,48,64,0.82)">${data.advice}</p>
+        <div class="omikuji-paper">
+          <div class="paper-hdr">
+            <div class="paper-hdr-title">⛩ 今日の御籤 ⛩</div>
+            <div class="paper-hdr-date">✦ ${data.dateJa}の託宣 ✦</div>
+          </div>
+          <div class="paper-fortune-area">
+            <span class="paper-fortune-char" style="color:${fc.color};animation:none">${data.fortune}</span>
+          </div>
+          <div class="paper-body">
+            <div class="paper-lucky">
+              <span class="paper-lucky-title">🍀 今日のラッキーアイテム</span>
+              <span class="paper-lucky-main">${data.luckyEmoji || '🍀'} ${data.luckyItem}</span>
+              ${data.luckyReason ? `<span class="paper-lucky-why">${data.luckyReason}</span>` : ''}
+            </div>
+            <div class="paper-advice">
+              <span class="paper-advice-title">🔮 守護獣からのお告げ</span>
+              <p class="paper-advice-txt">${data.advice}</p>
+            </div>
+          </div>
         </div>`;
     }
 
