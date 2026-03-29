@@ -326,52 +326,117 @@
     }
     .ifstory-card .loading-text { color:rgba(212,175,55,0.65); }
 
-    /* ── 今日の加護カード ── */
-    .blessing-card {
-      background:linear-gradient(135deg,rgba(255,248,255,0.97),rgba(250,240,255,0.97));
-      border:1.5px solid rgba(200,160,210,0.4); border-radius:18px;
-      padding:24px 22px; margin-bottom:14px;
-      box-shadow:0 6px 28px rgba(180,130,200,0.12), inset 0 1px 0 rgba(255,255,255,0.8);
+    /* ── ガチャ（今日の加護）カード ── */
+    @keyframes shakeTube {
+      0%,100% { transform:rotate(0deg) translateX(0); }
+      10%  { transform:rotate(-9deg) translateX(-6px); }
+      20%  { transform:rotate(9deg)  translateX(6px); }
+      30%  { transform:rotate(-7deg) translateX(-5px); }
+      40%  { transform:rotate(7deg)  translateX(5px); }
+      50%  { transform:rotate(-5deg) translateX(-3px); }
+      60%  { transform:rotate(5deg)  translateX(3px); }
+      70%  { transform:rotate(-3deg) translateX(-2px); }
+      80%  { transform:rotate(3deg)  translateX(2px); }
+      90%  { transform:rotate(-1deg) translateX(-1px); }
+    }
+    @keyframes orbPulse {
+      0%,100% { box-shadow:0 0 18px rgba(200,150,230,0.4),0 0 40px rgba(200,150,230,0.15); }
+      50%     { box-shadow:0 0 30px rgba(200,150,230,0.7),0 0 60px rgba(200,150,230,0.3); }
+    }
+    @keyframes ringRotate { 100% { transform:rotate(360deg); } }
+    @keyframes fortunePop {
+      0%   { transform:scale(0) rotate(-15deg); opacity:0; }
+      55%  { transform:scale(1.25) rotate(4deg); opacity:1; }
+      75%  { transform:scale(0.92) rotate(-2deg); }
+      90%  { transform:scale(1.05) rotate(1deg); }
+      100% { transform:scale(1) rotate(0deg); opacity:1; }
+    }
+    @keyframes slideUp {
+      from { opacity:0; transform:translateY(14px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .gacha-card {
+      background:linear-gradient(135deg,rgba(255,248,255,0.97),rgba(248,238,255,0.97));
+      border:1.5px solid rgba(200,155,220,0.42); border-radius:18px;
+      padding:26px 22px; margin-bottom:14px;
+      box-shadow:0 6px 30px rgba(170,120,200,0.13), inset 0 1px 0 rgba(255,255,255,0.85);
       animation:fadeUp 0.5s ease forwards; position:relative; overflow:hidden;
     }
-    .blessing-card::before {
+    .gacha-card::before {
       content:''; position:absolute; top:0; left:0; right:0; height:2px;
-      background:linear-gradient(to right,transparent,rgba(210,160,230,0.7),transparent);
+      background:linear-gradient(to right,transparent,rgba(200,150,230,0.75),transparent);
     }
-    .blessing-hdr {
-      font-family:'Shippori Mincho',serif; font-size:0.82rem; font-weight:700;
-      color:#9860b8; letter-spacing:0.22em; text-align:center; margin-bottom:16px;
+    .gacha-hdr {
+      font-family:'Shippori Mincho',serif; font-size:0.84rem; font-weight:700;
+      color:#8850b0; letter-spacing:0.24em; text-align:center; margin-bottom:20px;
     }
-    .blessing-date {
-      font-size:0.62rem; color:rgba(120,80,140,0.6); text-align:center;
+    /* 御籤玉（おみくじ球） */
+    .gacha-orb {
+      width:90px; height:90px; margin:0 auto 16px;
+      position:relative; display:flex; align-items:center; justify-content:center;
+    }
+    .gacha-orb.shaking { animation:shakeTube 0.45s ease-in-out infinite; }
+    .gacha-orb-ring {
+      position:absolute; inset:0; border-radius:50%;
+      border:2px dashed rgba(190,140,220,0.5);
+      animation:orbPulse 2.5s ease-in-out infinite;
+    }
+    .gacha-orb-ring.spinning-ring {
+      border-style:solid; border-color:rgba(190,140,220,0.7) transparent transparent transparent;
+      animation:ringRotate 0.7s linear infinite;
+    }
+    .gacha-orb-core {
+      width:72px; height:72px; border-radius:50%;
+      background:radial-gradient(circle at 35% 35%,rgba(230,200,255,0.95),rgba(190,140,230,0.85));
+      border:1.5px solid rgba(190,140,220,0.6);
+      box-shadow:0 4px 20px rgba(160,100,200,0.3), inset 0 2px 6px rgba(255,255,255,0.5);
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Shippori Mincho',serif; font-size:1.4rem; color:rgba(80,30,110,0.85);
+      font-weight:800;
+    }
+    .gacha-desc { font-size:0.76rem; color:var(--sub); text-align:center; margin-bottom:18px; }
+    .gacha-shake-msg {
+      font-size:0.76rem; color:rgba(120,80,150,0.7); text-align:center;
+      margin-top:4px; letter-spacing:0.08em;
+    }
+    /* ボタン */
+    .gacha-btn {
+      display:block; width:100%; padding:13px;
+      background:linear-gradient(135deg,rgba(190,140,230,0.88),rgba(160,100,210,0.88));
+      color:#fff; font-size:0.88rem; font-weight:700; letter-spacing:0.18em;
+      border:none; border-radius:50px; cursor:pointer;
+      box-shadow:0 4px 16px rgba(150,90,200,0.3);
+      transition:transform 0.15s, box-shadow 0.15s;
+    }
+    .gacha-btn:hover { transform:translateY(-2px); box-shadow:0 6px 22px rgba(150,90,200,0.4); }
+    .gacha-btn:active { transform:scale(0.97); }
+    /* 結果 */
+    .gacha-date {
+      font-size:0.62rem; color:rgba(120,80,150,0.6); text-align:center;
       letter-spacing:0.15em; margin-bottom:14px;
     }
-    .blessing-fortune-wrap {
-      display:flex; align-items:center; justify-content:center; gap:10px;
-      margin-bottom:14px;
+    .gacha-fortune-reveal {
+      font-family:'Shippori Mincho',serif; font-size:3rem; font-weight:900;
+      text-align:center; letter-spacing:0.1em; margin-bottom:18px;
+      animation:fortunePop 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards;
     }
-    .blessing-fortune-label { font-size:0.65rem; color:var(--sub); letter-spacing:0.15em; }
-    .blessing-fortune {
-      font-family:'Shippori Mincho',serif; font-size:1.5rem; font-weight:800;
-      letter-spacing:0.05em; padding:2px 14px; border-radius:20px;
-      background:linear-gradient(135deg,rgba(255,230,100,0.25),rgba(255,200,80,0.15));
-      border:1px solid rgba(210,175,55,0.45); color:#b8900a;
+    .gacha-body { animation:slideUp 0.5s ease 0.5s both; }
+    .gacha-lucky-row {
+      display:flex; align-items:center; gap:8px; margin-bottom:12px;
+      background:rgba(198,240,218,0.4); border-radius:10px; padding:8px 12px;
     }
-    .blessing-lucky-wrap {
-      display:flex; align-items:center; gap:8px; margin-bottom:14px;
-      background:rgba(200,240,220,0.35); border-radius:10px; padding:8px 12px;
+    .gacha-lucky-lbl { font-size:0.64rem; color:var(--sub); white-space:nowrap; }
+    .gacha-lucky-val { font-size:0.88rem; font-weight:600; color:#3a7a5a; }
+    .gacha-advice-box {
+      background:rgba(235,225,255,0.55); border-radius:12px;
+      padding:12px 14px; border:1px solid rgba(185,145,225,0.28);
     }
-    .blessing-lucky-label { font-size:0.64rem; color:var(--sub); white-space:nowrap; }
-    .blessing-lucky { font-size:0.88rem; font-weight:600; color:#3a7a5a; }
-    .blessing-advice-wrap {
-      background:rgba(240,230,255,0.5); border-radius:12px;
-      padding:12px 14px; border:1px solid rgba(190,150,220,0.25);
-    }
-    .blessing-advice-label {
-      font-size:0.62rem; color:#9860b8; letter-spacing:0.18em; margin-bottom:6px;
-    }
-    .blessing-advice {
-      font-size:0.84rem; line-height:1.95; color:rgba(74,48,64,0.8);
+    .gacha-advice-lbl { font-size:0.62rem; color:#8850b0; letter-spacing:0.18em; margin-bottom:6px; }
+    .gacha-advice-txt { font-size:0.84rem; line-height:1.95; color:rgba(74,48,64,0.82); }
+    /* 引き済み */
+    .gacha-done-msg {
+      font-size:0.72rem; color:rgba(120,80,150,0.7); text-align:center;
+      letter-spacing:0.12em; margin-bottom:14px;
     }
 
     /* ── SNSシェア ── */
@@ -511,27 +576,49 @@
         <p class="ifstory-body" id="ifstoryText" style="display:none"></p>
       </div>
 
-      <!-- 5. 今日の加護カード -->
-      <div class="blessing-card" id="blessingCard" style="display:none">
-        <div class="blessing-hdr">✨ 今日の加護 Daily Blessing ✨</div>
-        <div id="blessingLoading" class="loading-wrap" style="padding:12px 0">
-          <div class="summon-ring"></div>
-          <p class="loading-text">今日のお告げを受け取っています...</p>
+      <!-- 5. ガチャ（今日の加護）カード -->
+      <div class="gacha-card" id="blessingCard" style="display:none">
+        <div class="gacha-hdr">🎋 今日の加護を授かる</div>
+
+        <!-- 状態A: ボタン表示（未引き） -->
+        <div id="gachaReady">
+          <div class="gacha-orb" id="gachaOrb">
+            <div class="gacha-orb-ring"></div>
+            <div class="gacha-orb-core">御</div>
+          </div>
+          <p class="gacha-desc">守護獣が今日のお告げを授けてくれます</p>
+          <button class="gacha-btn" id="gachaBtn">✨ 加護を授かる ✨</button>
         </div>
-        <div id="blessingContent" style="display:none">
-          <div class="blessing-date" id="blessingDate"></div>
-          <div class="blessing-fortune-wrap">
-            <span class="blessing-fortune-label">今日の運勢</span>
-            <span class="blessing-fortune" id="blessingFortune"></span>
+
+        <!-- 状態B: シェイクアニメーション中 -->
+        <div id="gachaSpinning" style="display:none">
+          <div class="gacha-orb shaking">
+            <div class="gacha-orb-ring spinning-ring"></div>
+            <div class="gacha-orb-core">？</div>
           </div>
-          <div class="blessing-lucky-wrap">
-            <span class="blessing-lucky-label">🍀 ラッキーアイテム</span>
-            <span class="blessing-lucky" id="blessingLucky"></span>
+          <p class="gacha-shake-msg">守護獣がお告げを紡いでいます…</p>
+        </div>
+
+        <!-- 状態C: 結果表示 -->
+        <div id="gachaResult" style="display:none">
+          <div class="gacha-date" id="gachaDate"></div>
+          <div class="gacha-fortune-reveal" id="gachaFortune"></div>
+          <div class="gacha-body">
+            <div class="gacha-lucky-row">
+              <span class="gacha-lucky-lbl">🍀 ラッキーアイテム</span>
+              <span class="gacha-lucky-val" id="gachaLucky"></span>
+            </div>
+            <div class="gacha-advice-box">
+              <div class="gacha-advice-lbl">🔮 守護獣からのお告げ</div>
+              <p class="gacha-advice-txt" id="gachaAdvice"></p>
+            </div>
           </div>
-          <div class="blessing-advice-wrap">
-            <div class="blessing-advice-label">🔮 守護獣からの今日のお告げ</div>
-            <p class="blessing-advice" id="blessingAdvice"></p>
-          </div>
+        </div>
+
+        <!-- 状態D: 引き済み（今日はもう引けない） -->
+        <div id="gachaDone" style="display:none">
+          <p class="gacha-done-msg">✦ 本日の加護は授かり済みです ✦</p>
+          <div id="gachaDoneResult"></div>
         </div>
       </div>
 
@@ -673,10 +760,12 @@
       document.getElementById('ifstoryLoading').innerHTML =
         '<div class="summon-ring"></div><p class="loading-text">歴史の記憶を探っています...</p>';
 
-      // 今日の加護カードをリセット
-      document.getElementById('blessingCard').style.display = 'none';
-      document.getElementById('blessingContent').style.display = 'none';
-      document.getElementById('blessingLoading').style.display = 'block';
+      // ガチャカードをリセット
+      document.getElementById('blessingCard').style.display    = 'none';
+      document.getElementById('gachaReady').style.display      = 'none';
+      document.getElementById('gachaSpinning').style.display   = 'none';
+      document.getElementById('gachaResult').style.display     = 'none';
+      document.getElementById('gachaDone').style.display       = 'none';
 
       // シェアカードをリセット
       document.getElementById('shareCard').style.display = 'none';
@@ -800,34 +889,126 @@
     // ══════════════════════════════════════════
     // 名字ルーツ
     // ══════════════════════════════════════════
-    // 今日の加護（Daily Blessing）
+    // ガチャ（今日の加護）
     // ══════════════════════════════════════════
-    const FORTUNE_COLORS = { '大吉':'#b8900a', '中吉':'#3a7a5a', '吉':'#4878a8', '小吉':'#7a6898', '末吉':'#887060' };
-    async function fetchBlessing(myoji, shusshinchi) {
-      const card    = document.getElementById('blessingCard');
-      const loading = document.getElementById('blessingLoading');
-      const content = document.getElementById('blessingContent');
+    const FORTUNE_COLORS = {
+      '大吉': { color:'#b8860a', bg:'linear-gradient(135deg,rgba(255,220,60,0.22),rgba(255,180,30,0.12))', border:'rgba(210,175,55,0.6)' },
+      '中吉': { color:'#2a7a4a', bg:'linear-gradient(135deg,rgba(80,200,130,0.18),rgba(60,180,100,0.1))',  border:'rgba(80,180,110,0.5)' },
+      '吉':   { color:'#2858a8', bg:'linear-gradient(135deg,rgba(80,140,230,0.18),rgba(60,110,200,0.1))',  border:'rgba(80,130,210,0.5)' },
+      '小吉': { color:'#6a4898', bg:'linear-gradient(135deg,rgba(160,110,230,0.18),rgba(130,80,200,0.1))', border:'rgba(150,100,210,0.5)' },
+      '末吉': { color:'#7a6050', bg:'linear-gradient(135deg,rgba(180,150,120,0.18),rgba(160,130,100,0.1))',border:'rgba(160,130,100,0.5)' },
+    };
+
+    // JST 今日の日付（YYYY-MM-DD）
+    function getTodayJST() {
+      const now = new Date();
+      const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+      return jst.toISOString().slice(0, 10);
+    }
+
+    // ガチャカードを表示し、LocalStorage 確認
+    function fetchBlessing(myoji, shusshinchi) {
+      const card = document.getElementById('blessingCard');
       card.style.display = 'block';
-      try {
-        const res = await fetch('/api/blessing', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ myoji, shusshinchi }),
-        });
-        if (!res.ok) throw new Error();
-        const d = await res.json();
 
-        document.getElementById('blessingDate').textContent = `✦ ${d.dateJa}の託宣 ✦`;
-        const fortuneEl = document.getElementById('blessingFortune');
-        fortuneEl.textContent = d.fortune;
-        fortuneEl.style.color = FORTUNE_COLORS[d.fortune] || '#b8900a';
-        document.getElementById('blessingLucky').textContent  = d.luckyItem;
-        document.getElementById('blessingAdvice').textContent = d.advice;
+      const today = getTodayJST();
+      const storageKey = `gacha_${myoji}_${shusshinchi}_${today}`;
+      const stored = localStorage.getItem(storageKey);
 
-        loading.style.display = 'none';
-        content.style.display = 'block';
-      } catch {
-        loading.innerHTML = '<p class="loading-text" style="color:rgba(150,100,170,0.6)">今日のお告げを受け取れませんでした</p>';
+      if (stored) {
+        // 既に引いている → 結果をそのまま表示
+        showGachaDone(JSON.parse(stored));
+      } else {
+        // 未引き → ボタン表示
+        showGachaReady();
       }
+
+      // ボタンにイベントをセット
+      document.getElementById('gachaBtn').onclick = () => startGacha(myoji, shusshinchi);
+    }
+
+    function showGachaReady() {
+      document.getElementById('gachaReady').style.display    = 'block';
+      document.getElementById('gachaSpinning').style.display = 'none';
+      document.getElementById('gachaResult').style.display   = 'none';
+      document.getElementById('gachaDone').style.display     = 'none';
+    }
+
+    async function startGacha(myoji, shusshinchi) {
+      // シェイクアニメーション開始
+      document.getElementById('gachaReady').style.display    = 'none';
+      document.getElementById('gachaSpinning').style.display = 'block';
+      document.getElementById('gachaBtn').disabled = true;
+
+      try {
+        // APIコールと最低3秒アニメーションを並行
+        const [data] = await Promise.all([
+          fetch('/api/daily-gacha', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ myoji, shusshinchi }),
+          }).then(r => { if (!r.ok) throw new Error(); return r.json(); }),
+          new Promise(r => setTimeout(r, 3000)),
+        ]);
+
+        // 結果をLocalStorageに保存
+        const storageKey = `gacha_${myoji}_${shusshinchi}_${getTodayJST()}`;
+        localStorage.setItem(storageKey, JSON.stringify(data));
+
+        // 結果を表示
+        document.getElementById('gachaSpinning').style.display = 'none';
+        renderGachaResult(data);
+
+      } catch {
+        document.getElementById('gachaSpinning').style.display = 'none';
+        showGachaReady();
+        document.getElementById('gachaBtn').disabled = false;
+      }
+    }
+
+    function renderGachaResult(data) {
+      const fc = FORTUNE_COLORS[data.fortune] || FORTUNE_COLORS['吉'];
+      document.getElementById('gachaDate').textContent = `✦ ${data.dateJa}の託宣 ✦`;
+
+      const fortuneEl = document.getElementById('gachaFortune');
+      fortuneEl.textContent = data.fortune;
+      fortuneEl.style.color = fc.color;
+      fortuneEl.style.background = fc.bg;
+      fortuneEl.style.border = `2px solid ${fc.border}`;
+      fortuneEl.style.borderRadius = '16px';
+      fortuneEl.style.padding = '6px 28px';
+      fortuneEl.style.display = 'inline-block';
+
+      document.getElementById('gachaLucky').textContent  = data.luckyItem;
+      document.getElementById('gachaAdvice').textContent = data.advice;
+
+      document.getElementById('gachaResult').style.display   = 'block';
+      document.getElementById('gachaDone').style.display     = 'none';
+    }
+
+    function showGachaDone(data) {
+      document.getElementById('gachaReady').style.display    = 'none';
+      document.getElementById('gachaSpinning').style.display = 'none';
+      document.getElementById('gachaResult').style.display   = 'none';
+      document.getElementById('gachaDone').style.display     = 'block';
+
+      const fc = FORTUNE_COLORS[data.fortune] || FORTUNE_COLORS['吉'];
+      document.getElementById('gachaDoneResult').innerHTML = `
+        <div style="text-align:center;margin-bottom:10px">
+          <span style="font-family:'Shippori Mincho',serif;font-size:2.2rem;font-weight:900;
+            color:${fc.color};background:${fc.bg};border:2px solid ${fc.border};
+            border-radius:14px;padding:4px 22px;display:inline-block">
+            ${data.fortune}
+          </span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(198,240,218,0.4);
+          border-radius:10px;padding:8px 12px;margin-bottom:10px">
+          <span style="font-size:0.64rem;color:var(--sub)">🍀 ラッキーアイテム</span>
+          <span style="font-size:0.88rem;font-weight:600;color:#3a7a5a">${data.luckyItem}</span>
+        </div>
+        <div style="background:rgba(235,225,255,0.55);border-radius:12px;padding:12px 14px">
+          <div style="font-size:0.62rem;color:#8850b0;letter-spacing:0.18em;margin-bottom:6px">🔮 守護獣からのお告げ</div>
+          <p style="font-size:0.84rem;line-height:1.95;color:rgba(74,48,64,0.82)">${data.advice}</p>
+        </div>`;
     }
 
     // ══════════════════════════════════════════

@@ -326,6 +326,72 @@ app.post("/api/blessing", async (req, res) => {
   }
 });
 
+// ── デイリーガチャ（blessing と同じロジック、エンドポイントのみ別名） ──
+app.post("/api/daily-gacha", async (req, res) => {
+  // /api/blessing と全く同じ処理 → blessingCache を共有して二重生成を防ぐ
+  const { myoji, shusshinchi } = req.body;
+  if (!myoji || !shusshinchi) {
+    return res.status(400).json({ error: "名字と出身地を入力してください" });
+  }
+
+  const now  = new Date();
+  const jst  = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const date = jst.toISOString().slice(0, 10);
+
+  const cacheKey = `${myoji}|${shusshinchi}|${date}`;
+  if (blessingCache.has(cacheKey)) {
+    return res.json(blessingCache.get(cacheKey));
+  }
+
+  const dailySeed = fnvHash(myoji + shusshinchi + date);
+  const fortune   = FORTUNE_TABLE[dailySeed % FORTUNE_TABLE.length];
+  const charId    = getCharId(myoji, shusshinchi);
+  const charData  = CHARACTERS[charId - 1];
+
+  try {
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      max_tokens: 400,
+      stream: false,
+      temperature: 0,
+      seed: dailySeed,
+      response_format: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content: `汝は【${charData.typeName}】である。今日一日のお告げを、守護獣の口調で伝えよ。
+
+【口調の絶対厳守】
+・一人称:「${charData.pronoun}」のみ
+・語尾・口調:${charData.speechStyle}
+・今日の運勢はすでに「${fortune.label}」と決まっている（変更禁止）
+
+返すJSONの形式：
+{
+  "luckyItem": "今日のラッキーアイテム（物・色・場所など、10字以内）",
+  "advice": "「お主の今日の運勢は${fortune.label}でありんす！」のように運勢を宣言してから始まる、守護獣の口調による今日一日の過ごし方のお告げ（50〜80文字）"
+}`,
+        },
+        {
+          role: "user",
+          content: `名字：${myoji}\n出身地：${shusshinchi}\n今日の日付：${date}\n運勢：${fortune.label}\n守護獣：${charData.typeName}\n一人称：${charData.pronoun}　語尾：${charData.speechStyle}`,
+        },
+      ],
+    });
+
+    const raw = JSON.parse(completion.choices[0].message.content);
+    const [y, m, d] = date.split('-');
+    const dateJa = `${y}年${parseInt(m)}月${parseInt(d)}日`;
+
+    const result = { date, dateJa, fortune: fortune.label, fortuneRank: fortune.rank, luckyItem: raw.luckyItem, advice: raw.advice };
+    blessingCache.set(cacheKey, result);
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "ガチャの生成に失敗しました" });
+  }
+});
+
 // 名字ルーツキャッシュ
 const namerootCache = new Map();
 
