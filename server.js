@@ -292,7 +292,9 @@ app.post("/api/blessing", async (req, res) => {
 
 返すJSONの形式：
 {
-  "luckyItem": "今日のラッキーアイテム（物・色・場所など、10字以内）",
+  "luckyItem": "今日のラッキーアイテム（8字以内）。【必ず現代の日常品に限定】飲み物・食べ物・文房具・仕事道具・衣類・持ち物・簡単な習慣（ストレッチ等）から選ぶこと。刀・お守り・勾玉・魔法陣などファンタジーや歴史的アイテムは絶対禁止。",
+  "luckyEmoji": "ラッキーアイテムに合う絵文字1文字（例：☕🖋️🧦🍫🎧📎🧤🫖🗒️👟）",
+  "luckyReason": "守護獣の一人称「${charData.pronoun}」を使い、なぜ今日そのアイテムが幸運をもたらすか1文（30字以内）で述べよ。",
   "advice": "${charData.pronoun}が汝に贈る今日一日の過ごし方のお告げ。守護獣の口調で100字程度。具体的で温かいアドバイスを。"
 }`,
         },
@@ -315,6 +317,8 @@ app.post("/api/blessing", async (req, res) => {
       fortune: fortune.label,
       fortuneRank: fortune.rank,
       luckyItem:   raw.luckyItem,
+      luckyEmoji:  raw.luckyEmoji  || '🍀',
+      luckyReason: raw.luckyReason || '',
       advice:      raw.advice,
     };
 
@@ -368,7 +372,9 @@ app.post("/api/daily-gacha", async (req, res) => {
 
 返すJSONの形式：
 {
-  "luckyItem": "今日のラッキーアイテム（物・色・場所など、10字以内）",
+  "luckyItem": "今日のラッキーアイテム（8字以内）。【必ず現代の日常品に限定】飲み物・食べ物・文房具・仕事道具・衣類・持ち物・簡単な習慣（ストレッチ等）から選ぶこと。刀・お守り・勾玉・魔法陣などファンタジーや歴史的アイテムは絶対禁止。",
+  "luckyEmoji": "ラッキーアイテムに合う絵文字1文字（例：☕🖋️🧦🍫🎧📎🧤🫖🗒️👟）",
+  "luckyReason": "守護獣の一人称「${charData.pronoun}」を使い、なぜ今日そのアイテムが幸運をもたらすか1文（30字以内）で述べよ。",
   "advice": "「お主の今日の運勢は${fortune.label}でありんす！」のように運勢を宣言してから始まる、守護獣の口調による今日一日の過ごし方のお告げ（50〜80文字）"
 }`,
         },
@@ -383,7 +389,7 @@ app.post("/api/daily-gacha", async (req, res) => {
     const [y, m, d] = date.split('-');
     const dateJa = `${y}年${parseInt(m)}月${parseInt(d)}日`;
 
-    const result = { date, dateJa, fortune: fortune.label, fortuneRank: fortune.rank, luckyItem: raw.luckyItem, advice: raw.advice };
+    const result = { date, dateJa, fortune: fortune.label, fortuneRank: fortune.rank, luckyItem: raw.luckyItem, luckyEmoji: raw.luckyEmoji || '🍀', luckyReason: raw.luckyReason || '', advice: raw.advice };
     blessingCache.set(cacheKey, result);
     res.json(result);
   } catch (error) {

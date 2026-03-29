@@ -422,11 +422,12 @@
     }
     .gacha-body { animation:slideUp 0.5s ease 0.5s both; }
     .gacha-lucky-row {
-      display:flex; align-items:center; gap:8px; margin-bottom:12px;
-      background:rgba(198,240,218,0.4); border-radius:10px; padding:8px 12px;
+      margin-bottom:12px;
+      background:rgba(198,240,218,0.4); border-radius:10px; padding:10px 14px;
     }
-    .gacha-lucky-lbl { font-size:0.64rem; color:var(--sub); white-space:nowrap; }
-    .gacha-lucky-val { font-size:0.88rem; font-weight:600; color:#3a7a5a; }
+    .gacha-lucky-lbl { font-size:0.60rem; color:var(--sub); letter-spacing:0.1em; display:block; margin-bottom:4px; }
+    .gacha-lucky-val { font-size:1.15rem; font-weight:700; color:#2a6a4a; display:block; }
+    .gacha-lucky-reason { font-size:0.72rem; color:#4a7a5a; line-height:1.6; margin-top:4px; display:block; }
     .gacha-advice-box {
       background:rgba(235,225,255,0.55); border-radius:12px;
       padding:12px 14px; border:1px solid rgba(185,145,225,0.28);
@@ -607,6 +608,7 @@
             <div class="gacha-lucky-row">
               <span class="gacha-lucky-lbl">🍀 ラッキーアイテム</span>
               <span class="gacha-lucky-val" id="gachaLucky"></span>
+              <span class="gacha-lucky-reason" id="gachaLuckyReason"></span>
             </div>
             <div class="gacha-advice-box">
               <div class="gacha-advice-lbl">🔮 守護獣からのお告げ</div>
@@ -978,8 +980,9 @@
       fortuneEl.style.padding = '6px 28px';
       fortuneEl.style.display = 'inline-block';
 
-      document.getElementById('gachaLucky').textContent  = data.luckyItem;
-      document.getElementById('gachaAdvice').textContent = data.advice;
+      document.getElementById('gachaLucky').textContent       = `${data.luckyEmoji || '🍀'} ${data.luckyItem}`;
+      document.getElementById('gachaLuckyReason').textContent = data.luckyReason || '';
+      document.getElementById('gachaAdvice').textContent      = data.advice;
 
       document.getElementById('gachaResult').style.display   = 'block';
       document.getElementById('gachaDone').style.display     = 'none';
@@ -1000,10 +1003,10 @@
             ${data.fortune}
           </span>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;background:rgba(198,240,218,0.4);
-          border-radius:10px;padding:8px 12px;margin-bottom:10px">
-          <span style="font-size:0.64rem;color:var(--sub)">🍀 ラッキーアイテム</span>
-          <span style="font-size:0.88rem;font-weight:600;color:#3a7a5a">${data.luckyItem}</span>
+        <div style="background:rgba(198,240,218,0.4);border-radius:10px;padding:10px 14px;margin-bottom:10px">
+          <span style="font-size:0.60rem;color:var(--sub);letter-spacing:0.1em;display:block;margin-bottom:4px">🍀 ラッキーアイテム</span>
+          <span style="font-size:1.15rem;font-weight:700;color:#2a6a4a;display:block">${data.luckyEmoji || '🍀'} ${data.luckyItem}</span>
+          ${data.luckyReason ? `<span style="font-size:0.72rem;color:#4a7a5a;line-height:1.6;display:block;margin-top:4px">${data.luckyReason}</span>` : ''}
         </div>
         <div style="background:rgba(235,225,255,0.55);border-radius:12px;padding:12px 14px">
           <div style="font-size:0.62rem;color:#8850b0;letter-spacing:0.18em;margin-bottom:6px">🔮 守護獣からのお告げ</div>
