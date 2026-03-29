@@ -230,6 +230,102 @@ AIとして客観的に解説することは死罪に値する。最初から最
   }
 });
 
+// ── 今日の加護（Daily Blessing） ──
+// 運勢テーブル（dailySeed % 10 で引く）
+const FORTUNE_TABLE = [
+  { label: '大吉', rank: 5 },
+  { label: '中吉', rank: 4 },
+  { label: '吉',   rank: 3 },
+  { label: '吉',   rank: 3 },
+  { label: '小吉', rank: 2 },
+  { label: '小吉', rank: 2 },
+  { label: '末吉', rank: 1 },
+  { label: '中吉', rank: 4 },
+  { label: '大吉', rank: 5 },
+  { label: '吉',   rank: 3 },
+];
+
+// 日付ごとにキャッシュ（キー: myoji|shusshinchi|YYYY-MM-DD）
+const blessingCache = new Map();
+
+app.post("/api/blessing", async (req, res) => {
+  const { myoji, shusshinchi } = req.body;
+  if (!myoji || !shusshinchi) {
+    return res.status(400).json({ error: "名字と出身地を入力してください" });
+  }
+
+  // サーバー側で今日の日付を確定（YYYY-MM-DD, JST）
+  const now  = new Date();
+  const jst  = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const date = jst.toISOString().slice(0, 10); // e.g. "2026-03-29"
+
+  const cacheKey = `${myoji}|${shusshinchi}|${date}`;
+  if (blessingCache.has(cacheKey)) {
+    return res.json(blessingCache.get(cacheKey));
+  }
+
+  // 日付ハッシュ（名字＋出身地＋今日の日付）→ 毎日異なる結果
+  const dailySeed  = fnvHash(myoji + shusshinchi + date);
+  const fortune    = FORTUNE_TABLE[dailySeed % FORTUNE_TABLE.length];
+
+  // キャラクターの口調を取得（挨拶の統一のため）
+  const charId     = getCharId(myoji, shusshinchi);
+  const charData   = CHARACTERS[charId - 1];
+
+  try {
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      max_tokens: 400,
+      stream: false,
+      temperature: 0,
+      seed: dailySeed,
+      response_format: { type: "json_object" },
+      messages: [
+        {
+          role: "system",
+          content: `汝は【${charData.typeName}】である。今日一日のお告げを、守護獣の口調で伝えよ。
+
+【口調の絶対厳守】
+・一人称:「${charData.pronoun}」のみ
+・語尾・口調:${charData.speechStyle}
+・今日の運勢はすでに「${fortune.label}」と決まっている（変更禁止）
+
+返すJSONの形式：
+{
+  "luckyItem": "今日のラッキーアイテム（物・色・場所など、10字以内）",
+  "advice": "${charData.pronoun}が汝に贈る今日一日の過ごし方のお告げ。守護獣の口調で100字程度。具体的で温かいアドバイスを。"
+}`,
+        },
+        {
+          role: "user",
+          content: `名字：${myoji}\n出身地：${shusshinchi}\n今日の日付：${date}\n運勢：${fortune.label}\n守護獣：${charData.typeName}\n一人称：${charData.pronoun}　語尾：${charData.speechStyle}`,
+        },
+      ],
+    });
+
+    const raw = JSON.parse(completion.choices[0].message.content);
+
+    // 日付を "2026年3月29日" 形式に変換
+    const [y, m, d] = date.split('-');
+    const dateJa = `${y}年${parseInt(m)}月${parseInt(d)}日`;
+
+    const result = {
+      date,
+      dateJa,
+      fortune: fortune.label,
+      fortuneRank: fortune.rank,
+      luckyItem:   raw.luckyItem,
+      advice:      raw.advice,
+    };
+
+    blessingCache.set(cacheKey, result);
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "今日の加護の取得に失敗しました" });
+  }
+});
+
 // 名字ルーツキャッシュ
 const namerootCache = new Map();
 

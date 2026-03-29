@@ -326,6 +326,54 @@
     }
     .ifstory-card .loading-text { color:rgba(212,175,55,0.65); }
 
+    /* ── 今日の加護カード ── */
+    .blessing-card {
+      background:linear-gradient(135deg,rgba(255,248,255,0.97),rgba(250,240,255,0.97));
+      border:1.5px solid rgba(200,160,210,0.4); border-radius:18px;
+      padding:24px 22px; margin-bottom:14px;
+      box-shadow:0 6px 28px rgba(180,130,200,0.12), inset 0 1px 0 rgba(255,255,255,0.8);
+      animation:fadeUp 0.5s ease forwards; position:relative; overflow:hidden;
+    }
+    .blessing-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(to right,transparent,rgba(210,160,230,0.7),transparent);
+    }
+    .blessing-hdr {
+      font-family:'Shippori Mincho',serif; font-size:0.82rem; font-weight:700;
+      color:#9860b8; letter-spacing:0.22em; text-align:center; margin-bottom:16px;
+    }
+    .blessing-date {
+      font-size:0.62rem; color:rgba(120,80,140,0.6); text-align:center;
+      letter-spacing:0.15em; margin-bottom:14px;
+    }
+    .blessing-fortune-wrap {
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      margin-bottom:14px;
+    }
+    .blessing-fortune-label { font-size:0.65rem; color:var(--sub); letter-spacing:0.15em; }
+    .blessing-fortune {
+      font-family:'Shippori Mincho',serif; font-size:1.5rem; font-weight:800;
+      letter-spacing:0.05em; padding:2px 14px; border-radius:20px;
+      background:linear-gradient(135deg,rgba(255,230,100,0.25),rgba(255,200,80,0.15));
+      border:1px solid rgba(210,175,55,0.45); color:#b8900a;
+    }
+    .blessing-lucky-wrap {
+      display:flex; align-items:center; gap:8px; margin-bottom:14px;
+      background:rgba(200,240,220,0.35); border-radius:10px; padding:8px 12px;
+    }
+    .blessing-lucky-label { font-size:0.64rem; color:var(--sub); white-space:nowrap; }
+    .blessing-lucky { font-size:0.88rem; font-weight:600; color:#3a7a5a; }
+    .blessing-advice-wrap {
+      background:rgba(240,230,255,0.5); border-radius:12px;
+      padding:12px 14px; border:1px solid rgba(190,150,220,0.25);
+    }
+    .blessing-advice-label {
+      font-size:0.62rem; color:#9860b8; letter-spacing:0.18em; margin-bottom:6px;
+    }
+    .blessing-advice {
+      font-size:0.84rem; line-height:1.95; color:rgba(74,48,64,0.8);
+    }
+
     /* ── SNSシェア ── */
     .share-hdg {
       display:flex; align-items:center; gap:10px; justify-content:center;
@@ -463,7 +511,31 @@
         <p class="ifstory-body" id="ifstoryText" style="display:none"></p>
       </div>
 
-      <!-- 5. シェアカード -->
+      <!-- 5. 今日の加護カード -->
+      <div class="blessing-card" id="blessingCard" style="display:none">
+        <div class="blessing-hdr">✨ 今日の加護 Daily Blessing ✨</div>
+        <div id="blessingLoading" class="loading-wrap" style="padding:12px 0">
+          <div class="summon-ring"></div>
+          <p class="loading-text">今日のお告げを受け取っています...</p>
+        </div>
+        <div id="blessingContent" style="display:none">
+          <div class="blessing-date" id="blessingDate"></div>
+          <div class="blessing-fortune-wrap">
+            <span class="blessing-fortune-label">今日の運勢</span>
+            <span class="blessing-fortune" id="blessingFortune"></span>
+          </div>
+          <div class="blessing-lucky-wrap">
+            <span class="blessing-lucky-label">🍀 ラッキーアイテム</span>
+            <span class="blessing-lucky" id="blessingLucky"></span>
+          </div>
+          <div class="blessing-advice-wrap">
+            <div class="blessing-advice-label">🔮 守護獣からの今日のお告げ</div>
+            <p class="blessing-advice" id="blessingAdvice"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. シェアカード -->
       <div class="info-card" id="shareCard" style="display:none;text-align:center;">
         <div class="share-hdg">✦ 結果をシェアする ✦</div>
         <div class="share-btns">
@@ -601,6 +673,11 @@
       document.getElementById('ifstoryLoading').innerHTML =
         '<div class="summon-ring"></div><p class="loading-text">歴史の記憶を探っています...</p>';
 
+      // 今日の加護カードをリセット
+      document.getElementById('blessingCard').style.display = 'none';
+      document.getElementById('blessingContent').style.display = 'none';
+      document.getElementById('blessingLoading').style.display = 'block';
+
       // シェアカードをリセット
       document.getElementById('shareCard').style.display = 'none';
 
@@ -707,6 +784,9 @@
       // 歴史IFストーリーを取得（キャラクターデータが揃ってから）
       fetchIfStory(_lastMyoji, _lastShusshinchi, data.key, data.typeName);
 
+      // 今日の加護を取得
+      fetchBlessing(_lastMyoji, _lastShusshinchi);
+
       // シェアカードを更新・表示
       const APP_URL = 'https://roots-quest.vercel.app';
       const shareText = `私のご先祖さまは『${data.ancestorName}』でした！${data.emoji} #ルーツクエスト ${APP_URL}`;
@@ -719,6 +799,37 @@
 
     // ══════════════════════════════════════════
     // 名字ルーツ
+    // ══════════════════════════════════════════
+    // 今日の加護（Daily Blessing）
+    // ══════════════════════════════════════════
+    const FORTUNE_COLORS = { '大吉':'#b8900a', '中吉':'#3a7a5a', '吉':'#4878a8', '小吉':'#7a6898', '末吉':'#887060' };
+    async function fetchBlessing(myoji, shusshinchi) {
+      const card    = document.getElementById('blessingCard');
+      const loading = document.getElementById('blessingLoading');
+      const content = document.getElementById('blessingContent');
+      card.style.display = 'block';
+      try {
+        const res = await fetch('/api/blessing', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ myoji, shusshinchi }),
+        });
+        if (!res.ok) throw new Error();
+        const d = await res.json();
+
+        document.getElementById('blessingDate').textContent = `✦ ${d.dateJa}の託宣 ✦`;
+        const fortuneEl = document.getElementById('blessingFortune');
+        fortuneEl.textContent = d.fortune;
+        fortuneEl.style.color = FORTUNE_COLORS[d.fortune] || '#b8900a';
+        document.getElementById('blessingLucky').textContent  = d.luckyItem;
+        document.getElementById('blessingAdvice').textContent = d.advice;
+
+        loading.style.display = 'none';
+        content.style.display = 'block';
+      } catch {
+        loading.innerHTML = '<p class="loading-text" style="color:rgba(150,100,170,0.6)">今日のお告げを受け取れませんでした</p>';
+      }
+    }
+
     // ══════════════════════════════════════════
     async function fetchNameroot(myoji) {
       try {
