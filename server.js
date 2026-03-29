@@ -14,27 +14,28 @@ app.use(express.static(__dirname));
 app.get("/", (req, res) => res.sendFile(__dirname + "/public/index.html"));
 
 // 守護獣マスターデータ（id = 画像ファイル番号と完全一致: id_xxx.png）
+// personality: AIが「なりきり」で語りかけるための口調設定
 const CHARACTERS = [
-  { id:  1, key: 'warrior',        emoji: '🐕', typeName: '柴犬の武神',       typeDesc: '勇気・忠義をつかさどる守護獣',       isRare: false },
-  { id:  2, key: 'ninja',          emoji: '🐱', typeName: '黒猫の忍神',       typeDesc: '俊敏・秘密をつかさどる守護獣',       isRare: true  },
-  { id:  3, key: 'court_noble',    emoji: '🐇', typeName: '白うさぎの雅神',   typeDesc: '美・気品をつかさどる守護獣',         isRare: false },
-  { id:  4, key: 'farmer',         emoji: '🦝', typeName: 'たぬきの豊穣神',   typeDesc: '豊作・大地をつかさどる守護獣',       isRare: false },
-  { id:  5, key: 'shugenja',       emoji: '🦌', typeName: 'しかの霊験神',     typeDesc: '神秘・霊力をつかさどる守護獣',       isRare: true  },
-  { id:  6, key: 'craftsman',      emoji: '🐱', typeName: '三毛猫の匠神',     typeDesc: '器用・創造をつかさどる守護獣',       isRare: false },
-  { id:  7, key: 'merchant',       emoji: '🐼', typeName: 'パンダの商才神',   typeDesc: '知恵・金運をつかさどる守護獣',       isRare: false },
-  { id:  8, key: 'seafarer',       emoji: '🐧', typeName: 'ペンギンの海神',   typeDesc: '冒険・自由をつかさどる守護獣',       isRare: false },
-  { id:  9, key: 'scholar',        emoji: '🐹', typeName: 'ハムスターの仏神', typeDesc: '信心・慈悲をつかさどる守護獣',       isRare: false },
-  { id: 10, key: 'healer',         emoji: '🦊', typeName: 'きつねの陰陽神',   typeDesc: '知恵・神秘をつかさどる守護獣',       isRare: false },
-  { id: 11, key: 'hunter',         emoji: '🐻', typeName: 'くまのマタギ神',   typeDesc: '自然・直感をつかさどる守護獣',       isRare: false },
-  { id: 12, key: 'trader',         emoji: '🐿', typeName: 'りすの速神',       typeDesc: '素早さ・誠実をつかさどる守護獣',     isRare: false },
-  { id: 13, key: 'performer',      emoji: '🦉', typeName: 'ふくろうの長老神', typeDesc: '学問・洞察をつかさどる守護獣',       isRare: false },
-  { id: 14, key: 'weaver',         emoji: '🐸', typeName: 'かえるの芸神',     typeDesc: '魅力・表現をつかさどる守護獣',       isRare: false },
-  { id: 15, key: 'mountain_folk',  emoji: '🐒', typeName: 'さるの祭神',       typeDesc: '陽気・縁起をつかさどる守護獣',       isRare: false },
-  { id: 16, key: 'christian',      emoji: '🦦', typeName: 'かわうその川神',   typeDesc: '誠実・奉仕をつかさどる守護獣',       isRare: false },
-  { id: 17, key: 'blacksmith',     emoji: '🐗', typeName: 'いのししの守神',   typeDesc: '力強さ・守護をつかさどる守護獣',     isRare: false },
-  { id: 18, key: 'tea_master',     emoji: '🐨', typeName: 'コアラの風雅神',   typeDesc: '侘び寂び・癒しをつかさどる守護獣',   isRare: false },
-  { id: 19, key: 'castle_samurai', emoji: '🐘', typeName: 'ぞうの縁神',       typeDesc: '縁・繁栄をつかさどる守護獣',         isRare: false },
-  { id: 20, key: 'noble_exile',    emoji: '🐉', typeName: 'たつの龍神',       typeDesc: '天地万物をつかさどる伝説の守護獣',   isRare: true  },
+  { id:  1, key: 'warrior',        emoji: '🐕', typeName: '柴犬の武神',       typeDesc: '勇気・忠義をつかさどる守護獣',       isRare: false, pronoun: '拙者',     speechStyle: '〜ござる',         trait: '生真面目・忠義一徹' },
+  { id:  2, key: 'ninja',          emoji: '🐱', typeName: '黒猫の忍神',       typeDesc: '俊敏・秘密をつかさどる守護獣',       isRare: true,  pronoun: 'それがし', speechStyle: '〜にんにん',       trait: '冷静・神秘的' },
+  { id:  3, key: 'court_noble',    emoji: '🐇', typeName: '白うさぎの雅神',   typeDesc: '美・気品をつかさどる守護獣',         isRare: false, pronoun: 'わたくし', speechStyle: '〜でございます',   trait: '優雅・気品高い' },
+  { id:  4, key: 'farmer',         emoji: '🦝', typeName: 'たぬきの豊穣神',   typeDesc: '豊作・大地をつかさどる守護獣',       isRare: false, pronoun: 'おら',     speechStyle: '〜だべ',           trait: '朴訥・温かい' },
+  { id:  5, key: 'shugenja',       emoji: '🦌', typeName: 'しかの霊験神',     typeDesc: '神秘・霊力をつかさどる守護獣',       isRare: true,  pronoun: 'この身',   speechStyle: '〜であろう',       trait: '神秘的・厳格' },
+  { id:  6, key: 'craftsman',      emoji: '🐱', typeName: '三毛猫の匠神',     typeDesc: '器用・創造をつかさどる守護獣',       isRare: false, pronoun: 'あたい',   speechStyle: '〜だよ',           trait: '親分肌・職人気質' },
+  { id:  7, key: 'merchant',       emoji: '🐼', typeName: 'パンダの商才神',   typeDesc: '知恵・金運をつかさどる守護獣',       isRare: false, pronoun: 'わし',     speechStyle: '〜でっせ',         trait: '陽気・商売上手' },
+  { id:  8, key: 'seafarer',       emoji: '🐧', typeName: 'ペンギンの海神',   typeDesc: '冒険・自由をつかさどる守護獣',       isRare: false, pronoun: 'おいら',   speechStyle: '〜だぜ',           trait: '豪快・自由' },
+  { id:  9, key: 'scholar',        emoji: '🐹', typeName: 'ハムスターの仏神', typeDesc: '信心・慈悲をつかさどる守護獣',       isRare: false, pronoun: '私',       speechStyle: '〜でございます',   trait: '穏やか・慈悲深い' },
+  { id: 10, key: 'healer',         emoji: '🦊', typeName: 'きつねの陰陽神',   typeDesc: '知恵・神秘をつかさどる守護獣',       isRare: false, pronoun: '我',       speechStyle: '〜よ',             trait: '神秘的・知的' },
+  { id: 11, key: 'hunter',         emoji: '🐻', typeName: 'くまのマタギ神',   typeDesc: '自然・直感をつかさどる守護獣',       isRare: false, pronoun: 'おれ',     speechStyle: '〜だ',             trait: '無骨・実直' },
+  { id: 12, key: 'trader',         emoji: '🐿', typeName: 'りすの速神',       typeDesc: '素早さ・誠実をつかさどる守護獣',     isRare: false, pronoun: 'あっし',   speechStyle: '〜でさ',           trait: '軽快・誠実' },
+  { id: 13, key: 'performer',      emoji: '🦉', typeName: 'ふくろうの長老神', typeDesc: '学問・洞察をつかさどる守護獣',       isRare: false, pronoun: 'わし',     speechStyle: '〜じゃ',           trait: '博識・長老の貫禄' },
+  { id: 14, key: 'weaver',         emoji: '🐸', typeName: 'かえるの芸神',     typeDesc: '魅力・表現をつかさどる守護獣',       isRare: false, pronoun: 'わらわ',   speechStyle: '〜でありんす',     trait: '華やか・艶やか' },
+  { id: 15, key: 'mountain_folk',  emoji: '🐒', typeName: 'さるの祭神',       typeDesc: '陽気・縁起をつかさどる守護獣',       isRare: false, pronoun: 'わい',     speechStyle: '〜やで',           trait: '陽気・にぎやか' },
+  { id: 16, key: 'christian',      emoji: '🦦', typeName: 'かわうその川神',   typeDesc: '誠実・奉仕をつかさどる守護獣',       isRare: false, pronoun: 'おれ',     speechStyle: '〜だな',           trait: '誠実・奉仕的' },
+  { id: 17, key: 'blacksmith',     emoji: '🐗', typeName: 'いのししの守神',   typeDesc: '力強さ・守護をつかさどる守護獣',     isRare: false, pronoun: '俺様',     speechStyle: '〜だ！',           trait: '豪快・頼もしい' },
+  { id: 18, key: 'tea_master',     emoji: '🐨', typeName: 'コアラの風雅神',   typeDesc: '侘び寂び・癒しをつかさどる守護獣',   isRare: false, pronoun: 'わたくし', speechStyle: '〜にございます',   trait: '静謐・侘び寂び' },
+  { id: 19, key: 'castle_samurai', emoji: '🐘', typeName: 'ぞうの縁神',       typeDesc: '縁・繁栄をつかさどる守護獣',         isRare: false, pronoun: '私',       speechStyle: '〜ですよ',         trait: '穏やか・縁を結ぶ' },
+  { id: 20, key: 'noble_exile',    emoji: '🐉', typeName: 'たつの龍神',       typeDesc: '天地万物をつかさどる伝説の守護獣',   isRare: true,  pronoun: '余',       speechStyle: '〜であるぞ',       trait: '威厳と慈愛' },
 ];
 
 async function generateWithRetry(myoji, shusshinchi, maxRetries = 3) {
@@ -177,26 +178,28 @@ app.post("/api/character", async (req, res) => {
       messages: [
         {
           role: "system",
-          content: `あなたは守護獣の語り部です。
-【絶対厳守】今から指定するID番号の守護獣として振る舞い、それ以外の守護獣に変えることは禁止です。
+          content: `あなたは今から【ID:${charId}番・${charData.typeName}】に完全になりきってください。
+第三者的な解説は禁止です。目の前のユーザー（主君・依頼人）に直接語りかける「口語体」で話してください。
 同じ入力が来たら毎回全く同じ内容を返してください（ランダム性を完全排除する）。
 
-【確定済み守護獣 ID:${charId}番】
+【あなたのキャラクター設定（厳守）】
 - 守護獣名: ${charData.typeName}
-- 守護獣の特徴: ${charData.typeDesc}
-- ご依頼者の名字: ${myoji}
-- ご依頼者の出身地: ${shusshinchi}
+- 一人称: 「${charData.pronoun}」（これ以外の一人称を使わないこと）
+- 語尾・口調: ${charData.speechStyle}（この口調を全文に一貫させること）
+- 性格: ${charData.trait}
+- ユーザーの名字: ${myoji}
+- ユーザーの出身地: ${shusshinchi}
 
 返すJSONの形式：
 {
   "ancestorName": "名字・地域・動物を組み合わせた守護獣の固有名（例：陸奥の柴犬武神・鉄三郎権現）",
-  "feature": "この守護獣の由来と特徴を2〜3文で。ご先祖の時代背景・ご加護の内容を含めてください。",
-  "comment": "守護獣からあなたへの温かいひとこと。やさしく励ますような語り口で（40字程度）"
+  "feature": "【なりきり必須】${charData.pronoun}がユーザーに直接語りかける形で、${myoji}家・${shusshinchi}のご先祖のルーツをドラマチックに語る（2〜3文、${charData.speechStyle}の口調で）",
+  "comment": "【なりきり必須】${charData.pronoun}からユーザーへの励ましと加護の言葉（${charData.speechStyle}の口調で40字程度）"
 }`,
         },
         {
           role: "user",
-          content: `名字：${myoji}\n出身地：${shusshinchi}\n担当守護獣（ID:${charId}番）：${charData.typeName}（${charData.typeDesc}）`,
+          content: `名字：${myoji}\n出身地：${shusshinchi}\n守護獣（ID:${charId}番）：${charData.typeName}（${charData.typeDesc}）\n一人称：${charData.pronoun}　語尾：${charData.speechStyle}`,
         },
       ],
     });

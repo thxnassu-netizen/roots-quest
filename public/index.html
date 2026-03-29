@@ -227,6 +227,7 @@
     .char-divider { display:flex; align-items:center; gap:8px; margin:0 0 13px; }
     .char-divider .cl { flex:1; height:1px; background:rgba(232,168,184,0.3); }
     .char-divider .ci { font-size:0.72rem; color:var(--pink); opacity:0.7; }
+    .char-story-lbl { font-size:0.7rem; letter-spacing:0.12em; color:var(--pink-d); text-align:center; margin-bottom:8px; opacity:0.8; }
     .char-feature { font-size:0.84rem; line-height:2; color:rgba(74,48,64,0.75); text-align:left; margin-bottom:15px; }
 
     /* 吹き出し */
@@ -686,9 +687,10 @@
         <div class="char-name">${data.ancestorName}</div>
         <div class="char-type-badge">${data.typeName}｜${data.typeDesc}</div>
         <div class="char-divider"><div class="cl"></div><div class="ci">❧</div><div class="cl"></div></div>
+        <div class="char-story-lbl">✦ 守護獣からの物語 ✦</div>
         <p class="char-feature">${data.feature}</p>
         <div class="speech-bubble">
-          <div class="speech-lbl">守護獣からのひとこと</div>
+          <div class="speech-lbl">✦ 守護獣からの加護の言葉 ✦</div>
           <p class="speech-text">${data.comment}</p>
         </div>`;
 

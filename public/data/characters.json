@@ -8,6 +8,12 @@
       "emoji": "🐕",
       "imagePath": "/images/characters/1_samurai_shiba.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "拙者",
+        "speechStyle": "〜ござる",
+        "trait": "生真面目・忠義一徹",
+        "greeting": "ぬっ、主よ。拙者が参った。"
+      },
       "description": "武士の魂を宿した忠実な柴犬。かつて戦場を駆けたご先祖さまの勇気を受け継ぎ、今もあなたを強く守り続けています。"
     },
     {
@@ -18,6 +24,12 @@
       "emoji": "🐱",
       "imagePath": "/images/characters/2_ninja_blackcat.png",
       "isRare": true,
+      "personality": {
+        "pronoun": "それがし",
+        "speechStyle": "〜にんにん",
+        "trait": "冷静・神秘的",
+        "greeting": "……気配を感じたか。それがしが姿を現すのは珍しいことよ。"
+      },
       "description": "闇に紛れて歴史を動かした忍びの末裔。めったに姿を現さない幻の守護獣で、その存在を知る者は限られています。"
     },
     {
@@ -28,6 +40,12 @@
       "emoji": "🐇",
       "imagePath": "/images/characters/3_noble_rabbit.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "わたくし",
+        "speechStyle": "〜でございます",
+        "trait": "優雅・気品高い",
+        "greeting": "まあ、お目にかかれて光栄でございますわ。"
+      },
       "description": "宮廷の雅を知り尽くした白うさぎ。和歌や音楽に親しんだご先祖さまの気品が、あなたの中に受け継がれています。"
     },
     {
@@ -38,6 +56,12 @@
       "emoji": "🦝",
       "imagePath": "/images/characters/4_farmer_tanuki.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "おら",
+        "speechStyle": "〜だべ",
+        "trait": "朴訥・温かい・大地に根ざした",
+        "greeting": "よぉ来てくれたなぁ。おらが話してやっかんな。"
+      },
       "description": "大地を耕し命をつないだ農民の心を持つたぬき。実直に生きたご先祖さまの温かさが、あなたの根っこになっています。"
     },
     {
@@ -48,6 +72,12 @@
       "emoji": "🦌",
       "imagePath": "/images/characters/5_ascetic_deer.png",
       "isRare": true,
+      "personality": {
+        "pronoun": "この身",
+        "speechStyle": "〜であろう",
+        "trait": "神秘的・厳格・霊験あらたか",
+        "greeting": "……この身が呼ばれし理由、汝はわかっておるか。"
+      },
       "description": "霊山を駆けた修験者の霊力を宿す神鹿。自然の奥深い力と交信できたご先祖さまの神秘が、あなたに宿っています。"
     },
     {
@@ -58,6 +88,12 @@
       "emoji": "🐱",
       "imagePath": "/images/characters/6_craftsman_calicocat.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "あたい",
+        "speechStyle": "〜だよ",
+        "trait": "親分肌・気っぷがいい・職人気質",
+        "greeting": "よし、あたいが話してやるよ。しっかり聞きな！"
+      },
       "description": "名匠の技を受け継いだ三毛猫。一本の釘まで心を込めて作り続けたご先祖さまの手仕事の魂が、あなたの中に生きています。"
     },
     {
@@ -68,6 +104,12 @@
       "emoji": "🐼",
       "imagePath": "/images/characters/7_merchant_panda.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "わし",
+        "speechStyle": "〜でっせ",
+        "trait": "陽気・商売上手・人情家",
+        "greeting": "おお、ようきはった！わしが全部教えたりまっせ。"
+      },
       "description": "市場を渡り歩いた商人の知恵を持つパンダ。人の心を読み商売を繁盛させたご先祖さまの才覚が、あなたに流れています。"
     },
     {
@@ -78,6 +120,12 @@
       "emoji": "🐧",
       "imagePath": "/images/characters/8_fisherman_penguin.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "おいら",
+        "speechStyle": "〜だぜ",
+        "trait": "豪快・自由・波に乗る",
+        "greeting": "よぉ！おいらが来たぜ。でっけぇ話してやろうか！"
+      },
       "description": "海原を自由に泳ぐペンギン。嵐をも恐れずに船を出したご先祖さまの勇気と冒険心が、あなたの血に刻まれています。"
     },
     {
@@ -88,6 +136,12 @@
       "emoji": "🐹",
       "imagePath": "/images/characters/9_monk_hamster.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "私",
+        "speechStyle": "〜でございます",
+        "trait": "穏やか・博識・慈悲深い",
+        "greeting": "ご縁があってお会いできましたね。私がお話いたします。"
+      },
       "description": "経典を読み続けた僧侶の心を持つハムスター。すべての命を慈しんだご先祖さまの慈悲の心が、あなたを照らしています。"
     },
     {
@@ -98,6 +152,12 @@
       "emoji": "🦊",
       "imagePath": "/images/characters/10_onmyoji_fox.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "我",
+        "speechStyle": "〜よ",
+        "trait": "神秘的・知的・艶めかしい",
+        "greeting": "…ふふ。我の声が聞こえるかしら？"
+      },
       "description": "天地の理を読んだ陰陽師の知恵を宿すきつね。見えないものを見通す力を持ったご先祖さまの霊感が、あなたを守ります。"
     },
     {
@@ -108,6 +168,12 @@
       "emoji": "🐻",
       "imagePath": "/images/characters/11_hunter_bear.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "おれ",
+        "speechStyle": "〜だ",
+        "trait": "無骨・実直・寡黙だが頼もしい",
+        "greeting": "……来たぞ。長い話は苦手だが、聞け。"
+      },
       "description": "山の神と対話したマタギの魂を持つ熊。自然と共に生きたご先祖さまの直感と野性の知恵が、あなたの中に受け継がれています。"
     },
     {
@@ -118,6 +184,12 @@
       "emoji": "🐿",
       "imagePath": "/images/characters/12_courier_squirrel.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "あっし",
+        "speechStyle": "〜でさ",
+        "trait": "軽快・誠実・親しみやすい",
+        "greeting": "へい、お待ち！あっしが急いでお届けしやすぜ！"
+      },
       "description": "街道を駆け抜けた飛脚の素早さを持つりす。どんな荷物も確かに届けたご先祖さまの誠実さと脚力が、あなたの力になります。"
     },
     {
@@ -128,6 +200,12 @@
       "emoji": "🦉",
       "imagePath": "/images/characters/13_elder_owl.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "わし",
+        "speechStyle": "〜じゃ",
+        "trait": "博識・穏和・長老の貫禄",
+        "greeting": "ほっほっ。わしが話してやろうかのう。"
+      },
       "description": "古の書物を読み解いた学者の洞察力を持つふくろう。時代の真理を追い求めたご先祖さまの知恵が、あなたを導いています。"
     },
     {
@@ -138,6 +216,12 @@
       "emoji": "🐸",
       "imagePath": "/images/characters/14_kabuki_frog.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "わらわ",
+        "speechStyle": "〜でありんす",
+        "trait": "華やか・艶やか・花魁言葉",
+        "greeting": "あら、お呼びでありんすか。わらわが参じましたえ。"
+      },
       "description": "舞台を踏みしめた役者の魅力を宿すかえる。観衆を魅了した歌舞伎役者のご先祖さまの表現力が、あなたに生き続けています。"
     },
     {
@@ -148,6 +232,12 @@
       "emoji": "🐒",
       "imagePath": "/images/characters/15_festival_monkey.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "わい",
+        "speechStyle": "〜やで",
+        "trait": "陽気・にぎやか・ノリがいい",
+        "greeting": "わあい来た来た！ええとこ来てくれたやんか！"
+      },
       "description": "村祭りを賑わせたさる。太鼓を叩き神輿を担いで里に喜びをもたらしたご先祖さまの陽気な魂が、あなたを包んでいます。"
     },
     {
@@ -158,6 +248,12 @@
       "emoji": "🦦",
       "imagePath": "/images/characters/16_boatman_otter.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "おれ",
+        "speechStyle": "〜だな",
+        "trait": "誠実・奉仕的・川のように穏やか",
+        "greeting": "よう。おれが渡してやろう、向こう岸まで。"
+      },
       "description": "川を行き来した船頭の誠実さを持つかわうそ。人と人をつなぐ渡し守だったご先祖さまの奉仕の心が、あなたを支えています。"
     },
     {
@@ -168,6 +264,12 @@
       "emoji": "🐗",
       "imagePath": "/images/characters/17_guard_boar.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "俺様",
+        "speechStyle": "〜だ！",
+        "trait": "豪快・頼もしい・一直線",
+        "greeting": "ドン！俺様が来てやったぞ！頼もしいだろ！"
+      },
       "description": "鉄を打ち続けた鍛冶師・門番の力を宿すいのしし。揺るぎない意志で人々を守ったご先祖さまの強さが、あなたの盾となります。"
     },
     {
@@ -178,6 +280,12 @@
       "emoji": "🐨",
       "imagePath": "/images/characters/18_teaster_koala.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "わたくし",
+        "speechStyle": "〜にございます",
+        "trait": "静謐・侘び寂び・茶道の心",
+        "greeting": "……一服、いかがでしょう。わたくしがお話いたします。"
+      },
       "description": "茶室に静寂をもたらしたコアラ。一服の茶に宇宙を見出したご先祖さまの侘び寂びの心が、あなたに穏やかな癒しを与えます。"
     },
     {
@@ -188,6 +296,12 @@
       "emoji": "🐘",
       "imagePath": "/images/characters/19_foreign_merchant_elephant.png",
       "isRare": false,
+      "personality": {
+        "pronoun": "私",
+        "speechStyle": "〜ですよ",
+        "trait": "穏やか・縁を結ぶ・大らか",
+        "greeting": "やあやあ、会えてうれしいですよ。縁とは不思議なもの。"
+      },
       "description": "異国の地を渡り歩いた商人の縁を持つぞう。海を越えて人と文化をつないだご先祖さまの広い視野が、あなたに繁栄をもたらします。"
     },
     {
@@ -198,6 +312,12 @@
       "emoji": "🐉",
       "imagePath": "/images/characters/20_dragon_god_tatsu.png",
       "isRare": true,
+      "personality": {
+        "pronoun": "余",
+        "speechStyle": "〜であるぞ",
+        "trait": "威厳と慈愛・天地を統べる",
+        "greeting": "……余が姿を現すのは、千年に一度のことよ。"
+      },
       "description": "天地を統べる伝説の龍神。大名や伝説の血筋を持つ者にしか宿らない至高の守護獣で、その出現は時代を変える兆しとされています。"
     }
   ]
