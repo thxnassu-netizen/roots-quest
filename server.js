@@ -43,12 +43,15 @@ async function generateWithRetry(myoji, shusshinchi, maxRetries = 3) {
         model: "llama-3.3-70b-versatile",
         max_tokens: 1024,
         stream: true,
+        temperature: 0,
+        seed: fnvHash(myoji, shusshinchi),
         messages: [
           {
             role: "system",
             content: `あなたは日本の歴史に詳しい歴史家・語り部です。
 ユーザーの名字と出身地をもとに、そのご先祖さまがどんな時代をどのように生きたかを、
 歴史的事実を織り交ぜながらエンターテインメントとして楽しく語ってください。
+同じ名字・出身地が入力されたら、毎回必ず同じ内容のルーツ話を返してください。
 以下のルールに従ってください：
 - 130〜160字程度のドラマチックな短文（3行で読み切れる長さ）
 - 歴史的な時代背景（戦国時代・江戸時代など）と絡めて語る
@@ -127,84 +130,83 @@ app.post("/api/story", async (req, res) => {
   }
 });
 
-// 名字+出身地のハッシュで守護獣タイプを決定論的に選ぶフォールバック
-function hashType(myoji, shusshinchi) {
+// 名字+出身地のFNV-1aハッシュ（数値も返す）
+function fnvHash(myoji, shusshinchi) {
   const s = myoji + shusshinchi;
   let h = 2166136261;
   for (let i = 0; i < s.length; i++) {
     h ^= s.charCodeAt(i);
     h = (h * 16777619) >>> 0;
   }
+  return h; // 符号なし32bit整数
+}
+
+function hashType(myoji, shusshinchi) {
+  const h = fnvHash(myoji, shusshinchi);
   const keys = Object.keys(CHARACTER_TYPES);
   return keys[h % keys.length];
 }
+
+// 守護獣キャラクターの結果キャッシュ（サーバープロセス内で固定化）
+const characterCache = new Map();
 
 app.post("/api/character", async (req, res) => {
   const { myoji, shusshinchi, story } = req.body;
   if (!myoji || !shusshinchi || !story) {
     return res.status(400).json({ error: "必要な情報が不足しています" });
   }
+
+  // 名字+出身地のFNV-1aハッシュで守護獣タイプを一意に確定（毎回同じ結果になる）
+  const hash = fnvHash(myoji, shusshinchi);
+  const resolvedKey = Object.keys(CHARACTER_TYPES)[hash % Object.keys(CHARACTER_TYPES).length];
+  const typeInfo = CHARACTER_TYPES[resolvedKey];
+
+  // キャッシュヒット → 同一入力なら常に同じ結果を返す
+  const cacheKey = `${myoji}|${shusshinchi}`;
+  if (characterCache.has(cacheKey)) {
+    return res.json(characterCache.get(cacheKey));
+  }
+
   try {
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       max_tokens: 512,
       stream: false,
+      temperature: 0,        // 完全決定論的出力
+      seed: hash,            // 入力ハッシュをシードに使用
       response_format: { type: "json_object" },
       messages: [
         {
           role: "system",
-          content: `あなたは守護獣を判定する神秘の占い師です。
-名字・出身地・ご先祖のストーリーをもとに、以下20種類の守護獣タイプから最も適切なものを厳密に1つ選んでください。
-JSON形式のみで返してください。
+          content: `あなたは守護獣の語り部です。
+以下の【確定済みの守護獣】に合わせて、ancestorName・feature・commentを生成してください。
+守護獣タイプは絶対に変更せず、指定された守護獣の設定のみで語ってください。
+毎回必ず同一の名前・説明・ひとことを返してください（ランダム性を一切排除する）。
 
-【守護獣の選び方：ストーリーのキーワードで判断する】
-- 田畑・農業・豊作・里山の暮らし → farmer（たぬきの豊穣神）
-- 武士・合戦・刀・剣術・忠義 → warrior（柴犬の武神）
-- 忍び・隠密・スパイ・秘密工作 → ninja（黒猫の忍神）★レア
-- 公家・朝廷・宮廷・雅楽・和歌 → court_noble（白うさぎの雅神）
-- 修験道・山岳修行・呪術・霊山 → shugenja（しかの霊験神）★レア
-- 大工・左官・建築・木工・鍛冶以外の職人 → craftsman（三毛猫の匠神）
-- 商売・両替・問屋・市場・行商 → merchant（パンダの商才神）
-- 海・漁・船乗り・漁村・港 → seafarer（ペンギンの海神）
-- 寺・仏教・僧侶・念仏・写経 → scholar（ハムスターの仏神）
-- 陰陽師・呪い・占い・神道・神社神職 → healer（きつねの陰陽神）
-- 山・猟・狩り・マタギ・山村 → hunter（くまのマタギ神）
-- 飛脚・早馬・使者・旅・行商の旅人 → trader（りすの速神）
-- 長老・学者・医者・儒学・書物 → performer（ふくろうの長老神）
-- 歌舞伎・能・芸能・踊り・祭り芸 → weaver（かえるの芸神）
-- 祭り・神輿・太鼓・民俗行事 → mountain_folk（さるの祭神）
-- 川・渡し舟・水運・船頭・漁師（川） → christian（かわうその川神）
-- 鍛冶・製鉄・炭焼き・衛兵・門番 → blacksmith（いのししの守神）
-- 茶道・華道・文人・文化人・茶人 → tea_master（コアラの風雅神）
-- 貿易商・異国・琉球・長崎・外国との縁 → castle_samurai（ぞうの縁神）
-- 大名・伝説・龍・神話・極めて特殊な血筋 → noble_exile（たつの龍神）★レア
+【確定済みの守護獣】
+- キー: ${resolvedKey}
+- 守護獣名: ${typeInfo.typeName}
+- 守護獣の特徴: ${typeInfo.typeDesc}
+- 名字: ${myoji}
+- 出身地: ${shusshinchi}
 
-【重要】
-・必ず上記20種類のkeyを1つだけ返してください
-・「warrior」は武士・剣士の話のみ。農民や商人には使わないでください
-・ストーリーに複数の要素がある場合は、最も強調されているものを選んでください
-
-返すJSONの形式：
+返すJSONの形式（keyは含めない）：
 {
-  "key": "上記20種類のkeyから1つ（例：farmer, merchant, ninja など）",
-  "ancestorName": "名字や地域・動物を活かした守護獣の名前（例：陸奥の柴犬武神・鉄三郎権現）",
+  "ancestorName": "名字と地域と動物を組み合わせた守護獣の固有名（例：陸奥の柴犬武神・鉄三郎権現）",
   "feature": "この守護獣の由来と特徴を2〜3文で。ご先祖の時代背景・ご加護の内容を含めてください。",
   "comment": "守護獣からあなたへの温かいひとこと。やさしく励ますような語り口で（40字程度）"
 }`,
         },
         {
           role: "user",
-          content: `名字：${myoji}\n出身地：${shusshinchi}\n\nストーリー：\n${story}`,
+          content: `名字：${myoji}\n出身地：${shusshinchi}\n守護獣：${typeInfo.typeName}（${typeInfo.typeDesc}）`,
         },
       ],
     });
 
     const raw = JSON.parse(completion.choices[0].message.content);
-    // 有効なkeyかチェック。無効ならハッシュフォールバック
-    const resolvedKey = CHARACTER_TYPES[raw.key] ? raw.key : hashType(myoji, shusshinchi);
-    const typeInfo = CHARACTER_TYPES[resolvedKey];
 
-    res.json({
+    const result = {
       key: resolvedKey,
       emoji: typeInfo.emoji,
       typeName: typeInfo.typeName,
@@ -213,21 +215,32 @@ JSON形式のみで返してください。
       ancestorName: raw.ancestorName,
       feature: raw.feature,
       comment: raw.comment,
-    });
+    };
+
+    // 結果をキャッシュに保存（同じ名字+出身地なら常に同じ結果）
+    characterCache.set(cacheKey, result);
+
+    res.json(result);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "キャラクター判定に失敗しました" });
   }
 });
 
+// 名字ルーツキャッシュ
+const namerootCache = new Map();
+
 app.post("/api/nameroot", async (req, res) => {
   const { myoji } = req.body;
   if (!myoji) return res.status(400).json({ error: "名字を入力してください" });
+  if (namerootCache.has(myoji)) return res.json(namerootCache.get(myoji));
   try {
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       max_tokens: 400,
       stream: false,
+      temperature: 0,
+      seed: fnvHash(myoji, ''),
       response_format: { type: "json_object" },
       messages: [
         {
@@ -245,7 +258,9 @@ app.post("/api/nameroot", async (req, res) => {
         { role: "user", content: `名字：${myoji}` },
       ],
     });
-    res.json(JSON.parse(completion.choices[0].message.content));
+    const namerootResult = JSON.parse(completion.choices[0].message.content);
+    namerootCache.set(myoji, namerootResult);
+    res.json(namerootResult);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "名字ルーツの取得に失敗しました" });
@@ -263,11 +278,14 @@ app.post("/api/ifstory", async (req, res) => {
       model: "llama-3.3-70b-versatile",
       max_tokens: 700,
       stream: true,
+      temperature: 0,
+      seed: fnvHash(myoji, shusshinchi) ^ fnvHash(charKey, ''),
       messages: [
         {
           role: "system",
           content: `あなたは日本の歴史に精通した幻想的な語り部です。
 ユーザーの名字・出身地・先祖タイプをもとに、歴史のIFストーリーを一段落で生成してください。
+同じ名字・出身地・先祖タイプが入力されたら、毎回必ず同じ内容のストーリーを返してください。
 
 【必須ルール】
 - 200〜260字程度の濃密な一段落

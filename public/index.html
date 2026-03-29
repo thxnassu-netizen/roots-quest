@@ -203,7 +203,6 @@
       width:160px; height:170px; margin:0 auto 16px; position:relative;
       animation:float 3.5s ease-in-out infinite;
     }
-    .char-icon-wrap svg { width:100%; height:100%; }
     .char-img { width:100%; height:100%; object-fit:contain; display:block; }
     .char-shadow {
       position:absolute; bottom:-10px; left:50%; transform:translateX(-50%);
@@ -677,13 +676,13 @@
       const card    = document.getElementById('charCard');
       const loading = document.getElementById('charLoading');
       const content = document.getElementById('charContent');
-      const imgSrc  = CHARACTER_IMAGES[data.key];
+      const imgSrc  = CHARACTER_IMAGES[data.key] || CHARACTER_IMAGES['warrior'];
 
       card.className = 'char-card' + (data.isRare ? ' rare' : '');
       content.innerHTML = `
         ${data.isRare ? '<div class="rare-badge">✨ めったに出ない守護獣です ✨</div><br>' : ''}
         <div class="char-sec-label">✦ あなたの守護獣 ✦</div>
-        <div class="char-icon-wrap"><img src="${imgSrc}" alt="${data.typeName}" class="char-img"><div class="char-shadow"></div></div>
+        <div class="char-icon-wrap"><img src="${imgSrc}" alt="${data.typeName}" class="char-img" onerror="this.style.display='none'"><div class="char-shadow"></div></div>
         <div class="char-name">${data.ancestorName}</div>
         <div class="char-type-badge">${data.typeName}｜${data.typeDesc}</div>
         <div class="char-divider"><div class="cl"></div><div class="ci">❧</div><div class="cl"></div></div>
