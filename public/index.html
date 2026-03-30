@@ -53,10 +53,13 @@
     /* 桜の花びら */
     .petal { position:fixed; pointer-events:none; opacity:0; animation:fall linear infinite; z-index:0; }
     @keyframes fall {
-      0%   { transform:translateY(-20px) rotate(0deg); opacity:0; }
-      10%  { opacity:0.6; }
-      90%  { opacity:0.35; }
-      100% { transform:translateY(110vh) rotate(360deg); opacity:0; }
+      0%    { transform:translateY(-30px) translateX(0) rotate(0deg);          opacity:0; }
+      6%    { opacity:0.5; }
+      25%   { transform:translateY(25vh)  translateX(22px)  rotate(95deg);  }
+      50%   { transform:translateY(50vh)  translateX(-18px) rotate(200deg); }
+      75%   { transform:translateY(75vh)  translateX(16px)  rotate(300deg); }
+      94%   { opacity:0.3; }
+      100%  { transform:translateY(112vh) translateX(-6px)  rotate(390deg);    opacity:0; }
     }
 
     /* パーティクル */
@@ -71,17 +74,34 @@
 
     /* カード演出 */
     @keyframes cardReveal {
-      0%   { opacity:0; transform:scale(0.86) translateY(18px); }
-      65%  { transform:scale(1.04) translateY(-2px); }
-      100% { opacity:1; transform:scale(1) translateY(0); }
+      0%   { opacity:0; transform:scale(0.90) translateY(24px); filter:blur(7px); }
+      45%  { filter:blur(1.5px); }
+      65%  { transform:scale(1.03) translateY(-2px); filter:blur(0); }
+      100% { opacity:1; transform:scale(1) translateY(0); filter:blur(0); }
     }
     @keyframes fadeUp {
-      from { opacity:0; transform:translateY(12px); }
-      to   { opacity:1; transform:translateY(0); }
+      from { opacity:0; transform:translateY(16px); filter:blur(5px); }
+      60%  { filter:blur(0); }
+      to   { opacity:1; transform:translateY(0); filter:blur(0); }
     }
     @keyframes rareGlow {
       from { box-shadow:0 0 18px rgba(212,175,55,0.25), 0 6px 24px rgba(180,140,100,0.12); }
       to   { box-shadow:0 0 40px rgba(212,175,55,0.48), 0 6px 36px rgba(180,140,100,0.16); }
+    }
+    @keyframes haloBreath {
+      0%,100% { transform:translate(-50%,-50%) scale(1);    opacity:0.75; }
+      50%     { transform:translate(-50%,-50%) scale(1.14); opacity:1; }
+    }
+    @keyframes particleFloat {
+      0%   { opacity:0;   transform:translate(var(--px),var(--py)) scale(0.4); }
+      20%  { opacity:0.9; }
+      80%  { opacity:0.5; }
+      100% { opacity:0;   transform:translate(calc(var(--px) + var(--dx)), calc(var(--py) - 36px)) scale(0.1); }
+    }
+    @keyframes cardStagger {
+      from { opacity:0; transform:translateY(20px); filter:blur(6px); }
+      55%  { filter:blur(0.5px); }
+      to   { opacity:1; transform:translateY(0); filter:blur(0); }
     }
     @keyframes shimmer {
       from { background-position:0% center; }
@@ -156,7 +176,7 @@
       font-weight:700; letter-spacing:0.3em; cursor:pointer; transition:all 0.25s;
       box-shadow:0 4px 18px rgba(232,168,184,0.4);
     }
-    .btn-primary:hover { background-position:100% center; transform:translateY(-2px); box-shadow:0 6px 24px rgba(232,168,184,0.55); }
+    .btn-primary:hover { background-position:100% center; transform:translateY(-2px); box-shadow:0 6px 28px rgba(232,168,184,0.65), 0 0 0 3px rgba(232,168,184,0.12); }
     .btn-primary:disabled { opacity:0.55; cursor:default; transform:none; }
     .btn-secondary {
       width:100%; padding:13px; border:1.5px solid rgba(143,168,143,0.4); border-radius:50px;
@@ -164,7 +184,7 @@
       font-size:0.87rem; font-family:'Shippori Mincho',serif;
       font-weight:500; letter-spacing:0.25em; cursor:pointer; transition:all 0.25s;
     }
-    .btn-secondary:hover { background:rgba(138,184,160,0.2); transform:translateY(-2px); }
+    .btn-secondary:hover { background:rgba(138,184,160,0.2); transform:translateY(-2px); box-shadow:0 5px 20px rgba(138,184,160,0.38), 0 0 0 3px rgba(138,184,160,0.1); }
 
     /* ── 結果エリア ── */
     .results-area { display:none; }
@@ -186,8 +206,8 @@
       background:linear-gradient(135deg,rgba(255,252,245,0.97),rgba(255,248,228,0.97));
     }
     .char-card.rare::before { background:linear-gradient(to right,transparent,var(--gold),transparent); }
-    .char-card.revealed        { animation:cardReveal 0.6s ease-out forwards; }
-    .char-card.rare.revealed   { animation:cardReveal 0.6s ease-out forwards, rareGlow 2.8s 0.6s ease-in-out infinite alternate; }
+    .char-card.revealed        { animation:cardReveal 0.85s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .char-card.rare.revealed   { animation:cardReveal 0.85s cubic-bezier(0.22,1,0.36,1) forwards, rareGlow 2.8s 0.85s ease-in-out infinite alternate; }
 
     .rare-badge {
       display:inline-block;
@@ -210,6 +230,46 @@
       background:radial-gradient(ellipse,rgba(200,140,160,0.25) 0%,transparent 70%);
     }
     .char-card.rare .char-shadow { background:radial-gradient(ellipse,rgba(212,175,55,0.32) 0%,transparent 70%); }
+    /* 守護獣ハロー（光の輪） */
+    .char-halo {
+      position:absolute; top:50%; left:50%;
+      width:200px; height:200px; border-radius:50%;
+      background:radial-gradient(circle,rgba(232,168,184,0.38) 0%,rgba(232,168,184,0.12) 45%,transparent 72%);
+      animation:haloBreath 3.2s ease-in-out infinite;
+      pointer-events:none; z-index:0;
+    }
+    .char-card.rare .char-halo {
+      background:radial-gradient(circle,rgba(212,175,55,0.38) 0%,rgba(212,175,55,0.12) 45%,transparent 72%);
+    }
+    /* パーティクル */
+    .char-particle {
+      position:absolute; top:50%; left:50%;
+      width:5px; height:5px; border-radius:50%;
+      background:rgba(232,168,184,0.9);
+      animation:particleFloat var(--dur,2.4s) var(--delay,0s) ease-in-out infinite;
+      pointer-events:none; z-index:2;
+    }
+    .char-card.rare .char-particle { background:rgba(212,175,55,0.9); }
+    /* 結果カードのスタガー */
+    .info-card { animation:cardStagger 0.75s cubic-bezier(0.22,1,0.36,1) both; }
+    .info-card.stagger-2 { animation-delay:0.12s; }
+    .info-card.stagger-3 { animation-delay:0.22s; }
+    .ifstory-card { animation:cardStagger 0.75s cubic-bezier(0.22,1,0.36,1) 0.32s both; }
+    /* ガチャセクション区切り */
+    .gacha-sep {
+      display:flex; align-items:center; gap:14px; margin:28px 0 22px;
+    }
+    .gacha-sep::before,.gacha-sep::after {
+      content:''; flex:1; height:1px;
+      background:linear-gradient(to right,transparent,rgba(180,130,210,0.45),transparent);
+    }
+    .gacha-sep span {
+      font-size:0.6rem; color:rgba(150,90,185,0.7); letter-spacing:0.3em; white-space:nowrap;
+      padding:7px 18px; border:1px solid rgba(180,130,210,0.28); border-radius:20px;
+      background:rgba(235,215,255,0.18); backdrop-filter:blur(4px);
+    }
+    /* ガチャカード - 上部に柔らかい影で分離 */
+    .gacha-card { box-shadow:0 -2px 24px rgba(160,100,200,0.08),0 6px 30px rgba(170,120,200,0.13); }
 
     /* 名前・タイプ */
     .char-name {
@@ -300,7 +360,7 @@
     .ifstory-card {
       background:linear-gradient(135deg,rgba(18,14,26,0.97),rgba(32,22,42,0.97));
       border:1.5px solid rgba(180,140,60,0.48); border-radius:18px;
-      padding:28px 24px; margin-bottom:14px;
+      padding:28px 24px; margin-bottom:6px;
       box-shadow:0 8px 36px rgba(60,30,10,0.32), 0 0 90px rgba(120,80,20,0.07),
                  inset 0 1px 0 rgba(220,180,80,0.14);
       animation:fadeUp 0.5s ease forwards; position:relative; overflow:hidden;
@@ -390,7 +450,7 @@
       border:1.5px solid rgba(200,155,220,0.42); border-radius:18px;
       padding:26px 22px; margin-bottom:14px;
       box-shadow:0 6px 30px rgba(170,120,200,0.13), inset 0 1px 0 rgba(255,255,255,0.85);
-      animation:fadeUp 0.5s ease forwards; position:relative; overflow:hidden;
+      animation:fadeUp 0.75s cubic-bezier(0.22,1,0.36,1) forwards; position:relative; overflow:hidden;
     }
     .gacha-card::before {
       content:''; position:absolute; top:0; left:0; right:0; height:2px;
@@ -451,7 +511,7 @@
       box-shadow:0 4px 16px rgba(150,90,200,0.3);
       transition:transform 0.15s, box-shadow 0.15s;
     }
-    .gacha-btn:hover { transform:translateY(-2px); box-shadow:0 6px 22px rgba(150,90,200,0.4); }
+    .gacha-btn:hover { transform:translateY(-2px); box-shadow:0 6px 26px rgba(150,90,200,0.5), 0 0 0 3px rgba(190,140,230,0.15); }
     .gacha-btn:active { transform:scale(0.97); }
     /* シェイク中 */
     .gacha-shake-msg {
@@ -528,9 +588,9 @@
       transition:all 0.22s; text-decoration:none; line-height:1;
     }
     .btn-share-x   { background:#0f0f14; color:#fff; box-shadow:0 3px 14px rgba(0,0,0,0.2); }
-    .btn-share-x:hover   { background:#1e1e28; transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.28); }
+    .btn-share-x:hover   { background:#1e1e28; transform:translateY(-2px); box-shadow:0 6px 22px rgba(0,0,0,0.32), 0 0 0 3px rgba(255,255,255,0.08); }
     .btn-share-line { background:#06c755; color:#fff; box-shadow:0 3px 14px rgba(6,199,85,0.22); }
-    .btn-share-line:hover { background:#05af4b; transform:translateY(-2px); box-shadow:0 6px 20px rgba(6,199,85,0.32); }
+    .btn-share-line:hover { background:#05af4b; transform:translateY(-2px); box-shadow:0 6px 22px rgba(6,199,85,0.42), 0 0 0 3px rgba(6,199,85,0.12); }
 
     /* ── ヒートマップ ── */
     #mapContainer { height:350px; border-radius:12px; overflow:hidden; }
@@ -627,7 +687,7 @@
       </div>
 
       <!-- 2. 名字ルーツカード -->
-      <div class="info-card green" id="namerootCard" style="display:none">
+      <div class="info-card green stagger-2" id="namerootCard" style="display:none">
         <div class="card-hdr">📖 お名字のルーツ</div>
         <div id="namerootContent">
           <div class="loading-wrap" style="padding:10px 0"><p class="loading-text">調べています...</p></div>
@@ -635,7 +695,7 @@
       </div>
 
       <!-- 3. ストーリーカード -->
-      <div class="info-card" id="storyCard" style="display:none">
+      <div class="info-card stagger-3" id="storyCard" style="display:none">
         <div class="card-hdr">📜 守護獣の語り｜汝の血脈に眠る物語</div>
         <p class="story-text" id="resultText"></p>
       </div>
@@ -651,6 +711,7 @@
       </div>
 
       <!-- 5. ガチャ（今日の加護）カード -->
+      <div class="gacha-sep" id="gachaSep" style="display:none"><span>✦ 今日の加護 ✦</span></div>
       <div class="gacha-card" id="blessingCard" style="display:none">
         <div class="gacha-hdr">⛩️ 今日の御籤を引く</div>
 
@@ -857,6 +918,7 @@
         '<div class="summon-ring"></div><p class="loading-text">歴史の記憶を探っています...</p>';
 
       // ガチャカードをリセット
+      document.getElementById('gachaSep').style.display        = 'none';
       document.getElementById('blessingCard').style.display    = 'none';
       document.getElementById('gachaReady').style.display      = 'none';
       document.getElementById('gachaSpinning').style.display   = 'none';
@@ -961,6 +1023,11 @@
       loading.style.display = 'none';
       content.style.display = 'block';
       card.classList.add('revealed');
+
+      // ハロー＋パーティクルを追加
+      const iconWrap = content.querySelector('.char-icon-wrap');
+      if (iconWrap) addCharParticles(iconWrap, data.isRare);
+
       setTimeout(() => {
         launchSparkles(card, data.isRare ? 42 : 24);
         if (data.isRare) launchShockwave(card);
@@ -1005,6 +1072,7 @@
     // ガチャカードを表示し、LocalStorage 確認
     function fetchBlessing(myoji, shusshinchi) {
       const card = document.getElementById('blessingCard');
+      document.getElementById('gachaSep').style.display = 'flex';
       card.style.display = 'block';
 
       const today = getTodayJST();
@@ -1271,24 +1339,69 @@
     // ══════════════════════════════════════════
     // 桜の花びら
     // ══════════════════════════════════════════
+    // ── 桜の花びら ──
+    const PETAL_SHAPES = [
+      // 一枚花びら（丸みのある）
+      `<ellipse cx="10" cy="7" rx="4.2" ry="6.5" fill="FILL"/>`,
+      // 先端にくびれのある花びら
+      `<path d="M10,2 Q14,5 14,10 Q13,16 10,18 Q7,16 6,10 Q6,5 10,2Z" fill="FILL"/>`,
+      // 幅広花びら
+      `<ellipse cx="10" cy="8" rx="5.5" ry="5.8" fill="FILL"/>`,
+      // 細長花びら
+      `<path d="M10,1 Q13,6 13,11 Q12,17 10,19 Q8,17 7,11 Q7,6 10,1Z" fill="FILL"/>`,
+    ];
+    const PETAL_COLORS = [
+      'rgba(228,172,188,ALPHA)','rgba(240,190,205,ALPHA)',
+      'rgba(215,160,178,ALPHA)','rgba(248,210,220,ALPHA)',
+    ];
     function createPetal() {
-      const p = document.createElement('div');
+      const p     = document.createElement('div');
       p.className = 'petal';
-      const size = Math.random()*10+8, left = Math.random()*100;
-      const dur  = Math.random()*8+8,  delay = Math.random()*5;
-      p.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,185,0.72)" transform="rotate(0 10 10)"/>
-        <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,185,0.72)" transform="rotate(72 10 10)"/>
-        <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,185,0.72)" transform="rotate(144 10 10)"/>
-        <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,185,0.72)" transform="rotate(216 10 10)"/>
-        <ellipse cx="10" cy="5" rx="4" ry="5.5" fill="rgba(220,170,185,0.72)" transform="rotate(288 10 10)"/>
+      const size  = Math.random()*10 + 9;
+      const left  = Math.random()*105 - 2;
+      const dur   = Math.random()*9  + 9;
+      const delay = Math.random()*6;
+      const alpha = (Math.random()*0.25 + 0.28).toFixed(2);
+      const rot   = Math.floor(Math.random()*360);
+      const shape = PETAL_SHAPES[Math.floor(Math.random()*PETAL_SHAPES.length)];
+      const color = PETAL_COLORS[Math.floor(Math.random()*PETAL_COLORS.length)].replace('ALPHA', alpha);
+      const sway  = Math.random() > 0.5 ? '' : 'transform:scaleX(-1);';
+      p.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"
+        style="${sway}">
+        <g transform="rotate(${rot} 10 10)">${shape.replace('FILL', color)}</g>
       </svg>`;
       p.style.cssText = `position:fixed;left:${left}vw;top:-30px;pointer-events:none;
         animation:fall ${dur}s ${delay}s linear infinite;z-index:0;`;
       document.body.appendChild(p);
-      setTimeout(() => { p.remove(); createPetal(); }, (dur+delay)*1000);
+      setTimeout(() => { p.remove(); createPetal(); }, (dur + delay)*1000 + 500);
     }
-    for (let i = 0; i < 12; i++) setTimeout(() => createPetal(), i*600);
+    for (let i = 0; i < 20; i++) setTimeout(() => createPetal(), i * 450 + Math.random()*300);
+
+    // ── 守護獣パーティクル ──
+    function addCharParticles(wrap, isRare) {
+      // ハロー（光の輪）
+      const halo = document.createElement('div');
+      halo.className = 'char-halo';
+      wrap.prepend(halo);
+      // パーティクル 8個
+      const count = 8;
+      for (let i = 0; i < count; i++) {
+        const angle  = (i / count) * 2 * Math.PI + Math.random()*0.8;
+        const radius = 70 + Math.random()*30;
+        const px = Math.round(Math.cos(angle) * radius);
+        const py = Math.round(Math.sin(angle) * radius);
+        const dx = Math.round((Math.random()-0.5)*30);
+        const dur   = (1.8 + Math.random()*1.6).toFixed(1);
+        const delay = (Math.random()*2.5).toFixed(2);
+        const sz    = 3 + Math.random()*4;
+        const pt = document.createElement('div');
+        pt.className = 'char-particle';
+        if (isRare) pt.classList.add('rare-particle');
+        pt.style.cssText = `--px:${px}px;--py:${py}px;--dx:${dx}px;--dur:${dur}s;--delay:${delay}s;
+          width:${sz}px;height:${sz}px;`;
+        wrap.appendChild(pt);
+      }
+    }
   </script>
 </body>
 </html>
