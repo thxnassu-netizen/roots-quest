@@ -1151,8 +1151,9 @@
         // 既に引いている → 結果をそのまま表示
         showGachaDone(JSON.parse(stored));
       } else {
-        // 未引き → ボタン表示
+        // 未引き → 筒を表示してからスクロール（Stage 1）
         showGachaReady();
+        setTimeout(() => card.scrollIntoView({ behavior:'smooth', block:'center' }), 350);
       }
 
       // ボタンにイベントをセット
@@ -1218,6 +1219,11 @@
 
       document.getElementById('gachaResult').style.display = 'block';
       document.getElementById('gachaDone').style.display   = 'none';
+
+      // Stage 2：おみくじ紙が展開しきった頃に中央へスクロール
+      setTimeout(() => {
+        document.getElementById('gachaResult').scrollIntoView({ behavior:'smooth', block:'center' });
+      }, 550);
     }
 
     function showGachaDone(data) {
@@ -1225,6 +1231,11 @@
       document.getElementById('gachaSpinning').style.display = 'none';
       document.getElementById('gachaResult').style.display   = 'none';
       document.getElementById('gachaDone').style.display     = 'block';
+
+      // Stage 2（引き済み）：結果カードを中央へスクロール
+      setTimeout(() => {
+        document.getElementById('gachaDone').scrollIntoView({ behavior:'smooth', block:'center' });
+      }, 350);
 
       const fc = FORTUNE_COLORS[data.fortune] || FORTUNE_COLORS['吉'];
       document.getElementById('gachaDoneResult').innerHTML = `
@@ -1496,9 +1507,19 @@
       // おかえりカードを表示
       showReturnCard(savedMyoji);
 
-      // ショートカットボタン：即座に診断開始
+      // ショートカットボタン：結果エリアをパッと表示してからsubmit発火
       document.getElementById('btnReturn').addEventListener('click', () => {
-        document.getElementById('rootsForm').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+        // 結果エリアが非表示なら先にdisplay:blockしてDOMを確定させる
+        const ra = document.getElementById('resultsArea');
+        if (ra.style.display === 'none' || ra.style.display === '') {
+          ra.style.display = 'block';
+        }
+        // 次フレームで確実にsubmitを発火（DOM更新後）
+        requestAnimationFrame(() => {
+          document.getElementById('rootsForm').dispatchEvent(
+            new Event('submit', { bubbles: true, cancelable: true })
+          );
+        });
       });
 
       // 「別の名前で占う」：データをクリアしてフォームを空に
