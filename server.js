@@ -245,6 +245,40 @@ const FORTUNE_TABLE = [
   { label: '吉',   rank: 3 },
 ];
 
+// ラッキーアイテムマスター（30種・決定論的に選択）
+const LUCKY_ITEMS = [
+  { name: 'コンビニのカフェラテ',   emoji: '☕' },
+  { name: 'チョコレート1粒',        emoji: '🍫' },
+  { name: '青いボールペン',          emoji: '🖊️' },
+  { name: '白いハンカチ',            emoji: '🤍' },
+  { name: 'おにぎり（鮭）',          emoji: '🍙' },
+  { name: '駅の階段を使う',          emoji: '🪜' },
+  { name: '深呼吸を3回する',        emoji: '🌬️' },
+  { name: 'スマホ画面を拭く',        emoji: '📱' },
+  { name: '温かいお茶',             emoji: '🍵' },
+  { name: '付箋にメモを書く',        emoji: '📝' },
+  { name: 'エコバッグ',             emoji: '🛍️' },
+  { name: 'ハンドクリーム',          emoji: '🤲' },
+  { name: '好きな音楽を1曲',        emoji: '🎵' },
+  { name: '窓を開けて換気する',      emoji: '🪟' },
+  { name: 'ストレッチ5分',          emoji: '🧘' },
+  { name: 'お気に入りの文具を使う', emoji: '✏️' },
+  { name: '緑のものを眺める',        emoji: '🌿' },
+  { name: '整理整頓を少しだけ',      emoji: '🗂️' },
+  { name: '水をコップ1杯飲む',      emoji: '💧' },
+  { name: 'ミントのお菓子',          emoji: '🌱' },
+  { name: 'お気に入りの靴下',        emoji: '🧦' },
+  { name: '昼休みに外へ出る',        emoji: '🚶' },
+  { name: '誰かにひとこと連絡する', emoji: '💌' },
+  { name: '新しいカフェを試す',      emoji: '🏪' },
+  { name: '早めに布団に入る',        emoji: '😴' },
+  { name: '短い散歩に出る',          emoji: '🌸' },
+  { name: '入浴剤を使う',            emoji: '🛁' },
+  { name: '好きな本を少し読む',      emoji: '📖' },
+  { name: '朝ごはんをしっかり食べる', emoji: '🍳' },
+  { name: '空を見上げる',            emoji: '☁️' },
+];
+
 // 日付ごとにキャッシュ（キー: myoji|shusshinchi|YYYY-MM-DD）
 const blessingCache = new Map();
 
@@ -267,6 +301,7 @@ app.post("/api/blessing", async (req, res) => {
   // 日付ハッシュ（名字＋出身地＋今日の日付）→ 毎日異なる結果
   const dailySeed  = fnvHash(myoji + shusshinchi + date);
   const fortune    = FORTUNE_TABLE[dailySeed % FORTUNE_TABLE.length];
+  const todayItem  = LUCKY_ITEMS[dailySeed % LUCKY_ITEMS.length];
 
   // キャラクターの口調を取得（挨拶の統一のため）
   const charId     = getCharId(myoji, shusshinchi);
@@ -289,18 +324,19 @@ app.post("/api/blessing", async (req, res) => {
 ・一人称:「${charData.pronoun}」のみ
 ・語尾・口調:${charData.speechStyle}
 ・今日の運勢はすでに「${fortune.label}」と決まっている（変更禁止）
+・今日のラッキーアイテムは「${todayItem.name}」に決定済み（変更禁止）
 
 返すJSONの形式：
 {
-  "luckyItem": "今日のラッキーアイテム（12字以内）。【厳守】必ず現代の具体的な『物』または『行動』にすること。例：コンビニのカフェラテ・お気に入りの靴下・温かいお味噌汁・青いボールペン・おにぎり（鮭）・スマートフォンの画面を拭く・駅の階段を使う。【絶対禁止】色・抽象概念・刀・お守り・勾玉・魔法陣などファンタジー/歴史的アイテム。",
-  "luckyEmoji": "ラッキーアイテムに合う絵文字1文字（例：☕🖊️🧦🍙🍵🎧📎🧤👟🛁）",
-  "luckyReason": "守護獣の一人称「${charData.pronoun}」を使い、「今日は〇〇をすると良いぞ」のようにユーザーの生活に踏み込んで、なぜ今日そのアイテム/行動が幸運をもたらすか1文（35字以内）で述べよ。",
+  "luckyItem": "必ず「${todayItem.name}」と答えること（変更・追記禁止）",
+  "luckyEmoji": "必ず「${todayItem.emoji}」と答えること（変更禁止）",
+  "luckyReason": "守護獣の一人称「${charData.pronoun}」を使い、なぜ今日「${todayItem.name}」が幸運をもたらすか1文（35字以内）で述べよ。",
   "advice": "${charData.pronoun}が汝に贈る今日一日の過ごし方のお告げ。守護獣の口調で100字程度。具体的で温かいアドバイスを。"
 }`,
         },
         {
           role: "user",
-          content: `名字：${myoji}\n出身地：${shusshinchi}\n今日の日付：${date}\n運勢：${fortune.label}\n守護獣：${charData.typeName}\n一人称：${charData.pronoun}　語尾：${charData.speechStyle}`,
+          content: `名字：${myoji}\n出身地：${shusshinchi}\n今日の日付：${date}\n運勢：${fortune.label}\n守護獣：${charData.typeName}\n一人称：${charData.pronoun}　語尾：${charData.speechStyle}\nラッキーアイテム（固定）：${todayItem.name}`,
         },
       ],
     });
@@ -316,8 +352,8 @@ app.post("/api/blessing", async (req, res) => {
       dateJa,
       fortune: fortune.label,
       fortuneRank: fortune.rank,
-      luckyItem:   raw.luckyItem,
-      luckyEmoji:  raw.luckyEmoji  || '🍀',
+      luckyItem:   todayItem.name,   // AIに依存せずサーバー確定値を使用
+      luckyEmoji:  todayItem.emoji,  // 同上
       luckyReason: raw.luckyReason || '',
       advice:      raw.advice,
     };
@@ -349,6 +385,7 @@ app.post("/api/daily-gacha", async (req, res) => {
 
   const dailySeed = fnvHash(myoji + shusshinchi + date);
   const fortune   = FORTUNE_TABLE[dailySeed % FORTUNE_TABLE.length];
+  const todayItem = LUCKY_ITEMS[dailySeed % LUCKY_ITEMS.length];
   const charId    = getCharId(myoji, shusshinchi);
   const charData  = CHARACTERS[charId - 1];
 
@@ -369,18 +406,19 @@ app.post("/api/daily-gacha", async (req, res) => {
 ・一人称:「${charData.pronoun}」のみ
 ・語尾・口調:${charData.speechStyle}
 ・今日の運勢はすでに「${fortune.label}」と決まっている（変更禁止）
+・今日のラッキーアイテムは「${todayItem.name}」に決定済み（変更禁止）
 
 返すJSONの形式：
 {
-  "luckyItem": "今日のラッキーアイテム（12字以内）。【厳守】必ず現代の具体的な『物』または『行動』にすること。例：コンビニのカフェラテ・お気に入りの靴下・温かいお味噌汁・青いボールペン・おにぎり（鮭）・スマートフォンの画面を拭く・駅の階段を使う。【絶対禁止】色・抽象概念・刀・お守り・勾玉・魔法陣などファンタジー/歴史的アイテム。",
-  "luckyEmoji": "ラッキーアイテムに合う絵文字1文字（例：☕🖊️🧦🍙🍵🎧📎🧤👟🛁）",
-  "luckyReason": "守護獣の一人称「${charData.pronoun}」を使い、「今日は〇〇をすると良いぞ」のようにユーザーの生活に踏み込んで、なぜ今日そのアイテム/行動が幸運をもたらすか1文（35字以内）で述べよ。",
+  "luckyItem": "必ず「${todayItem.name}」と答えること（変更・追記禁止）",
+  "luckyEmoji": "必ず「${todayItem.emoji}」と答えること（変更禁止）",
+  "luckyReason": "守護獣の一人称「${charData.pronoun}」を使い、なぜ今日「${todayItem.name}」が幸運をもたらすか1文（35字以内）で述べよ。",
   "advice": "「お主の今日の運勢は${fortune.label}でありんす！」のように運勢を宣言してから始まる、守護獣の口調による今日一日の過ごし方のお告げ（50〜80文字）"
 }`,
         },
         {
           role: "user",
-          content: `名字：${myoji}\n出身地：${shusshinchi}\n今日の日付：${date}\n運勢：${fortune.label}\n守護獣：${charData.typeName}\n一人称：${charData.pronoun}　語尾：${charData.speechStyle}`,
+          content: `名字：${myoji}\n出身地：${shusshinchi}\n今日の日付：${date}\n運勢：${fortune.label}\n守護獣：${charData.typeName}\n一人称：${charData.pronoun}　語尾：${charData.speechStyle}\nラッキーアイテム（固定）：${todayItem.name}`,
         },
       ],
     });
@@ -389,7 +427,7 @@ app.post("/api/daily-gacha", async (req, res) => {
     const [y, m, d] = date.split('-');
     const dateJa = `${y}年${parseInt(m)}月${parseInt(d)}日`;
 
-    const result = { date, dateJa, fortune: fortune.label, fortuneRank: fortune.rank, luckyItem: raw.luckyItem, luckyEmoji: raw.luckyEmoji || '🍀', luckyReason: raw.luckyReason || '', advice: raw.advice };
+    const result = { date, dateJa, fortune: fortune.label, fortuneRank: fortune.rank, luckyItem: todayItem.name, luckyEmoji: todayItem.emoji, luckyReason: raw.luckyReason || '', advice: raw.advice };
     blessingCache.set(cacheKey, result);
     res.json(result);
   } catch (error) {
