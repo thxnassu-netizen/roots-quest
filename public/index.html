@@ -601,6 +601,57 @@
     .seasonal-deco { position:fixed; pointer-events:none; opacity:0.1; }
     .deco-tl { top:0; left:0; width:200px; }
     .deco-br { bottom:0; right:0; width:200px; transform:rotate(180deg); }
+
+    /* ── おかえりカード ── */
+    @keyframes returnReveal {
+      from { opacity:0; transform:translateY(14px); filter:blur(5px); }
+      to   { opacity:1; transform:translateY(0);    filter:blur(0); }
+    }
+    .return-card {
+      background:linear-gradient(135deg,rgba(255,248,252,0.97),rgba(252,240,255,0.97));
+      border:1.5px solid rgba(232,168,184,0.5); border-radius:24px;
+      padding:24px 24px 20px; margin-bottom:16px;
+      box-shadow:0 6px 28px rgba(200,140,170,0.14), inset 0 1px 0 rgba(255,255,255,0.9);
+      animation:returnReveal 0.7s cubic-bezier(0.22,1,0.36,1) both;
+      position:relative; overflow:hidden;
+    }
+    .return-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(to right,transparent,var(--pink),rgba(200,150,230,0.7),transparent);
+    }
+    .return-guardian-icon {
+      font-size:2.2rem; display:block; text-align:center; margin-bottom:6px;
+      animation:float 3.5s ease-in-out infinite;
+    }
+    .return-greeting {
+      font-family:'Shippori Mincho',serif; font-size:1.12rem; font-weight:700;
+      color:var(--text); letter-spacing:0.1em; text-align:center; margin-bottom:4px;
+    }
+    .return-greeting .return-name { color:var(--pink-d); }
+    .return-whisper {
+      font-size:0.72rem; color:var(--sub); text-align:center; letter-spacing:0.14em;
+      margin-bottom:18px; font-style:italic; opacity:0.85;
+    }
+    .btn-return {
+      display:block; width:100%; padding:15px; border:none; border-radius:50px;
+      background:linear-gradient(135deg,#c890b8,#e8a0c8,#b878a8); background-size:200% auto;
+      color:#fff; font-size:0.95rem; font-family:'Shippori Mincho',serif;
+      font-weight:700; letter-spacing:0.22em; cursor:pointer;
+      box-shadow:0 5px 22px rgba(200,130,175,0.45);
+      transition:all 0.25s; margin-bottom:12px;
+    }
+    .btn-return:hover {
+      background-position:100% center; transform:translateY(-2px);
+      box-shadow:0 8px 30px rgba(200,130,175,0.58), 0 0 0 3px rgba(232,168,200,0.15);
+    }
+    .return-reset-wrap { text-align:center; }
+    .return-reset {
+      font-size:0.68rem; color:var(--sub); letter-spacing:0.16em;
+      cursor:pointer; text-decoration:none; opacity:0.7;
+      border-bottom:1px solid rgba(154,120,136,0.3);
+      transition:opacity 0.2s;
+    }
+    .return-reset:hover { opacity:1; }
   </style>
 </head>
 <body>
@@ -658,8 +709,19 @@
       <div class="title-rule"><span class="title-rule-icon">✦</span></div>
     </div>
 
+    <!-- おかえりカード（リピーター向け） -->
+    <div class="return-card" id="returnCard" style="display:none">
+      <span class="return-guardian-icon">🦊</span>
+      <p class="return-greeting">おかえりなさい、<span class="return-name" id="returnName"></span>さん！ ✨</p>
+      <p class="return-whisper">また会えたな、主よ。今日も守護獣がそなたを待っておる。</p>
+      <button class="btn-return" id="btnReturn">⛩️ すぐに今日の運勢を占う</button>
+      <div class="return-reset-wrap">
+        <span class="return-reset" id="btnReturnReset">✦ 別の名前で占う</span>
+      </div>
+    </div>
+
     <!-- フォーム -->
-    <div class="form-card">
+    <div class="form-card" id="formCard">
       <div class="form-card-deco">✿ ❀ ✿</div>
       <form id="rootsForm">
         <div class="form-group">
@@ -895,6 +957,12 @@
       const storyCard   = document.getElementById('storyCard');
       const namerootCard= document.getElementById('namerootCard');
       const resultText  = document.getElementById('resultText');
+
+      // リピーター用データを保存
+      localStorage.setItem('rq_myoji', myoji);
+      localStorage.setItem('rq_shusshinchi', shusshinchi);
+      // おかえりカードを更新（名前が変わった場合に対応）
+      showReturnCard(myoji);
 
       submitBtn.disabled = true;
       submitBtn.textContent = '探しています...';
@@ -1402,6 +1470,47 @@
         wrap.appendChild(pt);
       }
     }
+
+    // ══════════════════════════════════════════
+    // リピーター向け「おかえり」機能
+    // ══════════════════════════════════════════
+    function showReturnCard(myoji) {
+      document.getElementById('returnName').textContent = myoji;
+      document.getElementById('returnCard').style.display = 'block';
+    }
+
+    function hideReturnCard() {
+      document.getElementById('returnCard').style.display = 'none';
+    }
+
+    // ページ読み込み時にlocalStorageを確認
+    (function initReturnUser() {
+      const savedMyoji       = localStorage.getItem('rq_myoji');
+      const savedShusshinchi = localStorage.getItem('rq_shusshinchi');
+      if (!savedMyoji || !savedShusshinchi) return;
+
+      // フォームをオートフィル
+      document.getElementById('myoji').value       = savedMyoji;
+      document.getElementById('shusshinchi').value = savedShusshinchi;
+
+      // おかえりカードを表示
+      showReturnCard(savedMyoji);
+
+      // ショートカットボタン：即座に診断開始
+      document.getElementById('btnReturn').addEventListener('click', () => {
+        document.getElementById('rootsForm').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      });
+
+      // 「別の名前で占う」：データをクリアしてフォームを空に
+      document.getElementById('btnReturnReset').addEventListener('click', () => {
+        localStorage.removeItem('rq_myoji');
+        localStorage.removeItem('rq_shusshinchi');
+        document.getElementById('myoji').value       = '';
+        document.getElementById('shusshinchi').value = '';
+        hideReturnCard();
+        document.getElementById('myoji').focus();
+      });
+    })();
   </script>
 </body>
 </html>
