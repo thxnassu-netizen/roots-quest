@@ -376,7 +376,9 @@
     .divider-or::before,.divider-or::after { content:''; flex:1; height:1px; background:rgba(232,168,184,0.3); }
     .divider-or span { font-size:0.63rem; color:var(--sub); letter-spacing:0.2em; }
 
-    .footer { text-align:center; margin-top:30px; font-size:0.62rem; color:rgba(154,120,136,0.55); letter-spacing:0.2em; }
+    .footer { text-align:center; margin-top:30px; font-size:0.62rem; color:rgba(154,120,136,0.55); letter-spacing:0.2em; line-height:2.2; }
+    .footer a { color:rgba(192,120,136,0.6); text-decoration:none; border-bottom:1px solid rgba(192,120,136,0.25); transition:color 0.2s, border-color 0.2s; }
+    .footer a:hover { color:var(--pink-d); border-bottom-color:var(--pink-d); }
 
     /* ── 歴史IFストーリー ── */
     .ifstory-card {
@@ -896,7 +898,10 @@
 
     </div>
 
-    <div class="footer">&copy; 2025 ご先祖さま診断 ｜ あなたの守護獣が、そっと見守っています</div>
+    <div class="footer">
+      <p>&copy; 2025 ご先祖さま診断 ｜ あなたの守護獣が、そっと見守っています</p>
+      <p><a href="/privacy.html">プライバシーポリシー</a></p>
+    </div>
   </div>
 
   <script>

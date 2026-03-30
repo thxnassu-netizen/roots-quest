@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>プライバシーポリシー｜ご先祖さま診断</title>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&family=Shippori+Mincho:wght@400;500;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:     #fdf4f8;
+      --card:   rgba(255,252,255,0.95);
+      --pink:   #e8a0b8;
+      --pink-d: #c07888;
+      --green:  #8ab8a0;
+      --text:   #4a3040;
+      --sub:    #9a7888;
+      --border: rgba(232,168,184,0.42);
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+
+    body {
+      font-family:'M PLUS Rounded 1c','Hiragino Maru Gothic ProN',sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 32px 20px 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    body::before {
+      content:''; position:fixed; top:-80px; right:-80px;
+      width:380px; height:380px;
+      background:radial-gradient(circle,rgba(230,180,200,0.18) 0%,transparent 70%);
+      pointer-events:none; z-index:0;
+    }
+    body::after {
+      content:''; position:fixed; bottom:-80px; left:-80px;
+      width:420px; height:420px;
+      background:radial-gradient(circle,rgba(160,200,175,0.14) 0%,transparent 70%);
+      pointer-events:none; z-index:0;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 620px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 戻るボタン */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 20px;
+      border: 1.5px solid var(--border);
+      border-radius: 50px;
+      background: rgba(255,252,255,0.8);
+      color: var(--pink-d);
+      font-size: 0.78rem;
+      font-family: 'Shippori Mincho', serif;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      margin-bottom: 28px;
+      box-shadow: 0 2px 10px rgba(180,120,140,0.1);
+    }
+    .back-btn:hover {
+      background: rgba(255,248,252,1);
+      transform: translateX(-2px);
+      box-shadow: 0 4px 16px rgba(180,120,140,0.18);
+    }
+    .back-arrow { font-size: 0.9rem; }
+
+    /* ヘッダー */
+    .pp-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .pp-kamon {
+      font-size: 2.4rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .pp-title {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: 0.12em;
+      margin-bottom: 6px;
+    }
+    .pp-app-name {
+      font-size: 0.7rem;
+      color: var(--sub);
+      letter-spacing: 0.22em;
+    }
+    .pp-date {
+      font-size: 0.65rem;
+      color: var(--sub);
+      letter-spacing: 0.14em;
+      margin-top: 4px;
+      opacity: 0.8;
+    }
+
+    /* カード */
+    .pp-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 26px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 20px rgba(180,120,140,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .pp-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(to right, transparent, var(--pink), transparent);
+    }
+    .pp-card.green { border-color: rgba(143,184,143,0.42); }
+    .pp-card.green::before {
+      background: linear-gradient(to right, transparent, var(--green), transparent);
+    }
+
+    .pp-section-icon {
+      font-size: 1.2rem;
+      margin-right: 8px;
+    }
+    .pp-section-title {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--pink-d);
+      letter-spacing: 0.15em;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+    }
+    .pp-card.green .pp-section-title { color: #5a9070; }
+
+    .pp-text {
+      font-size: 0.84rem;
+      line-height: 2.0;
+      color: rgba(74,48,64,0.80);
+      letter-spacing: 0.03em;
+    }
+    .pp-text + .pp-text { margin-top: 10px; }
+
+    .pp-highlight {
+      background: rgba(232,168,184,0.1);
+      border-left: 3px solid rgba(232,168,184,0.55);
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+      margin-top: 12px;
+      font-size: 0.82rem;
+      line-height: 1.85;
+      color: rgba(74,48,64,0.75);
+    }
+    .pp-card.green .pp-highlight {
+      background: rgba(138,184,160,0.1);
+      border-left-color: rgba(138,184,160,0.55);
+    }
+
+    /* フッター */
+    .pp-footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 0.62rem;
+      color: rgba(154,120,136,0.5);
+      letter-spacing: 0.18em;
+      line-height: 2;
+    }
+    .pp-footer a {
+      color: var(--pink-d);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(192,120,136,0.3);
+    }
+    .pp-footer a:hover { border-bottom-color: var(--pink-d); }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- 戻るボタン -->
+    <a href="/" class="back-btn">
+      <span class="back-arrow">←</span> アプリに戻る
+    </a>
+
+    <!-- ヘッダー -->
+    <div class="pp-header">
+      <span class="pp-kamon">🌸</span>
+      <h1 class="pp-title">プライバシーポリシー</h1>
+      <p class="pp-app-name">ご先祖さま診断</p>
+      <p class="pp-date">制定日：2025年1月1日　最終更新：2026年3月30日</p>
+    </div>
+
+    <!-- はじめに -->
+    <div class="pp-card">
+      <p class="pp-section-title"><span class="pp-section-icon">📜</span>はじめに</p>
+      <p class="pp-text">「ご先祖さま診断」（以下「本アプリ」）は、名字と出身地から守護獣と物語を生成するエンターテインメントサービスです。本ポリシーでは、本アプリがお客様の情報をどのように取り扱うかを説明します。</p>
+    </div>
+
+    <!-- 取得する情報 -->
+    <div class="pp-card">
+      <p class="pp-section-title"><span class="pp-section-icon">📝</span>取得する情報</p>
+      <p class="pp-text">本アプリは、守護獣の決定と物語の生成のために以下の情報を利用します。</p>
+      <div class="pp-highlight">
+        ・<strong>名字</strong>（例：田中、鈴木）<br>
+        ・<strong>出身地</strong>（例：京都府、薩摩）
+      </div>
+      <p class="pp-text" style="margin-top:12px">これらの情報は、守護獣の選定・物語生成・今日の運勢の計算にのみ使用します。<strong>個人を特定できる形でサーバーに永続保存することはありません。</strong>生成された結果は短時間のキャッシュ（サーバー再起動で消去）に限定されます。</p>
+    </div>
+
+    <!-- AIの利用 -->
+    <div class="pp-card">
+      <p class="pp-section-title"><span class="pp-section-icon">🤖</span>AIサービスの利用</p>
+      <p class="pp-text">入力された名字・出身地は、物語・守護獣の台詞・今日の運勢を生成するため、以下のAI APIサービスへ送信されます。</p>
+      <div class="pp-highlight">
+        ・<strong>Groq API</strong>（Groq, Inc.）― 物語・台詞の生成<br>
+        ・各サービスのプライバシーポリシーに従って処理されます
+      </div>
+      <p class="pp-text" style="margin-top:12px">送信される情報は物語生成の目的のみに使用されます。AIの学習データとして個人情報が利用されることはありません。</p>
+    </div>
+
+    <!-- localStorage -->
+    <div class="pp-card green">
+      <p class="pp-section-title"><span class="pp-section-icon">💾</span>ブラウザへの情報保存（localStorage）</p>
+      <p class="pp-text">本アプリは、リピーターの方の利便性向上のため、以下の情報をお使いのブラウザ内（localStorage）にのみ保存することがあります。</p>
+      <div class="pp-highlight">
+        ・名字・出身地（自動入力のため）<br>
+        ・今日の御籤の結果（当日中のキャッシュ）
+      </div>
+      <p class="pp-text" style="margin-top:12px">これらのデータはお使いのデバイス内にのみ存在し、サーバーや第三者に送信されることはありません。「別の名前で占う」から随時削除できます。</p>
+    </div>
+
+    <!-- 広告・解析 -->
+    <div class="pp-card green">
+      <p class="pp-section-title"><span class="pp-section-icon">📊</span>アクセス解析・広告</p>
+      <p class="pp-text">現在、本アプリは第三者の広告サービスやアクセス解析ツール（Google Analytics等）を<strong>使用していません</strong>。将来導入する場合は、本ポリシーを更新した上でお知らせします。</p>
+    </div>
+
+    <!-- 免責事項 -->
+    <div class="pp-card">
+      <p class="pp-section-title"><span class="pp-section-icon">⚠️</span>免責事項</p>
+      <p class="pp-text">本アプリはエンターテインメントを目的として提供されており、守護獣・物語・名字のルーツ・今日の運勢等について<strong>歴史的・学術的な正確性を保証するものではありません</strong>。診断結果はAIが生成したフィクションであり、実際の歴史や個人の運勢を示すものではありません。</p>
+      <p class="pp-text">本アプリの利用によって生じた損害について、開発者は責任を負いかねます。</p>
+    </div>
+
+    <!-- お問い合わせ -->
+    <div class="pp-card">
+      <p class="pp-section-title"><span class="pp-section-icon">✉️</span>ポリシーの変更・お問い合わせ</p>
+      <p class="pp-text">本ポリシーは、法令の改正やサービス内容の変更に応じて更新することがあります。重要な変更がある場合はアプリ内でお知らせします。</p>
+      <p class="pp-text" style="margin-top:8px">ご不明な点は、アプリのSNSシェア機能等からお問い合わせください。</p>
+    </div>
+
+    <!-- フッター -->
+    <div class="pp-footer">
+      <p>&copy; 2025 ご先祖さま診断</p>
+      <p style="margin-top:4px"><a href="/">← アプリトップへ戻る</a></p>
+    </div>
+
+  </div>
+</body>
+</html>
