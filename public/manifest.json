@@ -1,0 +1,33 @@
+{
+  "name": "ルーツ・クエスト",
+  "short_name": "ルツクエ",
+  "description": "名字と出身地から、あなたを守る守護獣に出会えるアプリ",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fdf4f8",
+  "theme_color": "#e8a0b8",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "/images/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/characters/20_dragon_god_tatsu.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/characters/20_dragon_god_tatsu.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["entertainment", "lifestyle"],
+  "screenshots": []
+}

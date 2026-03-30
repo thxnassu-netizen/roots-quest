@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 背景円 -->
+  <circle cx="256" cy="256" r="256" fill="#fdf4f8"/>
+  <!-- 外枠二重円 -->
+  <circle cx="256" cy="256" r="238" fill="none" stroke="#d4a0b0" stroke-width="11"/>
+  <circle cx="256" cy="256" r="200" fill="none" stroke="#d4a0b0" stroke-width="4.5" stroke-dasharray="19,32"/>
+  <!-- 内側の薄塗り -->
+  <circle cx="256" cy="256" r="193" fill="rgba(253,244,248,0.5)"/>
+  <!-- 5枚の花びら（中心256,256・半径136） -->
+  <ellipse cx="256" cy="120" rx="42" ry="67" fill="#f5d0e2" stroke="#c890a5" stroke-width="7.5"/>
+  <ellipse cx="256" cy="120" rx="42" ry="67" fill="#f5d0e2" stroke="#c890a5" stroke-width="7.5" transform="rotate(72,256,256)"/>
+  <ellipse cx="256" cy="120" rx="42" ry="67" fill="#f5d0e2" stroke="#c890a5" stroke-width="7.5" transform="rotate(144,256,256)"/>
+  <ellipse cx="256" cy="120" rx="42" ry="67" fill="#f5d0e2" stroke="#c890a5" stroke-width="7.5" transform="rotate(216,256,256)"/>
+  <ellipse cx="256" cy="120" rx="42" ry="67" fill="#f5d0e2" stroke="#c890a5" stroke-width="7.5" transform="rotate(288,256,256)"/>
+  <!-- 花芯 -->
+  <circle cx="256" cy="256" r="45" fill="#ebb8cc" stroke="#c890a5" stroke-width="6.5"/>
+  <circle cx="256" cy="256" r="19" fill="#c87090"/>
+  <!-- おしべ5本 -->
+  <line x1="256" y1="218" x2="256" y2="198" stroke="#d09090" stroke-width="6.5" stroke-linecap="round"/>
+  <line x1="256" y1="218" x2="256" y2="198" stroke="#d09090" stroke-width="6.5" stroke-linecap="round" transform="rotate(72,256,256)"/>
+  <line x1="256" y1="218" x2="256" y2="198" stroke="#d09090" stroke-width="6.5" stroke-linecap="round" transform="rotate(144,256,256)"/>
+  <line x1="256" y1="218" x2="256" y2="198" stroke="#d09090" stroke-width="6.5" stroke-linecap="round" transform="rotate(216,256,256)"/>
+  <line x1="256" y1="218" x2="256" y2="198" stroke="#d09090" stroke-width="6.5" stroke-linecap="round" transform="rotate(288,256,256)"/>
+</svg>

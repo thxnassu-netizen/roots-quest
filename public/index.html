@@ -2,8 +2,30 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>ルーツ・クエスト</title>
+
+  <!-- PWA: manifest & theme -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#e8a0b8">
+
+  <!-- PWA: iOS Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="ルツクエ">
+  <link rel="apple-touch-icon" href="/images/icon.svg">
+
+  <!-- PWA: Android / general -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="ルツクエ">
+  <meta name="description" content="名字と出身地から、あなたを守る守護獣に出会えるアプリ">
+
+  <!-- OGP (SNSシェア用) -->
+  <meta property="og:title" content="ルーツ・クエスト">
+  <meta property="og:description" content="名字と出身地から、あなたを守る守護獣に出会えます">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://roots-quest.vercel.app">
+
   <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&family=Shippori+Mincho:wght@400;500;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
