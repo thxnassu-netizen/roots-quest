@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>ルーツ・クエスト</title>
+  <title>ご先祖さま診断</title>
 
   <!-- PWA: manifest & theme -->
   <link rel="manifest" href="/manifest.json">
@@ -12,17 +12,17 @@
   <!-- PWA: iOS Safari -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="ルツクエ">
+  <meta name="apple-mobile-web-app-title" content="ご先祖さま診断">
   <link rel="apple-touch-icon" href="/images/icon.svg">
 
   <!-- PWA: Android / general -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="ルツクエ">
-  <meta name="description" content="名字と出身地から、あなたを守る守護獣に出会えるアプリ">
+  <meta name="application-name" content="ご先祖さま診断">
+  <meta name="description" content="名字と出身地から、あなたのご先祖さまと守護獣に出会えるアプリ">
 
   <!-- OGP (SNSシェア用) -->
-  <meta property="og:title" content="ルーツ・クエスト">
-  <meta property="og:description" content="名字と出身地から、あなたを守る守護獣に出会えます">
+  <meta property="og:title" content="ご先祖さま診断">
+  <meta property="og:description" content="名字と出身地から、あなたのご先祖さまと守護獣に出会えます">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://roots-quest.vercel.app">
 
@@ -723,8 +723,8 @@
           <line x1="40" y1="34" x2="40" y2="31" stroke="#d09090" stroke-width="1" stroke-linecap="round" transform="rotate(288,40,40)"/>
         </svg>
         <div class="logo-wordmark">
-          <div class="title-crest">ROOTS  QUEST</div>
-          <h1 class="title-main">ルーツ<span class="title-dot">・</span>クエスト</h1>
+          <div class="title-crest">GOSEN ZO SAMA SHINDAN</div>
+          <h1 class="title-main">ご先祖さま<span class="title-dot">診断</span></h1>
         </div>
       </div>
       <p class="title-sub">名字と出身地から、あなたを守る<br>かわいい動物の守護獣に出会えます</p>
@@ -896,7 +896,7 @@
 
     </div>
 
-    <div class="footer">&copy; 2025 Roots Quest ｜ あなたの守護獣が、そっと見守っています</div>
+    <div class="footer">&copy; 2025 ご先祖さま診断 ｜ あなたの守護獣が、そっと見守っています</div>
   </div>
 
   <script>
@@ -1131,7 +1131,7 @@
 
       // シェアカードを更新・表示
       const APP_URL = 'https://roots-quest.vercel.app';
-      const shareText = `私のご先祖さまは『${data.ancestorName}』でした！${data.emoji} #ルーツクエスト ${APP_URL}`;
+      const shareText = `私のご先祖さまは『${data.ancestorName}』でした！${data.emoji} #ご先祖さま診断 ${APP_URL}`;
       document.getElementById('btnShareX').href =
         `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
       document.getElementById('btnShareLine').href =

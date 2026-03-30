@@ -1,8 +1,9 @@
 {
-  "name": "ルーツ・クエスト",
-  "short_name": "ルツクエ",
-  "description": "名字と出身地から、あなたを守る守護獣に出会えるアプリ",
-  "start_url": "/",
+  "name": "ご先祖さま診断",
+  "short_name": "ご先祖さま診断",
+  "description": "名字と出身地から、あなたのご先祖さまと守護獣に出会えるアプリ",
+  "id": "/",
+  "start_url": "/?source=pwa",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#fdf4f8",

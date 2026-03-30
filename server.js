@@ -578,5 +578,5 @@ app.get("/api/japan-geojson", async (req, res) => {
 
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`ルーツ・クエスト起動中 → http://localhost:${PORT}`);
+  console.log(`ご先祖さま診断 起動中 → http://localhost:${PORT}`);
 });
